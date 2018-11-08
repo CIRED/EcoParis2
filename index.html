@@ -1,1 +1,293 @@
-<h1>Hello</h1>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>EcoParis: How nature impacts your life in Paris</title>
+
+      <!-- JQuery -->
+      <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+
+      <!-- Bootstrap core CSS -->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+      <!-- D3 Resources -->
+      <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+      <script src="http://d3js.org/queue.v1.min.js"></script>
+
+      <!-- Leaflet resources -->
+      <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+      <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+      <script src="js/canvasLayer.js"></script>
+
+    </head>
+
+  <body>
+
+    <div class="container" style="width:1000; margin-left:50px; margin-right:50px;">
+
+      <!-- Layer choice-->
+        <div class="row" style="padding: 10px 0px 15px  0px">
+          <div class="col-md-9">
+            <div class="btn-group">
+              <button type="button" class="btn btn-info" id="azoteLayer">Azote</button>
+              <button type="button" class="btn btn-info" id="phosphoreLayer">Phosphore</button>
+            </div>
+          </div>
+          <div class="col-md-3">
+          </div>
+        </div>
+
+      <!-- Add Map -->
+        <div class="row" style="position:relative;">
+            <div class="col-md-12">
+                <div id="ParisMap" style="height:500px; width:1000px;"></div>
+            </div>
+            <canvas id="canvas-container"></canvas>
+        </div>
+    
+  </div>
+
+
+    <script type="text/javascript">
+
+        var urlWaterShed = "watershed.geojson";
+        var urlAzote = "n_export.geojson";
+        var urlPhosphore = "p_export.geojson";
+
+        // Load the JSON file(s)
+        queue()
+            .defer(d3.json,'troncon_voie.geojson')
+            //.defer(d3.json, urlWaterShed) // Load Watershed Shape
+            //.defer(d3.json, urlAzote) // Load Azote metric
+            .defer(d3.json, urlPhosphore) // Load Phosphore metric
+            .await(loadGeoJSON); // When the GeoJsons are fully loaded, call the function loadGeom
+
+        // Function loadGeoJSON: this function is executed as soon as all the files in queue() are loaded
+
+        function loadGeoJSON(error, paris, density_phosphore){
+            var densityData = {
+                //w: watershed_shape,
+                l: paris,
+                p: density_phosphore,
+                //n: density_azote
+            };
+
+            canvas = d3.select("canvas#canvas-container")
+
+            var width = 1000
+            var height = 500
+
+            canvas.attr("width",1000)
+                .attr("height",500)
+            context = canvas.node().getContext("2d");
+
+            var densityDataChosen = densityData["l"]; //phosphore for now
+
+            var basemap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            });
+
+            var map = L.map('ParisMap', {zoomControl: false}).fitBounds(L.geoJson(densityDataChosen).getBounds());
+            // Add the base map to the map
+            basemap.addTo(map);
+
+            
+
+            
+
+            context.fillStyle = '#ddd0';
+            context.fillRect(0, 0, width, height);
+
+            function onDrawLayer(info) {
+                console.log("draw ")
+                console.log(info.zoom)
+
+                //console.log(alpha)
+                var ctx = info.canvas.getContext('2d');
+                ctx.clearRect(0, 0, info.canvas.width, info.canvas.height);
+
+                function projectPoint(x, y) {
+                    var point = map.latLngToContainerPoint(new L.LatLng(y, x));
+                    this.stream.point(point.x, point.y);
+                }
+
+                transform = d3.geo.transform({point: projectPoint});
+                var pathGenerator = d3.geo.path()
+                      .projection(transform)
+                      .context(ctx);
+
+                ctx.beginPath()
+                pathGenerator(densityDataChosen)
+                ctx.strokeStyle = "#666";
+                ctx.stroke()
+            };
+
+            this.onDrawLayer = onDrawLayer
+
+            var canvasLayer = L.canvasLayer()
+                .delegate(this) // -- if we do not inherit from L.CanvasLayer we can setup a delegate to receive events from L.CanvasLayer
+                .addTo(map);
+
+            
+            canvasLayer.drawLayer();
+            /*var densityData = {
+                //w: watershed_shape,
+                l: paris,
+                p: density_phosphore,
+                //n: density_azote
+            };
+
+            
+
+            // Define a basemap and min/max Zoom
+
+            var map = L.map('ParisMap', {zoomControl: false}).fitBounds(L.geoJson(densityDataChosen).getBounds());
+
+            // Add the base map to the map
+            basemap.addTo(map);
+
+            // we create a new SVG element in which we will store our geometrys. This empty SVG element is added to the leaflet overlayPane.
+            canvas = d3.select(map.getPanes().overlayPane).append("canvas");
+            canvas.attr("width","1000px")
+            //console.log(d3.select("#ParisMap"))
+            console.log(canvas)
+            g = canvas.append("g").attr("class", "leaflet-zoom-hide");
+
+            // We tell D3 to use the leaflet projection function "projectPoint".
+            transform = d3.geo.transform({point: projectPoint});
+
+            ctx = canvas.node().getContext('2d')
+            // Now a SVG path is created using the leaflet projection, which is stored in the variable "transform"
+            path = d3.geo.path().projection(transform)
+
+            // Use Leaflet to implement a D3 geometric transformation. This is the function that
+            // transforms D3 svg output to the correct leaflet projection
+            function projectPoint(x, y) {
+                var point = map.latLngToLayerPoint(new L.LatLng(y, x));
+                this.stream.point(point.x, point.y);
+            }
+
+            // Now lets load the density map
+            densityMap = g.append("g")
+                    .attr("class","densityMap")
+                    .selectAll("path")
+                    .data(densityDataChosen.features)
+                    .enter().append("path")
+                    .attr("id", "canton")
+                    .attr("density",function(d){
+                        return "_"+d.properties.DN;
+                    })
+                    .style("opacity", 0.8)
+                    .style("stroke","black")
+                    .style("fill", function(d){
+                        return getColour(d.properties.DN);
+                    })
+
+                    .on("mouseover", function(d) {
+                        d3.select(this).transition().duration(300).style("opacity", 1);
+                    })
+
+                    .on("mouseout", function(d) {
+                        d3.select(this).transition().duration(300).style("opacity", 0.8);
+                    })
+
+            function getColour(d){
+                return  d > 14 ? '#e31a1c':
+                        d > 10 ? '#fc4e2a':
+                        d > 5 ? '#fd8d3c':
+                        d > 1 ? '#feb24c':
+                                  '#ffffcc';
+            }
+
+            //Legend
+            var densityLegend = L.control({position: 'topleft'});
+            densityLegend.onAdd = function (map) {var div = L.DomUtil.create('div', 'info legend'); return div;}
+            densityLegend.addTo(map);
+
+            var grades = [0,50,100,150,200,250, 300];
+            // Create an array called 'labels' and set the first 2 lines
+            var labels = ['<strong>Phosphore density</strong>'];
+            // For each element in the array 'grades' create a new line in the
+            // legend.
+            for (var i = 0; i < grades.length; i++){
+                // set the from value. This gets the number stored in the
+                // array 'grades' at position i
+                var from = grades [i];
+                // set the to value. This gets the number in the array
+                // 'grades' at position i+1. Additionally 1 is subtracted
+                // so that the legend says: "from 0 to 49" and not from "0 to 50"
+                var to = grades [i+1]-1;
+                // Create the text for each line
+                labels.push('<i style="background:' + getColour(from + 1) + '"></i> ' + from + (to ? '&ndash;' + to : '+'));
+            }
+
+            // Join all the labels in the labels-array and add a <br> after each element
+            var legendText = labels.join('<br>');
+
+            // Use D3.js to fill up the legend DIV with our legend items
+            d3.select(".legend.leaflet-control") // select the div with class '.legend.leaflet-control'
+              .html(legendText); // Add the html stored in the legendText variable.
+
+
+            document.getElementById("phosphoreLayer").addEventListener('click', ()=>{
+                changeElement('p')
+            })
+
+
+            function changeElement(value){
+
+                var densityData = {
+                    p: density_phosphore,
+                    //n: density_azote
+                };
+
+                var densityDataChosen = densityData[value];
+
+                // Now lets update the SVG-Path styles and attributes to fit the new values
+                d3.selectAll("path")                         // select all paths of specific group (g)
+                        .data(densityDataChosen.features)       // bind data to these
+                        .attr("density",function(d){         // Update the density attribute
+                            return "_"+d.properties.DN;
+                        })
+                        .style("fill", function(d){          // Update the fill colour with the new value
+                            return getColour(d.properties.DN);
+                        })
+
+            }
+
+            map.on("viewreset", reset);
+
+            // On first load, the user will not have paned or zoomed, but the SVG still needs to be put in the
+            // right place, so the function reset is called.
+            reset();
+
+            // This function places the SVG at the right position, even after zoom and/or pan
+            function reset() {
+
+                // Get the bounding Box
+                boundsKreis = path.bounds(densityDataChosen);
+
+                // save top left and bottom right corner coordinates in variables
+                var topLeft = boundsKreis[0],
+                    bottomRight = boundsKreis[1];
+
+                // reposition and rescale SVG element
+                canvas.attr("width", bottomRight[0] - topLeft[0])
+                        .attr("height", bottomRight[1] - topLeft[1])
+                        .style("left", topLeft[0] + "px")
+                        .style("top", topLeft[1] + "px");
+
+                // reposition all geometries in SVG
+                canvas.selectAll("g.ParisMap").attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
+                densityMap.attr("d", path);
+            }*/
+
+        }
+    </script>
+  </body>
+</html>
+
