@@ -44,8 +44,8 @@
         <div class="row" style="position:relative;">
             <div class="col-md-12">
                 <div id="ParisMap" style="height:500px; width:1000px;"></div>
+                <img id="my-image" src="p_geotiff.png" style="" ></img>
             </div>
-            <canvas id="canvas-container"></canvas>
         </div>
     
   </div>
@@ -60,54 +60,108 @@
         // Load the JSON file(s)
         queue()
             .defer(d3.json,'troncon_voie.geojson')
-            //.defer(d3.json, urlWaterShed) // Load Watershed Shape
+            .defer(d3.json, urlWaterShed) // Load Watershed Shape
             //.defer(d3.json, urlAzote) // Load Azote metric
             .defer(d3.json, urlPhosphore) // Load Phosphore metric
             .await(loadGeoJSON); // When the GeoJsons are fully loaded, call the function loadGeom
 
         // Function loadGeoJSON: this function is executed as soon as all the files in queue() are loaded
 
-        function loadGeoJSON(error, paris, density_phosphore){
+        function loadGeoJSON(error, paris, watershed_shape, density_phosphore){
+
             var densityData = {
-                //w: watershed_shape,
-                l: paris,
+                w: watershed_shape,
                 p: density_phosphore,
                 //n: density_azote
             };
+            var densityDataChosen = densityData["p"]; //phosphore for now
 
-            canvas = d3.select("canvas#canvas-container")
 
-            var width = 1000
-            var height = 500
-
-            canvas.attr("width",1000)
-                .attr("height",500)
-            context = canvas.node().getContext("2d");
-
-            var densityDataChosen = densityData["l"]; //phosphore for now
-
+            //General Map
             var basemap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             });
-
+            // Zoomed on Paris
             var map = L.map('ParisMap', {zoomControl: false}).fitBounds(L.geoJson(densityDataChosen).getBounds());
-            // Add the base map to the map
             basemap.addTo(map);
 
-            
+            function style(feature) {
+                return {
+                    opacity:1,
+                    fillOpacity: 0
+                };
+            }
 
-            
+            //Canvas
+            this.onDrawLayer = onDrawLayer;
+            var canvasLayer = L.canvasLayer()
+                .delegate(this)
+                .addTo(map);
+            canvasLayer.drawLayer();
 
-            context.fillStyle = '#ddd0';
-            context.fillRect(0, 0, width, height);
+            L.geoJson(watershed_shape,{style:style}).addTo(map);
+
+            var svg = d3.select("#ParisMap").select("svg"),
+            g = svg.append("g")
+
+            var ratio = 1640/1977
+            var imgs = svg.selectAll("image").data([0,0]);
+            imgs.enter()
+                .append("svg:image")
+                .attr('x', 0)
+                .attr('y', 0)
+                .attr('width', 200)
+                .attr('height', 200*ratio)
+                .attr("xlink:href", "")
+            function update() {
+                var tl = new L.LatLng(49.2485668,1.4403262)
+                var br = new L.LatLng(48.1108602,3.5496114)
+
+                var width = (map.latLngToLayerPoint(br).x-map.latLngToLayerPoint(tl).x)
+                var height = (map.latLngToLayerPoint(br).y-map.latLngToLayerPoint(tl).y)
+                imgs.attr("transform", 
+                    function(d) { 
+                        var point = map.latLngToLayerPoint(tl)
+                        console.log(point)
+                        console.log(width,height)
+                        return "translate("+ 
+                            point.x +","+ 
+                            point.y +")";
+                    }
+                )
+                imgs.attr("width", 
+                    function(d) { 
+                        return width;
+                    }
+                )
+                imgs.attr("height", 
+                    function(d) { 
+                        return height;
+                    }
+                )
+                /*imgs.attr("height", 
+                    function(d) { 
+                        var left = map.latLngToLayerPoint(new L.LatLng(1, 0))
+                        var right = map.latLngToLayerPoint(new L.LatLng(0, 0))
+                        console.log(right.y-left.y)
+                        return ""+(right.y-left.y)*1590/100;
+                    }
+                )*/
+                console.log(imgs[0][0])
+            }
+            map.on("viewreset", update);
+            update();
+            function getColour(d){
+                return  d > 14 ? '#e31a1c':
+                        d > 10 ? '#fc4e2a':
+                        d > 5 ? '#fd8d3c':
+                        d > 1 ? '#feb24c':
+                                  '#ffffcc';
+            }
 
             function onDrawLayer(info) {
-                console.log("draw ")
-                console.log(info.zoom)
-
-                //console.log(alpha)
-                var ctx = info.canvas.getContext('2d');
+                /*var ctx = info.canvas.getContext('2d');
                 ctx.clearRect(0, 0, info.canvas.width, info.canvas.height);
 
                 function projectPoint(x, y) {
@@ -120,20 +174,58 @@
                       .projection(transform)
                       .context(ctx);
 
-                ctx.beginPath()
-                pathGenerator(densityDataChosen)
-                ctx.strokeStyle = "#666";
-                ctx.stroke()
+                for (i in densityDataChosen["features"]){
+                    ctx.beginPath()
+                    pathGenerator(densityDataChosen['features'][i])
+                    ctx.fillStyle = getColour(densityDataChosen['features'][i].properties.DN);
+
+                    ctx.fill()
+                }*/
             };
 
-            this.onDrawLayer = onDrawLayer
+            var img = document.getElementById('my-image');
+            var canvas = document.createElement("canvas")
+                canvas.width=img.width
+                canvas.height=img.height
 
-            var canvasLayer = L.canvasLayer()
-                .delegate(this) // -- if we do not inherit from L.CanvasLayer we can setup a delegate to receive events from L.CanvasLayer
-                .addTo(map);
+            canvas.getContext('2d').drawImage(img, 0, 0, img.width, img.height);
+            var context=canvas.getContext('2d');
 
+            function getRasterPixelValue(x,y){
+                return context.getImageData(x, y, 1, 1).data
+            }
+
+            console.log(getRasterPixelValue(400,400))
+
+            var imageData=context.createImageData(img.width, img.height);
+            // The property data will contain an array of int8
+            var data=imageData.data;
+            for (var i=0; i<canvas.height*canvas.width; i++) {
+
+                var value = getRasterPixelValue(i%canvas.width,i/canvas.width)
+                data[i*4+0]=value[0] // Red
+                data[i*4+1]=0 // Green
+                data[i*4+2]=0 // Blue
+                if (value[0]==0){
+                    data[i*4+3]=0; // alpha (transparency)
+                }
+                else{
+                    data[i*4+3]=100;
+                }
+                //console.log(i)
+            }
+            // we put this random image in the context
+            context.putImageData(imageData, 0, 0); // at coords 0,0
+            console.log(context)
+
+            var value=canvas.toDataURL("png");
+            document.getElementById("my-image").src=value
+
+            imgs.attr("xlink:href",value)
+            console.log("ok!")
+            //console.log(value)
             
-            canvasLayer.drawLayer();
+        
             /*var densityData = {
                 //w: watershed_shape,
                 l: paris,
@@ -290,4 +382,6 @@
     </script>
   </body>
 </html>
+
+
 

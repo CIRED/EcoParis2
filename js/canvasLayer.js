@@ -122,9 +122,6 @@ L.CanvasLayer = (L.Layer ? L.Layer : L.Class).extend({
 
         var center = this.LatLonToMercator(this._map.getCenter());
         var corner = this.LatLonToMercator(this._map.containerPointToLatLng([0,0]));
-        console.log(bounds)
-        console.log(center)
-        console.log(corner)
    
         var del = this._delegate || this;
         del.onDrawLayer && del.onDrawLayer( {
