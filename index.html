@@ -189,8 +189,8 @@
                 canvas.height=img.height
 
             canvas.getContext('2d').drawImage(img, 0, 0, img.width, img.height);
-            var context=canvas.getContext('2d');
-
+            var context = canvas.getContext('2d');
+            var pixels = context.getImageData(0, 0, canvas.width, canvas.height).data
             function getRasterPixelValue(x,y){
                 return context.getImageData(x, y, 1, 1).data
             }
@@ -202,11 +202,11 @@
             var data=imageData.data;
             for (var i=0; i<canvas.height*canvas.width; i++) {
 
-                var value = getRasterPixelValue(i%canvas.width,i/canvas.width)
-                data[i*4+0]=value[0] // Red
+                //var value = getRasterPixelValue(i%canvas.width,i/canvas.width)
+                data[i*4+0]=pixels[i*4 + 0] // Red
                 data[i*4+1]=0 // Green
                 data[i*4+2]=0 // Blue
-                if (value[0]==0){
+                if (pixels[i*4 + 0]==0){
                     data[i*4+3]=0; // alpha (transparency)
                 }
                 else{
@@ -223,6 +223,7 @@
 
             imgs.attr("xlink:href",value)
             console.log("ok!")
+            console.log(context.getImageData(0, 0, canvas.width, canvas.height).data)
             //console.log(value)
             
         
