@@ -8,7 +8,7 @@ function whenDocumentLoaded(action) {
 }
 
 whenDocumentLoaded(() => {
-	var urlWaterShed = "/watershed.geojson";
+	var urlWaterShed = "{{ site.baseurl }}/watershed.geojson";
 	var urlAzote = "n_export.json";
 	var urlPhosphore = "p_export.json";
 
