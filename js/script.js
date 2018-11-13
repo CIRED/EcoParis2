@@ -115,7 +115,7 @@ whenDocumentLoaded(() => {
 		        canvas.height=image_height//image_data.width
 
 		        var img = document.getElementById("my-image")
-		    	canvas.getContext('2d').drawImage(img, 0, 0, image_width, image_height);
+		    	//canvas.getContext('2d').drawImage(img, 0, 0, image_width, image_height);
 
 			    var context = canvas.getContext('2d');
 
