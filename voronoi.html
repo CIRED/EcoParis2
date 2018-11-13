@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset = "UTF-8">
+    <title></title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.12.0/d3.min.js"></script>
+    <style>
+        html, body {
+          margin: 0;
+          height: 100%;
+        }
+    </style>
+    </head>
+    
+<body>
+    <script type="text/javascript">
+        var width = 960;
+        var height = 500;
+        
+        // Some blank data
+        var colors = ["#fc8d62", "#ffd92f", "#66c2a5", "#8da0cb","#8dd0cb"];
+        var vertices = d3.range(5).map(function(d){ return [Math.random()*width,Math.random()*height];})       
+        
+        var json_data = []
+        vertices.forEach(function(d,i){
+            json_data.push({color: colors[i], x:d[0], y:d[1]})
+        });
+
+        function voronoi_json(json_data){
+            var voronoi = d3.voronoi()
+            .x(function(d) { return d.x; })
+            .y(function(d) { return d.y; })
+            .extent([[0, 0], [width, height]]);;
+            
+            var body_svg = d3.select("body").append("svg").attr("width", "100%").attr("height", "100%");
+            var polygons = body_svg.append("g").attr("class","polygons")
+                .selectAll("path")
+                .data(voronoi(json_data).polygons())
+                .enter().append("path")
+                        .attr("d",function(d){return "M"+d.join("L")+"Z"; })
+                        .style("fill", function(d){ return d.data.color;} );
+                        
+            var fuel = body_svg.append("g")
+                .attr("class","fuel")
+                .selectAll("circle")
+                    .data(json_data).enter().append("circle")
+                        .attr("cx",function(d){return d.x;}) 
+                        .attr("cy",function(d){return d.y;})
+                        .attr("r","3");
+        };
+        
+        voronoi_json(json_data);
+    </script>
+</body>
+</html>
