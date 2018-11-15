@@ -107,7 +107,11 @@ whenDocumentLoaded(() => {
 	        watersheds.attr("d",path)
 
             
-            var paths = ['js/points_7_out.txt']
+            var paths = ['data/points_0_out.txt','data/points_1_out.txt',
+            'data/points_2_out.txt','data/points_3_out.txt',
+            'data/points_4_out.txt','data/points_5_out.txt',
+            'data/points_6_out.txt','data/points_7_out.txt']
+            
             var fc = {'type': 'FeatureCollection','features': []}
             var poly = '{"type": "Feature","properties": {},"geometry": {"type": "Polygon","coordinates": []}}'
                 
