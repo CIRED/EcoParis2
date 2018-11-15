@@ -8,28 +8,14 @@ function whenDocumentLoaded(action) {
 }
 
 whenDocumentLoaded(() => {
-	var urlWaterShed = "depts.geojson";
-	var urlAzote = "n_export.geojson";
-	var urlPhosphore = "p_export.geojson";
+	var urlDpdt = "depts.geojson";
 
-	// Load the JSON file(s)
 	queue()
-	    .defer(d3.json, urlWaterShed) // Load Watershed Shape
-	    //.defer(d3.json, urlAzote) // Load Azote metric
-	    //.defer(d3.json, urlPhosphore) // Load Phosphore metric
-	    .await(loadGeoJSON); // When the GeoJsons are fully loaded, call the function loadGeom
+	    .defer(d3.json, urlDpdt) // Load Departements Shape
+	    .await(loadGeoJSON);
 
 	// Function loadGeoJSON: this function is executed as soon as all the files in queue() are loaded
-
-	function loadGeoJSON(error, watershed_shape){
-
-	    var densityData = {
-	        w: watershed_shape,
-	        //p: density_phosphore,
-	        //n: density_azote
-	    };
-	    //var densityDataChosen = densityData["p"]; //phosphore for now
-
+	function loadGeoJSON(error, dpt_shape){
 
 	    //General Map
 	    var basemap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -49,18 +35,19 @@ whenDocumentLoaded(() => {
 	            opacity:0,
 	            fillOpacity: 0
 	        };
-	    }
-
-	    L.geoJson(watershed_shape,{style:style}).addTo(map);
+	    }  
+        
+        // Artifice for Leaflet working correctly
+	    L.geoJson(dpt_shape,{style:style}).addTo(map);
 
 	    var svg = d3.select("#ParisMap").select("svg")
 
-	    var imgs = svg.selectAll("image").data([0,0]);
-	    imgs.enter()
-	        .append("svg:image")
-	        .attr('x', 0)
-	        .attr('y', 0)
-	        .attr("xlink:href", "")
+	    var imgs = svg.selectAll("image").data([0,0])
+                    .enter()
+                    .append("svg:image")
+                    .attr('x', 0)
+                    .attr('y', 0)
+                    .attr("xlink:href", "")
 
 	    function projectPoint(x, y) {
 	        var point = map.latLngToLayerPoint(new L.LatLng(y, x));
@@ -70,43 +57,33 @@ whenDocumentLoaded(() => {
 	    transform = d3.geo.transform({point: projectPoint});
 	    var path = d3.geo.path()
 	        .projection(transform);
-        console.log(watershed_shape.features)
-	    var watersheds = svg.append("g").selectAll("path")
-	        .data(watershed_shape.features)
+
+        //Display shape of departements
+	    var dpts = svg.append("g").selectAll("path")
+	        .data(dpt_shape.features)
 	        .enter().append('path')
-	            .attr('d', path)
-	            .attr('vector-effect', 'non-scaling-stroke')
-	            .style('stroke', "#000")
-	            .attr("fill","none")
+            .attr('d', path)
+            .attr('vector-effect', 'non-scaling-stroke')
+            .style('stroke', "#000")
+            .attr("fill","none")
 
 	    var img = document.getElementById('my-image');
 	    var image_width = img.width
 	    var image_height = img.height
 
 	    var canvas = document.createElement("canvas")
-	        canvas.width=image_width//image_data.width
-	        canvas.height=image_height//image_data.width
+	        canvas.width=image_width
+	        canvas.height=image_height
 
         var polygons = svg.append("g").attr("class","polygons")
-
-		function noop() {}
-        function projectLineString(feature, projection) {
-		  var line;
-		  d3.geo.stream(feature, projection.stream({
-		    polygonStart: noop,
-		    polygonEnd: noop,
-		    lineStart: function() { line = []; },
-		    lineEnd: noop,
-		    point: function(x, y) { line.push([x, y]); },
-		    sphere: noop
-		  }));
-		  return line;
-		}
-        console.log(watershed_shape.features[7])
-
+        
+        map.on("viewreset", update);
+	    update();
+		
 	    function update() {
-	        var width = (map.latLngToLayerPoint(br).x-map.latLngToLayerPoint(tl).x)
-	        var height = (map.latLngToLayerPoint(br).y-map.latLngToLayerPoint(tl).y)
+	        var width = (map.latLngToLayerPoint(br).x - map.latLngToLayerPoint(tl).x)
+	        var height = (map.latLngToLayerPoint(br).y - map.latLngToLayerPoint(tl).y)
+            
 	        imgs.attr("transform", 
 	            function(d) { 
 	                var point = map.latLngToLayerPoint(tl)
@@ -115,17 +92,21 @@ whenDocumentLoaded(() => {
 	                    point.y +")";
 	            }
 	        )
+            
 	        imgs.attr("width", 
 	            function(d) { 
 	                return width;
 	            }
 	        )
+            
 	        imgs.attr("height", 
 	            function(d) { 
 	                return height;
 	            }
 	        )
-	        watersheds.attr("d",path)
+            
+            //Display shape of departements
+	        dpts.attr("d",path)
 
 	        var vertices = [[972.823,274.289],
 		    				[454.092,159.518],
@@ -139,7 +120,13 @@ whenDocumentLoaded(() => {
 		    				[733.488,371.636],
 		    				[830.057,194.852],
 		    				[875.546,341.312]]
-        
+                            
+            var mapped = dpt_shape.features[7].geometry.coordinates[0].map(function(p) {
+                    projected_pt = map.latLngToLayerPoint(L.LatLng(p[1],p[0]))
+		        	return [projected_pt.x,projected_pt.y]
+		        });
+            var polygon_limit = d3.geom.polygon(mapped)
+            
 	        var json_data = []
 	        vertices.forEach(function(d,i){
 	            json_data.push({x:d[0], y:d[1]})
@@ -152,68 +139,23 @@ whenDocumentLoaded(() => {
 	        }
 
             var voronoi = d3.voronoi()
-	            .x(function(d) { return map.latLngToLayerPoint(imageToLatLng(d.x,d.y)).x; })//todo convert
-	            .y(function(d) { return map.latLngToLayerPoint(imageToLatLng(d.x,d.y)).y; })//todo convert
+	            .x(function(d) { return map.latLngToLayerPoint(imageToLatLng(d.x,d.y)).x; })
+	            .y(function(d) { return map.latLngToLayerPoint(imageToLatLng(d.x,d.y)).y; })
 	            .extent([[0, 0], [canvas.width, canvas.height]]);
-	        //console.log(canvas.width,canvas.height)
-	        //console.log("json_data:",json_data)
-	        //console.log("voronoi:",voronoi(json_data).polygons())
-	        var new_voronoi = []
-	        var voronoi_old = 0
 
-            var test = polygons
-            	.selectAll("path")
-            	.data(voronoi(json_data).polygons().map(function(d) {
-		        // Each voronoi region is a convex polygon, therefore we can use
-		        // d3.geom.polygon.clip, treating each regino as a clip region, with the
-		        // projected “exterior” as a subject polygon.
-		        //console.log("and....")
-		        var mapped = watershed_shape.features[7].geometry.coordinates[0].map(p => {
-		        	//return p
-		        	//console.log(p)
-		        	return [map.latLngToLayerPoint(L.latLng(p[1],p[0])).x,map.latLngToLayerPoint(L.latLng(p[1],p[0])).y] // <===== ICI?
-		        });
-		        var polygon_mask = d3.geom.polygon(mapped)
-		        console.log(polygon_mask)
-		        var polygon = d3.geom.polygon(d)
-		        console.log(polygon)
-
-
-		        function identical(array){
-
-			        var newArray = [];
-			        newArray.push(array[0]);
-			        for(var i = 0; i < array.length -1; i++) {
-			            if(array[i][0] != array[i + 1][0] || array[i][1] != array[i + 1][1]) {
-			                newArray.push(array[i + 1]);
-			            }
-			            else{
-			            	console.log("identical!")
-			            }
-			        }
-			        //console.log(newArray);
-			        return newArray
-			    }
-			    mapped = identical(mapped);
-			    console.log("huh?")
-			    mapped = identical(mapped);
-		        //console.log(mapped)
-		        //console.log(d)
-		        //var clipped = d3.polygonClip([[0,0],[0,700],[700,700],[700,500],[700,100],[500,0],[0,0]], d) //"marche"
-		        var clipped = polygon.clip(polygon_mask) //marche pas
-		        //console.log(clipped)
+            var voronoi_clipped = polygons
+            .selectAll("path")
+            .data(voronoi(json_data).polygons().map(function(d) {
+		        var current_polygon = d3.geom.polygon(d)
+		        var clipped = current_polygon.clip(polygon_limit)
 		        return clipped
 		      }))
-            //console.log(voronoi(json_data).polygons())
-            test.enter().append("path")
-
-            polygons.selectAll("path")
-            	.attr("d",function(d){return ((d != null && d.length != 0) ? "M"+d.join("L")+"Z" : "") })
-                .style("stroke", function(d){  return "#000000"} )
-                .style("fill","none");
+            .enter().append("path")
+            .attr("d",function(d){return ((d != null && d.length != 0) ? "M"+d.join("L")+"Z" : "") })
+            .style("stroke", function(d){  return "#000000"} )
+            .style("fill","none");
 	    }
-	    map.on("viewreset", update);
-	    update();
+	    
 	    function getColour(d){
 	        return  d > 200 ? '1c1ae3':
 	                d > 150 ? '2a4efc':
@@ -221,6 +163,7 @@ whenDocumentLoaded(() => {
 	                d > 50 ? '4cb2fe':
 	                          'ccffff';
 	    }
+        
 	    function loadFile(filePath) {
 			var result = null;
 			var xmlhttp = new XMLHttpRequest();
@@ -243,21 +186,20 @@ whenDocumentLoaded(() => {
 	    //var mean=26.22;
 	    //var std=52.05
 
-	    
-
 		var myArray=[]
 		var string=[]
+        
 		for (var i=0; i<8; ++i){
 			string[i]=""
 		}
-		console.log(watershed_shape.features)
+
 	    for (var i=0; i<canvas.height*canvas.width; i++) {
 	        var px = i%canvas.width
 	        var py = Math.floor(i/canvas.width)
 	        //var value = getRasterPixelValue(i%canvas.width,i/canvas.width)
 	        if(px >= 0 && px < image_width && py >= 0 && py < image_height){
 	            pos = i*4
-
+                
 	            var value = pixels[i*4]
 	            //var v = (value - mean)/(std*2) + 0.5;
 	            data[pos]   = parseInt(getColour(value),16) & 255
@@ -274,7 +216,7 @@ whenDocumentLoaded(() => {
 	        	var tx = px/(canvas.width-1)
 	        	var ty = py/(canvas.height-1)
 	        	/*for (var k=0; k<1; ++k){
-	        		if (d3.geoContains(watershed_shape.features[k],[tl.lng * (1-tx) + br.lng*tx,tl.lat * (1-ty) + br.lat*ty])){
+	        		if (d3.geoContains(dpt_shape.features[k],[tl.lng * (1-tx) + br.lng*tx,tl.lat * (1-ty) + br.lat*ty])){
 		        		for (var j=0; j<value/51; ++j){
 			        		string[k] += ""+px+","+py+"\n"
 			        	}
@@ -290,7 +232,7 @@ whenDocumentLoaded(() => {
 	        	myArray[i]=0;
 	        }
 	    }
-	    //console.log(JSON.stringify(myArray))
+
 	    function download(text, name, type, id) {
 	      d3.select(".container").append("a").attr("id","a"+id)
 		  var a = document.getElementById("a"+id);
@@ -300,7 +242,7 @@ whenDocumentLoaded(() => {
 	      d3.select(".container").append("br")
 		  a.download = name;
 		}
-		console.log(img.width,img.height)
+
 		/*download(JSON.stringify({"width":img.width,
 								"height":img.height,
 								"tl_lat":tl.lat,
@@ -308,14 +250,13 @@ whenDocumentLoaded(() => {
 								"br_lat":br.lat,
 								"br_lng":br.lng,
 								"data":JSON.stringify(myArray)}),"p_export.json","json")*/
+                                
 		for (var i=0; i<8; ++i){
-
 			download(string[i],"points_"+i+".txt","txt",i)
 		}
 		
 	    // we put this random image in the context
 	    context.putImageData(imageData, 0, 0); // at coords 0,0
-
 
 	    var value=canvas.toDataURL("png");
 	    document.getElementById("my-second-image").src=value
