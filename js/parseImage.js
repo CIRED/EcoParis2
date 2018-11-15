@@ -154,7 +154,12 @@ whenDocumentLoaded(() => {
             var voronoi = d3.voronoi()
 	            .x(function(d) { return map.latLngToLayerPoint(imageToLatLng(d.x,d.y)).x; })//todo convert
 	            .y(function(d) { return map.latLngToLayerPoint(imageToLatLng(d.x,d.y)).y; })//todo convert
-	            .extent([[0, 0], [canvas.width, canvas.height]]);;
+	            .extent([[0, 0], [canvas.width, canvas.height]]);
+	        //console.log(canvas.width,canvas.height)
+	        //console.log("json_data:",json_data)
+	        //console.log("voronoi:",voronoi(json_data).polygons())
+	        var new_voronoi = []
+	        var voronoi_old = 0
 
             var test = polygons
             	.selectAll("path")
@@ -162,24 +167,48 @@ whenDocumentLoaded(() => {
 		        // Each voronoi region is a convex polygon, therefore we can use
 		        // d3.geom.polygon.clip, treating each regino as a clip region, with the
 		        // projected “exterior” as a subject polygon.
-		        console.log("and....")
+		        //console.log("and....")
 		        var mapped = watershed_shape.features[7].geometry.coordinates[0].map(p => {
 		        	//return p
 		        	//console.log(p)
 		        	return [map.latLngToLayerPoint(L.latLng(p[1],p[0])).x,map.latLngToLayerPoint(L.latLng(p[1],p[0])).y] // <===== ICI?
 		        });
-		        console.log(mapped)
-		        console.log(d)
-		        //var clipped = d3.polygonClip([[0,0],[0,700],[700,700],[700,100],[500,0],[0,0]], d) //"marche"
-		        var clipped = d3.polygonClip(clipped, d) //marche pas
-		        console.log(clipped)
+		        var polygon_mask = d3.geom.polygon(mapped)
+		        console.log(polygon_mask)
+		        var polygon = d3.geom.polygon(d)
+		        console.log(polygon)
+
+
+		        function identical(array){
+
+			        var newArray = [];
+			        newArray.push(array[0]);
+			        for(var i = 0; i < array.length -1; i++) {
+			            if(array[i][0] != array[i + 1][0] || array[i][1] != array[i + 1][1]) {
+			                newArray.push(array[i + 1]);
+			            }
+			            else{
+			            	console.log("identical!")
+			            }
+			        }
+			        //console.log(newArray);
+			        return newArray
+			    }
+			    mapped = identical(mapped);
+			    console.log("huh?")
+			    mapped = identical(mapped);
+		        //console.log(mapped)
+		        //console.log(d)
+		        //var clipped = d3.polygonClip([[0,0],[0,700],[700,700],[700,500],[700,100],[500,0],[0,0]], d) //"marche"
+		        var clipped = polygon.clip(polygon_mask) //marche pas
+		        //console.log(clipped)
 		        return clipped
 		      }))
-            console.log(voronoi(json_data).polygons())
+            //console.log(voronoi(json_data).polygons())
             test.enter().append("path")
 
             polygons.selectAll("path")
-            	.attr("d",function(d){return "M"+d.join("L")+"Z"; })
+            	.attr("d",function(d){return ((d != null && d.length != 0) ? "M"+d.join("L")+"Z" : "") })
                 .style("stroke", function(d){  return "#000000"} )
                 .style("fill","none");
 	    }
@@ -217,7 +246,10 @@ whenDocumentLoaded(() => {
 	    
 
 		var myArray=[]
-		var string=""
+		var string=[]
+		for (var i=0; i<8; ++i){
+			string[i]=""
+		}
 		console.log(watershed_shape.features)
 	    for (var i=0; i<canvas.height*canvas.width; i++) {
 	        var px = i%canvas.width
@@ -241,13 +273,16 @@ whenDocumentLoaded(() => {
 
 	        	var tx = px/(canvas.width-1)
 	        	var ty = py/(canvas.height-1)
-	        	/*if (d3.geoContains(watershed_shape.features[7],[tl.lng * (1-tx) + br.lng*tx,tl.lat * (1-ty) + br.lat*ty])){
-	        		for (var j=0; j<value/51; ++j){
-		        		string += ""+px+","+py+"\n"
+	        	/*for (var k=0; k<1; ++k){
+	        		if (d3.geoContains(watershed_shape.features[k],[tl.lng * (1-tx) + br.lng*tx,tl.lat * (1-ty) + br.lat*ty])){
+		        		for (var j=0; j<value/51; ++j){
+			        		string[k] += ""+px+","+py+"\n"
+			        	}
 		        	}
 	        	}*/
+	        	
 	        	if (px == 0){
-	        		console.log(py)
+	        		//console.log(py)
 	        	}
 	        	//console.log(i)
 	        }
@@ -256,10 +291,13 @@ whenDocumentLoaded(() => {
 	        }
 	    }
 	    //console.log(JSON.stringify(myArray))
-	    function download(text, name, type) {
-		  var a = document.getElementById("a");
+	    function download(text, name, type, id) {
+	      d3.select(".container").append("a").attr("id","a"+id)
+		  var a = document.getElementById("a"+id);
 		  var file = new Blob([text], {type: type});
 		  a.href = URL.createObjectURL(file);
+		  a.innerHTML="Click here to download points_"+id+".txt"
+	      d3.select(".container").append("br")
 		  a.download = name;
 		}
 		console.log(img.width,img.height)
@@ -270,7 +308,11 @@ whenDocumentLoaded(() => {
 								"br_lat":br.lat,
 								"br_lng":br.lng,
 								"data":JSON.stringify(myArray)}),"p_export.json","json")*/
-		download(string,"points.txt","txt")
+		for (var i=0; i<8; ++i){
+
+			download(string[i],"points_"+i+".txt","txt",i)
+		}
+		
 	    // we put this random image in the context
 	    context.putImageData(imageData, 0, 0); // at coords 0,0
 
