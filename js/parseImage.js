@@ -74,7 +74,15 @@ whenDocumentLoaded(() => {
 	        canvas.width=image_width//image_data.width
 	        canvas.height=image_height//image_data.width
 
-        var polygons = svg.append("g").attr("class","polygons")
+	    var paths = ['data/points_0_out.txt','data/points_1_out.txt',
+            'data/points_2_out.txt','data/points_3_out.txt',
+            'data/points_4_out.txt','data/points_5_out.txt',
+            'data/points_6_out.txt','data/points_7_out.txt']
+
+	    var polygons = []
+	    for (var i=0; i<paths.length;++i){
+	    	polygons[i] = svg.append("g").attr("class","polygons")
+	    }
         
         map.on("viewreset", update);
 	    update();
@@ -103,100 +111,90 @@ whenDocumentLoaded(() => {
 	                return height;
 	            }
 	        )
+	        imgs.attr("xlink:href",value)
             
 	        watersheds.attr("d",path)
 
             
-            var paths = ['data/points_0_out.txt','data/points_1_out.txt',
-            'data/points_2_out.txt','data/points_3_out.txt',
-            'data/points_4_out.txt','data/points_5_out.txt',
-            'data/points_6_out.txt','data/points_7_out.txt']
+            
             
             var fc = {'type': 'FeatureCollection','features': []}
             var poly = '{"type": "Feature","properties": {},"geometry": {"type": "Polygon","coordinates": []}}'
                 
             for (i=0;i<paths.length;i++){
-                    dpt_index = i;
-                    data = loadFile(paths[i])
-                    data_splitted = data.split(",")
-                    data_real=[]
-                    for(j=0;j<data_splitted.length;j++){
-                        if(j==0){
-                            
-                        }
-                        else if(j%2==1){
-                            data_real.push(data_splitted[j])
-                        }
-                        else{
-                            data_real.push(data_splitted[j].slice(0,7))
-                        }
-                    }
-
-                    var json_data = []
-                    for(k=0;k<data_real.length;k=k+2){
-                        json_data.push({x:data_real[k], y:data_real[k+1]})
-                    }
-                
-                    //var dpt_index = 7;
-                    // var vertices = [[972.823,274.289],
-                                    // [454.092,159.518],
-                                    // [346.149,162.919],
-                                    // [248.585,111.850],
-                                    // [450.367,255.928],
-                                    // [695.151,212.843],
-                                    // [250.092,220.071],
-                                    // [579.122,148.726],
-                                    // [596.864,284.037],
-                                    // [733.488,371.636],
-                                    // [830.057,194.852],
-                                    // [875.546,341.312]]
-                
-                
-                
-                    //var json_data = []
-                    // vertices.forEach(function(d,i){
-                        // json_data.push({x:d[0], y:d[1]})
-                    // });
-
-                    function imageToLatLng(x,y){
-                        var tx = x/(image_width-1)
-                        var ty = y/(image_height-1)
-                        return L.latLng(tl.lat * (1-ty) + br.lat * ty, tl.lng * (1-tx) + br.lng * tx)
-                    }
-
-                    var voronoi = d3.voronoi()
-                        .x(function(d) { return map.latLngToLayerPoint(imageToLatLng(d.x,d.y)).x; })
-                        .y(function(d) { return map.latLngToLayerPoint(imageToLatLng(d.x,d.y)).y; })
-                        .extent([[0, 0], [canvas.width, canvas.height]]);
+                dpt_index = i;
+                data = loadFile(paths[i])
+                data_splitted = data.split(",")
+                data_real=[]
+                for(j=0;j<data_splitted.length;j++){
+                    if(j==0){
                         
-                    voronoi_clipped_data = voronoi(json_data).polygons().map(function(d) {
-                            var mapped = dpt_shape.features[dpt_index].geometry.coordinates[0].map(function(p) {
-                                projected_pt = map.latLngToLayerPoint(L.latLng(p[1],p[0]))
-                                return [projected_pt.x,projected_pt.y]
-                            });
-                            var polygon_mask = d3.geom.polygon(mapped)
-                            var polygon = d3.geom.polygon(d)
-                            var clipped = polygon.clip(polygon_mask) 
-                            return clipped
-                        })
-                        
-                    var voronoi_clipped = polygons
-                        .selectAll("path")
-                        .data(voronoi_clipped_data)
-                        .enter()
-                        .append("path")
-                        .attr("d",function(d){return ((d != null && d.length != 0) ? "M"+d.join("L")+"Z" : "") })
-                        .style("stroke", function(d){  return "#000000"} )
-                        .style("fill","none");
-                        
-                        voronoi_clipped_data.forEach(p => {
-                            let feature = JSON.parse(poly)
-                            p.reverse().push(p[0])
-                            feature.geometry.coordinates.push(p)
-                            fc.features.push(feature)
-                        })
+                    }
+                    else if(j%2==1){
+                        data_real.push(parseFloat(""+data_splitted[j]))
+                    }
+                    else{
+                        data_real.push(parseFloat(""+data_splitted[j].slice(0,7)))
+                    }
                 }
-        download(JSON.stringify(fc, null, 2), 'sd-voronoi.json', "json", 8)
+
+                var json_data = []
+                for(k=0;k<data_real.length;k=k+2){
+                    json_data.push({x:data_real[k], y:data_real[k+1]})
+                }
+
+                function imageToLatLng(x,y){
+                    var tx = x/(image_width-1)
+                    var ty = y/(image_height-1)
+                    return L.latLng(tl.lat * (1-ty) + br.lat * ty, tl.lng * (1-tx) + br.lng * tx)
+                }
+
+                var voronoi = d3.voronoi()
+                    .x(function(d) { return map.latLngToLayerPoint(imageToLatLng(d.x,d.y)).x; })
+                    .y(function(d) { return map.latLngToLayerPoint(imageToLatLng(d.x,d.y)).y; })
+                    .extent([[-100000, -100000], [100000,100000]]);//[canvas.width, canvas.height]]);
+                    
+                voronoi_clipped_data = voronoi(json_data).polygons().map(function(d) {
+                        var mapped = dpt_shape.features[dpt_index].geometry.coordinates[0].map(function(p) {
+                            projected_pt = map.latLngToLayerPoint(L.latLng(p[1],p[0]))
+                            return [projected_pt.x,projected_pt.y]
+                        });
+                        var polygon_mask = d3.geom.polygon(mapped)
+                        var polygon = d3.geom.polygon(d)
+                        var clipped = polygon.clip(polygon_mask) 
+                        return clipped
+                    })
+                    
+                var voronoi_clipped = polygons[i]
+                    .selectAll("path")
+                    .data(voronoi_clipped_data)
+                    .enter()
+                    .append("path")
+                    .attr("d",function(d){return ((d != null && d.length != 0) ? "M"+d.join("L")+"Z" : "") })
+                    .style("stroke", function(d){  return "#000000"} )
+                    .style("fill","none");
+
+                polygons[i]
+                    .selectAll("path")
+                    .attr("d",function(d){return ((d != null && d.length != 0) ? "M"+d.join("L")+"Z" : "") })
+                    
+                voronoi_clipped_data.forEach(p => {
+                    let feature = JSON.parse(poly)
+                    p.reverse().push(p[0])
+                    feature.geometry.coordinates.push(p)
+                    fc.features.push(feature)
+                })
+            }
+            //todo: map fc to latlng
+            fc.features.forEach((feature,i) =>{
+            	feature.geometry.coordinates.forEach((coordinates,j) => {
+            		coordinates.forEach((point,k) => {
+            			var latLng = map.layerPointToLatLng(L.point(point[0],point[1]))
+            			fc.features[i].geometry.coordinates[j][k] = [latLng.lng,latLng.lat]
+            		})
+            	})
+            })
+        	download(JSON.stringify(fc, null, 2), 'sd-voronoi.json', "json", 8)
               
 	    }
 	    
@@ -226,11 +224,8 @@ whenDocumentLoaded(() => {
 	    var imageData=context.createImageData(image_width, image_height);
 	    // The property data will contain an array of int8
 	    var data=imageData.data;
-	    //var mean=26.22;
-	    //var std=52.05
 
 	    
-
 		var myArray=[]
 		var string=[]
 		for (var i=0; i<8; ++i){

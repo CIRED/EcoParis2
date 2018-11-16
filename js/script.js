@@ -8,13 +8,17 @@ function whenDocumentLoaded(action) {
 }
 
 whenDocumentLoaded(() => {
+	var urlDepartment = "depts.geojson";
 	var urlWaterShed = "watershed.geojson";
+	var urlVoronoi = "sd-voronoi.json";
 	var urlAzote = "n_export.json";
 	var urlPhosphore = "p_export.json";
 
 	// Load the JSON file(s)
 	queue()
-	    .defer(d3.json, urlWaterShed) // Load Watershed Shape
+	    .defer(d3.json, urlDepartment) // Load Watershed Shape
+	    //.defer(d3.json, urlWaterShed) // Load Watershed Shape
+	    .defer(d3.json, urlVoronoi) // Load Voronoi Shape
 	    //.defer(d3.json, urlAzote) // Load Azote metric
 	    //.defer(d3.json, urlPhosphore) // Load Phosphore metric
 	    .await(loadGeoJSON); // When the GeoJsons are fully loaded, call the function loadGeom
@@ -32,10 +36,12 @@ whenDocumentLoaded(() => {
 		return result;
 	}
 
-	function loadGeoJSON(error, watershed_shape){
+	function loadGeoJSON(error, department_shape, voronoi_shape){
 
 	    var densityData = {
-	        w: watershed_shape,
+	        //w: watershed_shape,
+	        d: department_shape,
+	        v: voronoi_shape,
 	        //p: density_phosphore,
 	        //n: density_azote
 	    };
@@ -59,12 +65,12 @@ whenDocumentLoaded(() => {
 	            fillOpacity: 0
 	        };
 	    }
-	    L.geoJson(watershed_shape,{style:style}).addTo(map); //needed! otherwise a svg isn't generated, we use this one for practical purposes
+	    L.geoJson(department_shape,{style:style}).addTo(map); //needed! otherwise a svg isn't generated, we use this one for practical purposes
 
 	    var svg = d3.select("#ParisMap").select("svg")
 
-	    var imgs = svg.selectAll("image").data([0,0]);
-	    imgs.enter()
+	    var imgs = svg.selectAll("image").data([0])
+	    	.enter()
 	        .append("svg:image")
 	        .attr('x', 0)
 	        .attr('y', 0)
@@ -78,13 +84,22 @@ whenDocumentLoaded(() => {
 	    transform = d3.geo.transform({point: projectPoint});
 	    var path = d3.geo.path()
 	        .projection(transform);
-	    var watersheds = svg.append("g").selectAll("path")
-	        .data(watershed_shape.features)
+	    var departments = svg.append("g").selectAll("path")
+	        .data(department_shape.features)
 	        .enter().append('path')
 	            .attr('d', path)
 	            .attr('vector-effect', 'non-scaling-stroke')
 	            .style('stroke', "#000")
 	            .attr("fill","none")
+	            .style("stroke-width","2")
+	    var voronoi = svg.append("g").selectAll("path")
+	        .data(voronoi_shape.features)
+	        .enter().append('path')
+	            .attr('d', path)
+	            .attr('vector-effect', 'non-scaling-stroke')
+	            .style('stroke', "#000")
+	            .attr("fill","none")
+	    console.log(voronoi_shape.features)
 
 	    function getColour(d){
 	        return  d > 200 ? '1c1ae3':
@@ -105,7 +120,6 @@ whenDocumentLoaded(() => {
 				var json = loadFile(newLayerUrl)
 				var image_data = JSON.parse(json)
 				image_data.data=JSON.parse(image_data.data)
-				console.log(image_data)
 
 				image_width=image_data.width
 				image_height=image_data.height
@@ -174,6 +188,7 @@ whenDocumentLoaded(() => {
 		    function update() {
 		        var width = (map.latLngToLayerPoint(br).x-map.latLngToLayerPoint(tl).x)
 		        var height = (map.latLngToLayerPoint(br).y-map.latLngToLayerPoint(tl).y)
+		        console.log(imgs)
 		        imgs.attr("transform", 
 		            function(d) { 
 		                var point = map.latLngToLayerPoint(tl)
@@ -189,10 +204,12 @@ whenDocumentLoaded(() => {
 		        )
 		        imgs.attr("height", 
 		            function(d) { 
+		            	console.log("height",height)
 		                return height;
 		            }
 		        )
-		        watersheds.attr("d",path)
+		        departments.attr("d",path)
+		        voronoi.attr("d",path)
 		    }
 		    map.off("viewreset",currentUpdateFunction)
 		    map.on("viewreset", update);
