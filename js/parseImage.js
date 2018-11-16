@@ -9,14 +9,16 @@ function whenDocumentLoaded(action) {
 
 whenDocumentLoaded(() => {
 	var urlDPT = "depts.geojson";
+	var urlVoronoi = "sd-voronoi.json";
 
 	// Load the JSON file(s)
 	queue()
 	    .defer(d3.json, urlDPT) // Load Watershed Shape
+	    .defer(d3.json, urlVoronoi) // Load Voronoi Shape
 	    .await(loadGeoJSON); // When the GeoJsons are fully loaded, call the function loadGeom
 
 
-	function loadGeoJSON(error, dpt_shape){
+	function loadGeoJSON(error, dpt_shape, voronoi_shape){
 
 	    //General Map
 	    var basemap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -228,8 +230,15 @@ whenDocumentLoaded(() => {
 	    
 		var myArray=[]
 		var string=[]
+
+		var voronoi_means = []
+		var voronoi_count = []
 		for (var i=0; i<8; ++i){
 			string[i]=""
+		}
+		for (var i=0; i<voronoi_shape.features.length;++i){
+			voronoi_count[i]=0
+			voronoi_means[i]=0
 		}
 		console.log(dpt_shape.features)
 	    for (var i=0; i<canvas.height*canvas.width; i++) {
@@ -261,9 +270,16 @@ whenDocumentLoaded(() => {
 			        	}
 		        	}
 	        	}*/
+        		/*for (var k=0; k<voronoi_shape.features.length; ++k){
+					if (d3.geoContains(voronoi_shape.features[k],[tl.lng * (1-tx) + br.lng*tx,tl.lat * (1-ty) + br.lat*ty])){
+		        		voronoi_count[k]=voronoi_count[k]+1
+		        		voronoi_means[k]=voronoi_means[k]+value
+		        	}
+	        	}*/
+	        	
 	        	
 	        	if (px == 0){
-	        		//console.log(py)
+	        		console.log(py)
 	        	}
 	        	//console.log(i)
 	        }
@@ -271,6 +287,16 @@ whenDocumentLoaded(() => {
 	        	myArray[i]=0;
 	        }
 	    }
+		var voronoi_string = ""
+		for (var i=0; i<voronoi_shape.features.length;++i){
+			if (voronoi_count[i] == 0){
+				voronoi_means[i]=0
+			}
+			else{
+				voronoi_means[i]=voronoi_means[i]/voronoi_count[i]
+			}
+			voronoi_string = voronoi_string+voronoi_means[i]+"\n"
+		}
 	    //console.log(JSON.stringify(myArray))
 	    function download(text, name, type, id) {
 	      d3.select(".container").append("a").attr("id","a"+id)
@@ -293,7 +319,7 @@ whenDocumentLoaded(() => {
 
 			download(string[i],"points_"+i+".txt","txt",i)
 		}
-		
+		download(voronoi_string,"voronoi_means_p.txt","txt",9)
 	    // we put this random image in the context
 	    context.putImageData(imageData, 0, 0); // at coords 0,0
 

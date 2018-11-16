@@ -55,8 +55,9 @@ whenDocumentLoaded(() => {
 	    });
 
 	    // Zoomed on Paris
-
-	    var defaultBounds = L.latLngBounds(new L.LatLng(49.2485668,1.4403262),new L.LatLng(48.1108602,3.5496114))
+	    var default_tl = new L.LatLng(49.2485668,1.4403262)
+	    var default_br = new L.LatLng(48.1108602,3.5496114)
+	    var defaultBounds = L.latLngBounds(default_tl,default_br)
 	    var map = L.map('ParisMap', {zoomControl: true}).fitBounds(defaultBounds); //by default, zoom in on Paris
 	    basemap.addTo(map);
 
@@ -70,38 +71,110 @@ whenDocumentLoaded(() => {
 
 	    var svg = d3.select("#ParisMap").select("svg")
 
+	    function projectPoint(x, y) {
+	        var point = map.latLngToLayerPoint(new L.LatLng(y, x));
+	        this.stream.point(point.x, point.y);
+	    }
+	    transform = d3.geo.transform({point: projectPoint});
+	    var path = d3.geo.path()
+	        .projection(transform);
+
+		var defs = svg.append("defs");
+
+		var defs_path=defs.append("path")
+		    .attr("id", "clip_path")
+		console.log(voronoi_shape.features[0].geometry)
+
+		defs.append("clipPath")
+		    .attr("id", "clip")
+		    .append("use")
+		    .attr("xlink:href", "#clip_path");
+
+		console.log(defs)
 	    var imgs = svg.selectAll("image").data([0])
 	    	.enter()
 	        .append("svg:image")
 	        .attr('x', 0)
 	        .attr('y', 0)
 	        .attr("xlink:href", "")
+	        .attr("clip-path","url(#clip)")
 
-	    function projectPoint(x, y) {
-	        var point = map.latLngToLayerPoint(new L.LatLng(y, x));
-	        this.stream.point(point.x, point.y);
+
+        function update_clip(){
+        	function clip_projectPoint(x, y) {
+        	var width = (map.latLngToLayerPoint(default_br).x-map.latLngToLayerPoint(default_tl).x)
+        	var height = (map.latLngToLayerPoint(default_br).y-map.latLngToLayerPoint(default_tl).y)
+	        var tx = (x - default_tl.lng)/(default_br.lng - default_tl.lng) * (width-1)
+	        var ty = (default_tl.lat+0.00314 - y)/(default_tl.lat - default_br.lat) * (height-1) //it is slightly offset, and I have no idea why
+	        this.stream.point(tx, ty);
+		    }
+		    clip_transform = d3.geo.transform({point: clip_projectPoint});
+		    var clip_path = d3.geo.path()
+		        .projection(clip_transform);
+	        defs_path.attr("d",clip_path)
+	        console.log(defs_path)
+        }
+	    
+
+	    function loadFile(filePath) {
+			var result = null;
+			var xmlhttp = new XMLHttpRequest();
+			xmlhttp.open("GET", filePath, false);
+			xmlhttp.send();
+			if (xmlhttp.status==200) {
+				result = xmlhttp.responseText;
+			}
+			return result;
+		}
+
+		function paraseMeans(data){
+            data_splitted = data.split("\n")
+            data_splitted.pop()//last line does not contain a value!
+            return data_splitted.map((d) => parseFloat(d))
+		}
+
+		var voronoi_means = paraseMeans(loadFile("data/voronoi_means_n.txt"))
+
+		voronoi_shape.features.forEach((feature,i) => {
+			voronoi_shape.features[i].mean=voronoi_means[i] //integrate mean to data
+		})
+
+
+	    function getColour(d){
+	        return  d > 200 ? 'e31a1c':
+	                d > 150 ? 'fc4e2a':
+	                d > 100 ? 'fd8d3c':
+	                d > 50 ? 'feb24c':
+	                          'ffffcc';
 	    }
 
-	    transform = d3.geo.transform({point: projectPoint});
-	    var path = d3.geo.path()
-	        .projection(transform);
+	    var colour_mean = d3.scale.linear()
+            .range(['#ffffcc','#e31a1c'])
+            .domain([Math.min(...voronoi_means),Math.max(...voronoi_means)])
+
 	    var voronoi = svg.append("g").selectAll("path")
 	        .data(voronoi_shape.features)
 	        .enter().append('path')
 	            .attr('d', path)
 	            .attr('vector-effect', 'non-scaling-stroke')
 	            .style('stroke', "#000")
-	            .attr("fill","#4444")
-	            .attr("fill-opacity","0")
+	            .style("fill-opacity",0.7)
+	            .attr("fill",function(d,i){
+	            	return colour_mean(d.mean)
+	            })
 	            .on("mouseover",function(d,i){
-	            	d3.select(this).style('fill-opacity', 1);
+	            	d3.select(this).style('fill-opacity', 0);
+	    			defs_path.datum(d.geometry)
+	    			update_clip()
 	            })
 	            .on("mouseout",function(d,i){
-	            	d3.select(this).style('fill-opacity', 0);
+	            	d3.select(this).style('fill-opacity', 0.7);
+	    			defs_path.datum([])
+	    			update_clip()
 	            })
 	            .on("click",function(d,i){
 	            	departments.style("pointer-events","all")
-	            	map.fitBounds(defaultBounds) // zoom to department
+	            	map.fitBounds(defaultBounds) // zoom back to paris
 	            })
 	    var departments = svg.append("g").selectAll("path")
 	        .data(department_shape.features)
@@ -120,28 +193,20 @@ whenDocumentLoaded(() => {
 	            	d3.select(this).style('fill-opacity', 0);
 	            })
 	            .on("click",function(d,i){
-	            	departments.style("pointer-events","all") // now we cannot click/hover departments
-	            	d3.select(this).style("pointer-events","none") // now we cannot click/hover departments
+	            	departments.style("pointer-events","all") // now we can click/hover on every department
+	            	d3.select(this).style("pointer-events","none") // except the current one!
 	            	var BBox = d3.select(this).node().getBBox()
 	            	var neBound = map.layerPointToLatLng(L.point(BBox.x,BBox.y))
 	            	var swBound = map.layerPointToLatLng(L.point(BBox.x+BBox.width,BBox.y+BBox.height))
 	            	map.fitBounds(L.latLngBounds(neBound,swBound)) // zoom to department
 	            })
 
-
-	    function getColour(d){
-	        return  d > 200 ? '1c1ae3':
-	                d > 150 ? '2a4efc':
-	                d > 100 ? '3c8dfd':
-	                d > 50 ? '4cb2fe':
-	                          'ccffff';
-	    }
 	    
 
 	    var canvas = document.createElement("canvas")
 	    var context = canvas.getContext('2d');
 
-	    var currentUpdateFunction = getColour(0)
+	    var currentUpdateFunction = getColour(0)//litteraly anything other than null
 
 	    function setLayer(newLayerUrl){
 	    	if (!layersColorUrl[newLayerUrl]){
@@ -176,14 +241,14 @@ whenDocumentLoaded(() => {
 
 			            var value = pixels[i]
 			            //var v = (value - mean)/(std*2) + 0.5;
-			            data[pos]   = parseInt(getColour(value),16) & 255
+			            data[pos+2]   = parseInt(getColour(value),16) & 255
 			            data[pos+1]   = (parseInt(getColour(value),16) >> 8) & 255
-			            data[pos+2]   = (parseInt(getColour(value),16) >> 16) & 255
+			            data[pos]   = (parseInt(getColour(value),16) >> 16) & 255
 			            if (pixels[i]==0){
 			                data[pos+3]=0; // alpha (transparency)
 			            }
 			            else{
-			                data[pos+3]=100;//was 180
+			                data[pos+3]=220;
 			            }
 			        }
 			    }
@@ -236,6 +301,8 @@ whenDocumentLoaded(() => {
 		        )
 		        departments.attr("d",path)
 		        voronoi.attr("d",path)
+		        update_clip()
+
 		    }
 		    map.off("viewreset",currentUpdateFunction)
 		    map.on("viewreset", update);
