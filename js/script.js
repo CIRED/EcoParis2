@@ -112,7 +112,6 @@ whenDocumentLoaded(() => {
 		    var clip_path = d3.geo.path()
 		        .projection(clip_transform);
 	        defs_path.attr("d",clip_path)
-	        console.log(defs_path)
         }
 	    
 
@@ -133,12 +132,10 @@ whenDocumentLoaded(() => {
             return data_splitted.map((d) => parseFloat(d))
 		}
 
-		var voronoi_means = paraseMeans(loadFile("data/voronoi_means_n.txt"))
-
-		voronoi_shape.features.forEach((feature,i) => {
-			voronoi_shape.features[i].mean=voronoi_means[i] //integrate mean to data
-		})
-
+		var voronoi_means = {}
+		voronoi_means[urlPhosphore] = paraseMeans(loadFile("data/voronoi_means_p.txt"))
+		voronoi_means[urlAzote] = paraseMeans(loadFile("data/voronoi_means_n.txt"))
+		
 
 	    function getColour(d){
 	        return  d > 200 ? 'e31a1c':
@@ -148,10 +145,6 @@ whenDocumentLoaded(() => {
 	                          'ffffcc';
 	    }
 
-	    var colour_mean = d3.scale.linear()
-            .range(['#ffffcc','#e31a1c'])
-            .domain([Math.min(...voronoi_means),Math.max(...voronoi_means)])
-
 	    var voronoi = svg.append("g").selectAll("path")
 	        .data(voronoi_shape.features)
 	        .enter().append('path')
@@ -159,9 +152,6 @@ whenDocumentLoaded(() => {
 	            .attr('vector-effect', 'non-scaling-stroke')
 	            .style('stroke', "#000")
 	            .style("fill-opacity",0.7)
-	            .attr("fill",function(d,i){
-	            	return colour_mean(d.mean)
-	            })
 	            .on("mouseover",function(d,i){
 	            	d3.select(this).style('fill-opacity', 0);
 	    			defs_path.datum(d.geometry)
@@ -263,11 +253,20 @@ whenDocumentLoaded(() => {
 											"br_lat":image_data.br_lat,
 											"br_lng":image_data.br_lng,
 											"width":image_width,
-											"height":image_height}
+											"height":image_height,
+											"layerUrl":newLayerUrl}
 			    console.log("ok!")
 			}
 
 			info = layersColorUrl[newLayerUrl]
+			var colour_mean = d3.scale.linear() //change fill color according to current layer and means
+	            .range(['#ffffcc','#e31a1c'])
+	            .domain([Math.min(...voronoi_means[info.layerUrl]),Math.max(...voronoi_means[info.layerUrl])])
+
+			voronoi.attr("fill",function(d,i){
+            	return colour_mean(voronoi_means[info.layerUrl][i])
+            })
+
 			image_width=info.width
 			image_height=info.height
 		    //var densityDataChosen = densityData["p"]; //phosphore for now
