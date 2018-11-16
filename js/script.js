@@ -49,14 +49,15 @@ whenDocumentLoaded(() => {
 	    var layersColorUrl = {} //placehoder for the layers, to compute them only once
 
 	    //General Map
-	    var basemap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-	        maxZoom: 19,
+	    var basemap = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
+	        maxZoom: 14, //toner light won't go further than 14
 	        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 	    });
 
 	    // Zoomed on Paris
 
-	    var map = L.map('ParisMap', {zoomControl: true}).fitBounds(L.latLngBounds(new L.LatLng(49.2485668,1.4403262),new L.LatLng(48.1108602,3.5496114))); //by default, zoom in on Paris
+	    var defaultBounds = L.latLngBounds(new L.LatLng(49.2485668,1.4403262),new L.LatLng(48.1108602,3.5496114))
+	    var map = L.map('ParisMap', {zoomControl: true}).fitBounds(defaultBounds); //by default, zoom in on Paris
 	    basemap.addTo(map);
 
 	    function style(feature) {
@@ -84,22 +85,49 @@ whenDocumentLoaded(() => {
 	    transform = d3.geo.transform({point: projectPoint});
 	    var path = d3.geo.path()
 	        .projection(transform);
-	    var departments = svg.append("g").selectAll("path")
-	        .data(department_shape.features)
-	        .enter().append('path')
-	            .attr('d', path)
-	            .attr('vector-effect', 'non-scaling-stroke')
-	            .style('stroke', "#000")
-	            .attr("fill","none")
-	            .style("stroke-width","2")
 	    var voronoi = svg.append("g").selectAll("path")
 	        .data(voronoi_shape.features)
 	        .enter().append('path')
 	            .attr('d', path)
 	            .attr('vector-effect', 'non-scaling-stroke')
 	            .style('stroke', "#000")
-	            .attr("fill","none")
-	    console.log(voronoi_shape.features)
+	            .attr("fill","#4444")
+	            .attr("fill-opacity","0")
+	            .on("mouseover",function(d,i){
+	            	d3.select(this).style('fill-opacity', 1);
+	            })
+	            .on("mouseout",function(d,i){
+	            	d3.select(this).style('fill-opacity', 0);
+	            })
+	            .on("click",function(d,i){
+	            	departments.style("pointer-events","all")
+	            	map.fitBounds(defaultBounds) // zoom to department
+	            })
+	    var departments = svg.append("g").selectAll("path")
+	        .data(department_shape.features)
+	        .enter().append('path')
+	            .attr('d', path)
+	            .attr('vector-effect', 'non-scaling-stroke')
+	            .style('stroke', "#000")
+	            .attr("fill","#4444")
+	            .attr("fill-opacity","0")
+	            .style("stroke-width","2")
+	            .style("pointer-events", "all")
+	            .on("mouseover",function(d,i){
+	            	d3.select(this).style('fill-opacity', 1);
+	            })
+	            .on("mouseout",function(d,i){
+	            	d3.select(this).style('fill-opacity', 0);
+	            })
+	            .on("click",function(d,i){
+	            	departments.style("pointer-events","all") // now we cannot click/hover departments
+	            	d3.select(this).style("pointer-events","none") // now we cannot click/hover departments
+	            	var BBox = d3.select(this).node().getBBox()
+	            	var neBound = map.layerPointToLatLng(L.point(BBox.x,BBox.y))
+	            	var swBound = map.layerPointToLatLng(L.point(BBox.x+BBox.width,BBox.y+BBox.height))
+	            	map.fitBounds(L.latLngBounds(neBound,swBound)) // zoom to department
+	            })
+
 
 	    function getColour(d){
 	        return  d > 200 ? '1c1ae3':
@@ -155,7 +183,7 @@ whenDocumentLoaded(() => {
 			                data[pos+3]=0; // alpha (transparency)
 			            }
 			            else{
-			                data[pos+3]=180;
+			                data[pos+3]=100;//was 180
 			            }
 			        }
 			    }
@@ -188,7 +216,6 @@ whenDocumentLoaded(() => {
 		    function update() {
 		        var width = (map.latLngToLayerPoint(br).x-map.latLngToLayerPoint(tl).x)
 		        var height = (map.latLngToLayerPoint(br).y-map.latLngToLayerPoint(tl).y)
-		        console.log(imgs)
 		        imgs.attr("transform", 
 		            function(d) { 
 		                var point = map.latLngToLayerPoint(tl)
@@ -204,7 +231,6 @@ whenDocumentLoaded(() => {
 		        )
 		        imgs.attr("height", 
 		            function(d) { 
-		            	console.log("height",height)
 		                return height;
 		            }
 		        )
