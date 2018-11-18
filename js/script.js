@@ -16,14 +16,9 @@ whenDocumentLoaded(() => {
 
 	// Load the JSON file(s)
 	queue()
-	    .defer(d3.json, urlDepartment) // Load Watershed Shape
-	    //.defer(d3.json, urlWaterShed) // Load Watershed Shape
+	    .defer(d3.json, urlDepartment) // Load Departement Shape
 	    .defer(d3.json, urlVoronoi) // Load Voronoi Shape
-	    //.defer(d3.json, urlAzote) // Load Azote metric
-	    //.defer(d3.json, urlPhosphore) // Load Phosphore metric
 	    .await(loadGeoJSON); // When the GeoJsons are fully loaded, call the function loadGeom
-
-	// Function loadGeoJSON: this function is executed as soon as all the files in queue() are loaded
 
     function loadFile(filePath) {
 		var result = null;
@@ -37,14 +32,6 @@ whenDocumentLoaded(() => {
 	}    
     
 	function loadGeoJSON(error, department_shape, voronoi_shape){
-
-	    var densityData = {
-	        //w: watershed_shape,
-	        d: department_shape,
-	        v: voronoi_shape,
-	        //p: density_phosphore,
-	        //n: density_azote
-	    };
 
 	    var layersColorUrl = {} //placehoder for the layers, to compute them only once
 
@@ -76,21 +63,20 @@ whenDocumentLoaded(() => {
 	        this.stream.point(point.x, point.y);
 	    }
 	    transform = d3.geo.transform({point: projectPoint});
+        
 	    var path = d3.geo.path()
 	        .projection(transform);
 
 		var defs = svg.append("defs");
 
-		var defs_path=defs.append("path")
+		var defs_path = defs.append("path")
 		    .attr("id", "clip_path")
-		console.log(voronoi_shape.features[0].geometry)
 
 		defs.append("clipPath")
 		    .attr("id", "clip")
 		    .append("use")
 		    .attr("xlink:href", "#clip_path");
 
-		console.log(defs)
 	    var imgs = svg.selectAll("image").data([0])
 	    	.enter()
 	        .append("svg:image")
@@ -99,8 +85,8 @@ whenDocumentLoaded(() => {
 	        .attr("xlink:href", "")
 	        .attr("clip-path","url(#clip)")
 
-
         function update_clip(){
+            
         	function clip_projectPoint(x, y) {
         	var width = (map.latLngToLayerPoint(default_br).x-map.latLngToLayerPoint(default_tl).x)
         	var height = (map.latLngToLayerPoint(default_br).y-map.latLngToLayerPoint(default_tl).y)
@@ -108,13 +94,17 @@ whenDocumentLoaded(() => {
 	        var ty = (default_tl.lat+0.00314 - y)/(default_tl.lat - default_br.lat) * (height-1) //it is slightly offset, and I have no idea why
 	        this.stream.point(tx, ty);
 		    }
+            
 		    clip_transform = d3.geo.transform({point: clip_projectPoint});
+            
 		    var clip_path = d3.geo.path()
 		        .projection(clip_transform);
 	        defs_path.attr("d",clip_path)
+            if(display_coord){
+                L.marker([current_geoLat, current_geoLong], {icon: greenIcon}).addTo(map);
+            }
         }
 	    
-
 	    function loadFile(filePath) {
 			var result = null;
 			var xmlhttp = new XMLHttpRequest();
@@ -135,7 +125,6 @@ whenDocumentLoaded(() => {
 		var voronoi_means = {}
 		voronoi_means[urlPhosphore] = paraseMeans(loadFile("data/voronoi_means_p.txt"))
 		voronoi_means[urlAzote] = paraseMeans(loadFile("data/voronoi_means_n.txt"))
-		
 
 	    function getColour(d){
 	        return  d > 200 ? 'e31a1c':
@@ -147,8 +136,9 @@ whenDocumentLoaded(() => {
         
         var current_geoLat = 0.0;
         var current_geoLong = 0.0;
-        var display_coord = 0;
-
+        var display_coord = 0; //Do not display the localisation marker
+        var geomarker;
+        
 	    var voronoi = svg.append("g").selectAll("path")
 	        .data(voronoi_shape.features)
 	        .enter().append('path')
@@ -170,7 +160,7 @@ whenDocumentLoaded(() => {
 	            	departments.style("pointer-events","all")
 	            	map.fitBounds(defaultBounds) // zoom back to paris
                     if(display_coord){
-                        L.marker([current_geoLat, current_geoLong], {icon: greenIcon}).addTo(map);
+                        map.addLayer(geomarker);
                     }
 	            })
                 
@@ -196,16 +186,12 @@ whenDocumentLoaded(() => {
 	            	var BBox = d3.select(this).node().getBBox()
 	            	var neBound = map.layerPointToLatLng(L.point(BBox.x,BBox.y))
 	            	var swBound = map.layerPointToLatLng(L.point(BBox.x+BBox.width,BBox.y+BBox.height))
-	            	map.fitBounds(L.latLngBounds(neBound,swBound)) // zoom to department
+                    map.fitBounds(L.latLngBounds(neBound,swBound)) // zoom to department
                     if(display_coord){
-                        console.log("ok")
-                        L.marker([current_geoLat, current_geoLong], {icon: greenIcon}).addTo(map);
+                        map.addLayer(geomarker);
                     }
                 })
 
-                
-                
-	    
         function getLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(showPosition) // call showPosition when finished
@@ -214,11 +200,11 @@ whenDocumentLoaded(() => {
                 x.innerHTML = "Geolocation is not supported by this browser.";
             }
         }
-            
         
         var greenIcon = L.icon({
             iconUrl: 'marker_azure.png',
-            iconSize:     [35, 55], // size of the icon
+            iconSize: [64, 64],
+            iconAnchor: [32,64]
         });
     
         function showPosition(position) {
@@ -227,23 +213,18 @@ whenDocumentLoaded(() => {
             current_geoLat = 48.864716;
             current_geoLong = 2.349014;
             for (var k=0; k<department_shape.features.length; ++k){
-                console.log(department_shape.features[k])
                 if (d3.geoContains(department_shape.features[k],[current_geoLong,current_geoLat])){
                     display_coord = 1;
-                    L.marker([current_geoLat, current_geoLong], {icon: greenIcon}).addTo(map);
+                    geomarker = L.marker([current_geoLat, current_geoLong], {icon: greenIcon});
+                    map.addLayer(geomarker);
                 }
 		    }
         }
         
         getLocation();
-        
-        
-        
-        
-    
+
 	    var canvas = document.createElement("canvas")
 	    var context = canvas.getContext('2d');
-
 	    var currentUpdateFunction = getColour(0)//litteraly anything other than null
 
 	    function setLayer(newLayerUrl){
@@ -303,7 +284,6 @@ whenDocumentLoaded(() => {
 											"width":image_width,
 											"height":image_height,
 											"layerUrl":newLayerUrl}
-			    console.log("ok!")
 			}
 
 			info = layersColorUrl[newLayerUrl]
@@ -317,7 +297,6 @@ whenDocumentLoaded(() => {
 
 			image_width=info.width
 			image_height=info.height
-		    //var densityDataChosen = densityData["p"]; //phosphore for now
 
 	        canvas.width=image_width//image_data.width
 	        canvas.height=image_height//image_data.width
@@ -350,8 +329,7 @@ whenDocumentLoaded(() => {
 		        voronoi.attr("d",path)
 		        update_clip()
                 if(display_coord){
-                        console.log("ok")
-                        L.marker([current_geoLat, current_geoLong], {icon: greenIcon}).addTo(map);
+                    map.addLayer(geomarker);
                 }
 
 		    }
@@ -362,7 +340,6 @@ whenDocumentLoaded(() => {
 
 		    document.getElementById("my-second-image").src=info.url
 		    imgs.attr("xlink:href",info.url)
-		    console.log("ok!")
 		}
 		setLayer(urlPhosphore)
 		document.getElementById("azoteLayer").addEventListener("click",function(){
