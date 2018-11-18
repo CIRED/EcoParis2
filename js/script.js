@@ -349,6 +349,10 @@ whenDocumentLoaded(() => {
 		        departments.attr("d",path)
 		        voronoi.attr("d",path)
 		        update_clip()
+                if(display_coord){
+                        console.log("ok")
+                        L.marker([current_geoLat, current_geoLong], {icon: greenIcon}).addTo(map);
+                }
 
 		    }
 		    map.off("viewreset",currentUpdateFunction)
