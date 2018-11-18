@@ -34,8 +34,8 @@ whenDocumentLoaded(() => {
 			result = xmlhttp.responseText;
 		}
 		return result;
-	}
-
+	}    
+    
 	function loadGeoJSON(error, department_shape, voronoi_shape){
 
 	    var densityData = {
@@ -144,6 +144,10 @@ whenDocumentLoaded(() => {
 	                d > 50 ? 'feb24c':
 	                          'ffffcc';
 	    }
+        
+        var current_geoLat = 0.0;
+        var current_geoLong = 0.0;
+        var display_coord = 0;
 
 	    var voronoi = svg.append("g").selectAll("path")
 	        .data(voronoi_shape.features)
@@ -165,7 +169,11 @@ whenDocumentLoaded(() => {
 	            .on("click",function(d,i){
 	            	departments.style("pointer-events","all")
 	            	map.fitBounds(defaultBounds) // zoom back to paris
+                    if(display_coord){
+                        L.marker([current_geoLat, current_geoLong], {icon: greenIcon}).addTo(map);
+                    }
 	            })
+                
 	    var departments = svg.append("g").selectAll("path")
 	        .data(department_shape.features)
 	        .enter().append('path')
@@ -189,10 +197,50 @@ whenDocumentLoaded(() => {
 	            	var neBound = map.layerPointToLatLng(L.point(BBox.x,BBox.y))
 	            	var swBound = map.layerPointToLatLng(L.point(BBox.x+BBox.width,BBox.y+BBox.height))
 	            	map.fitBounds(L.latLngBounds(neBound,swBound)) // zoom to department
-	            })
+                    if(display_coord){
+                        console.log("ok")
+                        L.marker([current_geoLat, current_geoLong], {icon: greenIcon}).addTo(map);
+                    }
+                })
 
+                
+                
 	    
-
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition) // call showPosition when finished
+                
+            } else {
+                x.innerHTML = "Geolocation is not supported by this browser.";
+            }
+        }
+            
+        
+        var greenIcon = L.icon({
+            iconUrl: 'marker_azure.png',
+            iconSize:     [35, 55], // size of the icon
+        });
+    
+        function showPosition(position) {
+            current_geoLat = position.coords.latitude;
+            current_geoLong = position.coords.longitude;
+            current_geoLat = 48.864716;
+            current_geoLong = 2.349014;
+            for (var k=0; k<department_shape.features.length; ++k){
+                console.log(department_shape.features[k])
+                if (d3.geoContains(department_shape.features[k],[current_geoLong,current_geoLat])){
+                    display_coord = 1;
+                    L.marker([current_geoLat, current_geoLong], {icon: greenIcon}).addTo(map);
+                }
+		    }
+        }
+        
+        getLocation();
+        
+        
+        
+        
+    
 	    var canvas = document.createElement("canvas")
 	    var context = canvas.getContext('2d');
 
