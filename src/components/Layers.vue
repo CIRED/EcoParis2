@@ -25,7 +25,8 @@ export default {}
   max-height: 600px;
   height: 80%;
   width: 80px;
-  box-shadow: 0 0 3px rgba(0, 0, 0, .4);
+  box-shadow: 0 0 3px rgba(#8e61ca, .8);
+  border: 1px solid #8e61ca;
   background: #fff;
   display: flex;
   flex-direction: column;
@@ -37,8 +38,9 @@ export default {}
 
 .layers h3 {
   width: 100%;
+  margin: 0;
   padding: 7px 0;
-  color: #555;
+  color: #8e61ca;
   font-size: 12pt;
   font-weight: normal;
   text-align: center;

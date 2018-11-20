@@ -14,7 +14,8 @@ export default {}
   height: 40px;
   width: 80px;
   margin-bottom: 20px;
-  box-shadow: 0 0 3px rgba(0, 0, 0, .4);
+  box-shadow: 0 0 3px rgba(#8e61ca, .8);
+  border: 1px solid #8e61ca;
   background: #fff;
   display: flex;
 }
