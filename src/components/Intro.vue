@@ -1,6 +1,6 @@
 <template>
   <section class="intro">
-    <h2>EcoParis</h2>
+    <h1>EcoParis</h1>
     <p>How nature impacts your life in Paris.</p>
     <a @click.prevent="onDismiss" href="#" class="button">Explore</a>
   </section>
@@ -37,11 +37,18 @@ export default {
   opacity: 0;
 }
 
-.intro h2 {
-  margin-bottom: -.3rem;
+.intro h1, .intro p {
+  text-shadow: 0 0 2px rgba(0, 0, 0, .4);
+}
+
+.intro h1 {
+  font-family: 'Cedarville Cursive';
+  font-size: 38pt;
+  margin: 0 0 -.3rem;
 }
 
 .intro p {
-  margin-bottom: .8rem;
+  font-size: 21pt;
+  margin: 0 0 25px;
 }
 </style>

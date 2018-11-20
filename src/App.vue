@@ -8,8 +8,10 @@
       <ZoomControl />
       <Layers />
     </section>
-  
-    <Map />
+    <section class="container">
+      <Map />
+      <Sidebar />
+    </section>
   </div>
 </template>
 
@@ -18,6 +20,7 @@ import Intro from './components/Intro.vue'
 import ZoomControl from './components/ZoomControl.vue'
 import Layers from './components/Layers.vue'
 import Map from './components/Map.vue'
+import Sidebar from './components/Sidebar.vue'
 
 export default {
   data: () => ({
@@ -25,20 +28,17 @@ export default {
     sidebarVisible: false,
   }),
 
-  components: { Intro, ZoomControl, Layers, Map }
+  components: { Intro, ZoomControl, Layers, Map, Sidebar }
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" type="text/scss">
 html, body {
   width: 100%;
   height: 100%;
-  font-size: 23pt;
-}
-
-* {
   margin: 0;
   padding: 0;
+  font-size: 15pt;
 }
 
 #app {
@@ -50,8 +50,7 @@ html, body {
 }
 
 h2 {
-  font-family: 'Cedarville Cursive';
-  font-size: 1.7rem;
+  font-size: 1.4rem;
 }
 
 p {
@@ -61,8 +60,8 @@ p {
 .button {
   text-decoration: none;
   margin: 1.2rem;
-  font-size: .6rem;
-  padding: .33rem .47rem;
+  font-size: 14pt;
+  padding: 9px 13px;
   border: 1px solid #fff;
   color: #fff;
   text-transform: uppercase;
@@ -72,7 +71,7 @@ p {
   outline: none;
 
   &:hover {
-    padding: .33rem .55rem;
+    padding: 9px 16px;
   }
 }
 
@@ -86,5 +85,12 @@ p {
   flex-direction: column;
 
   justify-content: center;
+}
+
+.container {
+  display: flex;
+  background: #000;
+  width: 100%;
+  height: 100%;
 }
 </style>

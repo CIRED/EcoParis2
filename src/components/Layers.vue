@@ -25,7 +25,7 @@ export default {}
   max-height: 600px;
   height: 80%;
   width: 80px;
-  box-shadow: 0 0 2px rgba(0, 0, 0, .6);
+  box-shadow: 0 0 3px rgba(0, 0, 0, .4);
   background: #fff;
   display: flex;
   flex-direction: column;
@@ -66,7 +66,7 @@ export default {}
   &.active {
     color: #fff;
     background: #8e61ca;
-    box-shadow: inset 0 0 2px rgba(0, 0, 0, .3);
+    box-shadow: inset 0 0 2px rgba(0, 0, 0, .2);
   }
 
   &:first-child {

@@ -29,9 +29,8 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" type="text/scss">
 .map {
-  width: 100%;
-  height: 100%;
+  flex: 1;
 }
 </style>
