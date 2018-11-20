@@ -24,7 +24,8 @@ export default {
   text-align: justify;
 
   background: #fff;
-  box-shadow: 0 0 4px rgba(0, 0, 0, .3);
+  box-shadow: 0 0 2px rgba(0, 0, 0, .3);
+  overflow: auto;
 }
 
 .sidebar h2 {
