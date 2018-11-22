@@ -3,12 +3,16 @@
     <h3>Layers</h3>
 
     <div class="buttons">
-      <a href="#" class="active">
+      <a href="#"
+        :class="{ active: value == 'data/p_export.json' }"
+        @click="$emit('input', 'data/p_export.json')">
         <span>P</span>
         Phosph.
       </a>
 
-      <a href="#">
+      <a href="#"
+        :class="{ active: value == 'data/n_export.json' }"
+        @click="$emit('input', 'data/n_export.json')">
         <span>N</span>
         Nitrog.
       </a>
@@ -17,7 +21,9 @@
 </template>
 
 <script>
-export default {}
+export default {
+  props: ['value']
+}
 </script>
 
 <style lang="scss" type="text/scss">
@@ -58,6 +64,7 @@ export default {}
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  outline: none;
 
   height: 80px;
   text-decoration: none;

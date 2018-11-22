@@ -6,11 +6,11 @@
 
     <section class="menu">
       <ZoomControl />
-      <Layers />
+      <Layers v-model="currentLayer" />
     </section>
     <section class="container">
-      <Map />
-      <Sidebar />
+      <Map :currentLayer="currentLayer" />
+      <Sidebar :currentLayer="currentLayer" />
     </section>
   </div>
 </template>
@@ -24,6 +24,7 @@ import Sidebar from './components/Sidebar.vue'
 
 export default {
   data: () => ({
+    currentLayer: 'data/p_export.json',
     introVisible: true,
     sidebarVisible: false,
   }),

@@ -6,6 +6,11 @@
 import displayMap from '../map'
 
 export default {
+  props: ['currentLayer'],
+  data: () => ({
+    setLayer: () => {},
+  }),
+
   /**
    * Triggers when the component has been mounted.
    * This is used to create the Leaflet map and bind the event handlers.
@@ -17,7 +22,19 @@ export default {
     queue()
       .defer(d3.json, urlDepartment)
       .defer(d3.json, urlVoronoi)
-      .await((e, d, v) => displayMap(this.$refs.map, e, d, v))
+      .await((e, d, v) => {
+        this.setLayer = displayMap(this.$refs.map, e, d, v)
+        this.setLayer(this.currentLayer)
+      })
+  },
+
+  watch: {
+    /**
+     * Watches changes to the currentLayer prop, and updates the map.
+     */
+    currentLayer(layer) {
+      this.setLayer(layer)
+    }
   }
 }
 </script>
@@ -29,5 +46,9 @@ export default {
 
 .leaflet-overlay-pane {
   mix-blend-mode: multiply;
+
+  image {
+    image-rendering: optimizespeed;
+  }
 }
 </style>

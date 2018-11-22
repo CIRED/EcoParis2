@@ -183,9 +183,9 @@ export default function (element, error, department_shape, voronoi_shape) {
     }
     
     var greenIcon = L.icon({
-        iconUrl: 'marker_azure.png',
-        iconSize: [64, 64],
-        iconAnchor: [32,64]
+        iconUrl: 'assets/marker.png',
+        iconSize: [24, 24],
+        iconAnchor: [12, 24]
     });
 
     function showPosition(position) {
@@ -318,5 +318,6 @@ export default function (element, error, department_shape, voronoi_shape) {
 
         imgs.attr('xlink:href', info.url)
     }
-  setLayer(urlPhosphore)
+  
+  return setLayer
 }

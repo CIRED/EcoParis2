@@ -1,8 +1,18 @@
 <template>
   <section class="sidebar">
-    <h2>What is phosphorus?</h2>
-    <DemoChart />
-    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
+    <div v-if="currentLayer == 'data/p_export.json'">
+      <h2>Mesure de la rétention de phosphore.</h2>
+      <p>Le service de rétention du phosphore permet d'améliorer la qualité de l'eau (superficielle et souterraine). Il est directement utile aux organismes de gestion de l'eau (syndicats et département d'assainissement), et donc aux habitants dont les impôts financent la maintenance des services d'assainissement.</p>
+
+      <DemoChart />
+    </div>
+
+    <div v-if="currentLayer == 'data/n_export.json'">
+      <h2>Mesure de la rétention de l'azote.</h2>
+      <p>Le service de rétention de l'azote permet d'améliorer la qualité de l'eau (superficielle et souterraine). Il est directement utile aux organismes de gestion de l'eau (syndicats et département d'assainissement), et donc aux habitants dont les impôts financent la maintenance des services d'assainissement.</p>
+
+      <DemoChart />
+    </div>
   </section>
 </template>
 
@@ -10,6 +20,7 @@
 import DemoChart from './DemoChart.vue'
 
 export default {
+  props: ['currentLayer'],
   components: { DemoChart }
 }
 </script>
