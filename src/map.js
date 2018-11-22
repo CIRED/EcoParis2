@@ -7,12 +7,7 @@ const MAP_ATTRIB = '&copy; <a href="http://www.openstreetmap.org/copyright">Open
 /**
  * Creates a Leaflet map of the Paris area and returns it.
  */
-function createMap(element) {
-  const initialBounds = L.latLngBounds(
-    new L.LatLng(49.2485668, 1.3403262),
-    new L.LatLng(48.1108602, 3.4496114)
-  )
-
+function createMap(element, initialBounds) {
   const map = L.map(element, { zoomControl: false })
   map.fitBounds(initialBounds)
 
@@ -28,12 +23,13 @@ function createMap(element) {
 
 export default function (element, error, department_shape, voronoi_shape) {
   // This needs to leave.
-  var default_tl = new L.LatLng(49.2485668,1.4403262)
-  var default_br = new L.LatLng(48.1108602,3.5496114)
+  const default_tl = new L.LatLng(49.2485668,1.4403262)
+  const default_br = new L.LatLng(48.1108602,3.5496114)
+  const initialBounds = L.latLngBounds(default_tl, default_br)
 
   var layersColorUrl = {} //placehoder for the layers, to compute them only once
 
-  const map = createMap(element)
+  const map = createMap(element, initialBounds)
 
   function style(feature) {
       return {
@@ -44,8 +40,6 @@ export default function (element, error, department_shape, voronoi_shape) {
   L.geoJson(department_shape,{style:style}).addTo(map); //needed! otherwise a svg isn't generated, we use this one for practical purposes
 
   var svg = d3.select(element).select("svg")
-  svg.style('mix-blend-mode', 'multiply')
-  svg.style('background', '#f3f3f3')
 
   function projectPoint(x, y) {
       var point = map.latLngToLayerPoint(new L.LatLng(y, x));
@@ -146,7 +140,7 @@ export default function (element, error, department_shape, voronoi_shape) {
             })
             .on("click",function(d,i){
               departments.style("pointer-events","all")
-              map.fitBounds(defaultBounds) // zoom back to paris
+              map.fitBounds(initialBounds) // zoom back to paris
                 if(display_coord){
                     map.addLayer(geomarker);
                 }

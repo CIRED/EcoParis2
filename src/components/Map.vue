@@ -26,4 +26,8 @@ export default {
 .map {
   flex: 1;
 }
+
+.leaflet-overlay-pane {
+  mix-blend-mode: multiply;
+}
 </style>
