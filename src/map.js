@@ -176,7 +176,7 @@ export default function (element, error, department_shape, voronoi_shape) {
         .attr("xlink:href", greenIcon.iconUrl)
         .attr("width",greenIcon.iconSize[0])
         .attr("height",greenIcon.iconSize[1])
-        .style("pointer-events", "all")
+        .style("pointer-events", "none")
 
     function getLocation() {
         if (navigator.geolocation) {
