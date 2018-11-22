@@ -29,7 +29,7 @@ export default function (element, error, department_shape, voronoi_shape) {
 
   var layersColorUrl = {} //placehoder for the layers, to compute them only once
 
-  const map = createMap(element, initialBounds)
+  const map = createMap(element, initialBounds) //TODO: if the window is small, the zoom is too far (> 14) and the map is grey, untill we zoom in
 
   function style(feature) {
       return {
@@ -82,9 +82,6 @@ export default function (element, error, department_shape, voronoi_shape) {
       var clip_path = d3.geo.path()
           .projection(clip_transform);
         defs_path.attr("d",clip_path)
-        if(display_coord){
-            L.marker([current_geoLat, current_geoLong], {icon: greenIcon}).addTo(map);
-        }
     }
     
     function loadFile(filePath) {
@@ -141,9 +138,6 @@ export default function (element, error, department_shape, voronoi_shape) {
             .on("click",function(d,i){
               departments.style("pointer-events","all")
               map.fitBounds(initialBounds) // zoom back to paris
-                if(display_coord){
-                    map.addLayer(geomarker);
-                }
             })
             
     var departments = svg.append("g").selectAll("path")
@@ -168,10 +162,21 @@ export default function (element, error, department_shape, voronoi_shape) {
               var neBound = map.layerPointToLatLng(L.point(BBox.x,BBox.y))
               var swBound = map.layerPointToLatLng(L.point(BBox.x+BBox.width,BBox.y+BBox.height))
                 map.fitBounds(L.latLngBounds(neBound,swBound)) // zoom to department
-                if(display_coord){
-                    map.addLayer(geomarker);
-                }
             })
+
+    var greenIcon = {
+        iconUrl: 'assets/marker.png',
+        iconSize: [24, 24],
+        iconAnchor: [12, 24]
+    };
+
+    var marker_image = svg.append("g").selectAll("image").data([0])
+      .enter()
+        .append("svg:image")
+        .attr("xlink:href", greenIcon.iconUrl)
+        .attr("width",greenIcon.iconSize[0])
+        .attr("height",greenIcon.iconSize[1])
+        .style("pointer-events", "none")
 
     function getLocation() {
         if (navigator.geolocation) {
@@ -181,32 +186,70 @@ export default function (element, error, department_shape, voronoi_shape) {
             x.innerHTML = "Geolocation is not supported by this browser.";
         }
     }
-    
-    var greenIcon = L.icon({
-        iconUrl: 'assets/marker.png',
-        iconSize: [24, 24],
-        iconAnchor: [12, 24]
-    });
 
     function showPosition(position) {
-        current_geoLat = position.coords.latitude;
-        current_geoLong = position.coords.longitude;
+        //current_geoLat = position.coords.latitude;
+        //current_geoLong = position.coords.longitude;
         current_geoLat = 48.864716;
         current_geoLong = 2.349014;
         for (var k=0; k<department_shape.features.length; ++k){
             if (d3.geoContains(department_shape.features[k],[current_geoLong,current_geoLat])){
                 display_coord = 1;
-                geomarker = L.marker([current_geoLat, current_geoLong], {icon: greenIcon});
-                map.addLayer(geomarker);
             }
       }
     }
-    
-    getLocation();
+    showPosition(null)
+    //getLocation();
 
     var canvas = document.createElement("canvas")
     var context = canvas.getContext('2d');
     var currentUpdateFunction = getColour(0)//litteraly anything other than null
+
+    var update_parameters = {};
+
+	function update() { //add here everything that could potentially change
+		var tl = update_parameters.tl
+		var br = update_parameters.br
+		var current_geoLat = update_parameters.current_geoLat
+		var current_geoLong = update_parameters.current_geoLong
+
+      	console.log('UPDATING')
+        var width = (map.latLngToLayerPoint(br).x-map.latLngToLayerPoint(tl).x)
+        var height = (map.latLngToLayerPoint(br).y-map.latLngToLayerPoint(tl).y)
+        imgs.attr("transform", 
+            function(d) { 
+                var point = map.latLngToLayerPoint(tl)
+                return "translate("+ 
+                    point.x +","+ 
+                    point.y +")";
+            }
+        )
+        imgs.attr("width", 
+            function(d) { 
+                return width;
+            }
+        )
+        imgs.attr("height", 
+            function(d) { 
+                return height;
+            }
+        )
+        departments.attr("d",path)
+        voronoi.attr("d",path)
+        update_clip()
+
+       	marker_image.attr("transform", 
+       		function(d) {
+       			var point = map.latLngToLayerPoint([current_geoLat,current_geoLong])
+                return "translate("+ 
+                    (point.x - greenIcon.iconAnchor[0]) +","+ 
+                    (point.y - greenIcon.iconAnchor[1]) +")";
+       		})
+          // if(display_coord){
+          //     map.addLayer(geomarker);
+          // }
+
+    }
 
     function setLayer(newLayerUrl){
       console.log('SETTING LAYER', newLayerUrl)
@@ -282,42 +325,15 @@ export default function (element, error, department_shape, voronoi_shape) {
         var tl = new L.LatLng(info.tl_lat,info.tl_lng)
         var br = new L.LatLng(info.br_lat,info.br_lng)
 
-        function update() {
-          console.log('UPDATING')
-            var width = (map.latLngToLayerPoint(br).x-map.latLngToLayerPoint(tl).x)
-            var height = (map.latLngToLayerPoint(br).y-map.latLngToLayerPoint(tl).y)
-            imgs.attr("transform", 
-                function(d) { 
-                    var point = map.latLngToLayerPoint(tl)
-                    return "translate("+ 
-                        point.x +","+ 
-                        point.y +")";
-                }
-            )
-            imgs.attr("width", 
-                function(d) { 
-                    return width;
-                }
-            )
-            imgs.attr("height", 
-                function(d) { 
-                    return height;
-                }
-            )
-            departments.attr("d",path)
-            voronoi.attr("d",path)
-            update_clip()
-              // if(display_coord){
-              //     map.addLayer(geomarker);
-              // }
+        update_parameters.tl = tl
+        update_parameters.br = br
+        update_parameters.current_geoLat = current_geoLat
+        update_parameters.current_geoLong = current_geoLong
 
-        }
-
-        map.on('viewreset', update)
         update()
-
         imgs.attr('xlink:href', info.url)
     }
+	map.on('viewreset', update)
   
   return setLayer
 }
