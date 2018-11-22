@@ -25,8 +25,8 @@ export default {}
   max-height: 600px;
   height: 80%;
   width: 80px;
-  box-shadow: 0 0 3px rgba(#8e61ca, .8);
-  border: 1px solid #8e61ca;
+  border: 1px solid #bbb;
+  box-shadow: 0 0 3px rgba(#000, .2);
   background: #fff;
   display: flex;
   flex-direction: column;
@@ -40,7 +40,7 @@ export default {}
   width: 100%;
   margin: 0;
   padding: 7px 0;
-  color: #8e61ca;
+  color: #666;
   font-size: 12pt;
   font-weight: normal;
   text-align: center;
