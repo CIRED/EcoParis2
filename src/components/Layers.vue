@@ -74,7 +74,7 @@ export default {
 
   &.active {
     color: #fff;
-    background: #8e61ca;
+    background: #bbe069;
     box-shadow: inset 0 0 2px rgba(0, 0, 0, .2);
   }
 

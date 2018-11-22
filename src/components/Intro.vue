@@ -1,6 +1,9 @@
 <template>
   <section class="intro">
-    <h1>EcoParis</h1>
+    <h1>
+      EcoParis
+      <img src="assets/parrot.svg">
+    </h1>
     <p>How nature impacts your life in Paris.</p>
     <a @click.prevent="onDismiss" href="#" class="button">Explore</a>
   </section>
@@ -26,7 +29,9 @@ export default {
   align-items: center;
 
   color: #fff;
-  background: linear-gradient(to right, rgba(#4e54c8, .95), rgba(#8f94fb, .95));
+  // background: linear-gradient(to right, rgba(#1fa2ff, .95), rgba(#12d8fa, .95), rgba(#a6ffcb, .95));
+  // background: linear-gradient(to right, rgba(#4cb8c4, .95), rgba(#3cd3ad, .95));
+  background: linear-gradient(to right, rgba(#56ab2f, .95), rgba(#a8e063, .95));
 }
 
 .intro.fade-enter-active, .intro.fade-leave-active {
@@ -45,6 +50,14 @@ export default {
   font-family: 'Cedarville Cursive';
   font-size: 38pt;
   margin: 0 0 -.3rem;
+  position: relative;
+}
+
+.intro h1 img {
+  position: absolute;
+  width: 64px;
+  top: -8px;
+  right: -30px;
 }
 
 .intro p {
