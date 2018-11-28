@@ -21,23 +21,51 @@ function createMap(element, initialBounds) {
   return map
 }
 
+function loadFile(filePath) {
+  var result = null;
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.open("GET", filePath, false);
+  xmlhttp.send();
+  if (xmlhttp.status==200) {
+    result = xmlhttp.responseText;
+  }
+  return result;
+}
+
+function paraseMeans(data){
+    let data_splitted = data.split("\n")
+    data_splitted.pop()//last line does not contain a value!
+    return data_splitted.map((d) => parseFloat(d))
+}
+
+function getColour(d){
+    return  d > 200 ? 'e31a1c':
+            d > 150 ? 'fc4e2a':
+            d > 100 ? 'fd8d3c':
+            d > 50 ? 'feb24c':
+                      'ffffcc';
+}
+
 export default function (element, error, department_shape, voronoi_shape) {
+  var current_geoLat = 0.0;
+  var current_geoLong = 0.0;
+  var display_coord = 0; //Do not display the localisation marker
+  var geomarker;
+
   // This needs to leave.
   const default_tl = new L.LatLng(49.2485668,1.4403262)
   const default_br = new L.LatLng(48.1108602,3.5496114)
   const initialBounds = L.latLngBounds(default_tl, default_br)
 
-  var layersColorUrl = {} //placehoder for the layers, to compute them only once
-
   const map = createMap(element, initialBounds) //TODO: if the window is small, the zoom is too far (> 14) and the map is grey, untill we zoom in
 
-  function style(feature) {
+  function blankStyle(feature) {
       return {
           opacity:0,
           fillOpacity: 0
       };
   }
-  L.geoJson(department_shape,{style:style}).addTo(map); //needed! otherwise a svg isn't generated, we use this one for practical purposes
+  L.geoJson(department_shape,{style:blankStyle}).addTo(map); //needed! otherwise a svg isn't generated, we use this one for practical purposes
 
   var svg = d3.select(element).select("svg")
 
@@ -46,78 +74,44 @@ export default function (element, error, department_shape, voronoi_shape) {
       this.stream.point(point.x, point.y);
   }
   var transform = d3.geo.transform({point: projectPoint});
-
   var path = d3.geo.path()
       .projection(transform);
-
   var defs = svg.append("defs");
-
   var defs_path = defs.append("path")
       .attr("id", "clip_path")
-
   defs.append("clipPath")
       .attr("id", "clip")
       .append("use")
       .attr("xlink:href", "#clip_path");
-
-    var imgs = svg.selectAll("image").data([0])
-      .enter()
-        .append("svg:image")
-        .attr('x', 0)
-        .attr('y', 0)
-        .attr("xlink:href", "")
-        .attr("clip-path","url(#clip)")
+  var imgs = svg.selectAll("image").data([0])
+    .enter()
+      .append("svg:image")
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr("xlink:href", "")
+      .attr("clip-path","url(#clip)")
 
     function update_clip(){
-        
+
       function clip_projectPoint(x, y) {
-      var width = (map.latLngToLayerPoint(default_br).x-map.latLngToLayerPoint(default_tl).x)
-      var height = (map.latLngToLayerPoint(default_br).y-map.latLngToLayerPoint(default_tl).y)
-        var tx = (x - default_tl.lng)/(default_br.lng - default_tl.lng) * (width-1)
-        var ty = (default_tl.lat+0.00314 - y)/(default_tl.lat - default_br.lat) * (height-1) //it is slightly offset, and I have no idea why
-        this.stream.point(tx, ty);
+          var width = (map.latLngToLayerPoint(default_br).x-map.latLngToLayerPoint(default_tl).x)
+          var height = (map.latLngToLayerPoint(default_br).y-map.latLngToLayerPoint(default_tl).y)
+          var tx = (x - default_tl.lng)/(default_br.lng - default_tl.lng) * (width-1)
+          var ty = (default_tl.lat+0.00314 - y)/(default_tl.lat - default_br.lat) * (height-1) //it is slightly offset, and I have no idea why
+          this.stream.point(tx, ty);
       }
-        
+
       var clip_transform = d3.geo.transform({point: clip_projectPoint});
       var clip_path = d3.geo.path()
           .projection(clip_transform);
         defs_path.attr("d",clip_path)
     }
-    
-    function loadFile(filePath) {
-      var result = null;
-      var xmlhttp = new XMLHttpRequest();
-      xmlhttp.open("GET", filePath, false);
-      xmlhttp.send();
-      if (xmlhttp.status==200) {
-        result = xmlhttp.responseText;
-      }
-      return result;
-    }
 
-  function paraseMeans(data){
-        let data_splitted = data.split("\n")
-        data_splitted.pop()//last line does not contain a value!
-        return data_splitted.map((d) => parseFloat(d))
-  }
 
   var voronoi_means = {}
   voronoi_means[urlPhosphore] = paraseMeans(loadFile("data/voronoi_means_p.txt"))
   voronoi_means[urlAzote] = paraseMeans(loadFile("data/voronoi_means_n.txt"))
 
-    function getColour(d){
-        return  d > 200 ? 'e31a1c':
-                d > 150 ? 'fc4e2a':
-                d > 100 ? 'fd8d3c':
-                d > 50 ? 'feb24c':
-                          'ffffcc';
-    }
-    
-    var current_geoLat = 0.0;
-    var current_geoLong = 0.0;
-    var display_coord = 0; //Do not display the localisation marker
-    var geomarker;
-    
     var voronoi = svg.append("g").selectAll("path")
         .data(voronoi_shape.features)
         .enter().append('path')
@@ -139,7 +133,7 @@ export default function (element, error, department_shape, voronoi_shape) {
               departments.style("pointer-events","all")
               map.fitBounds(initialBounds) // zoom back to paris
             })
-            
+
     var departments = svg.append("g").selectAll("path")
         .data(department_shape.features)
         .enter().append('path')
@@ -181,7 +175,7 @@ export default function (element, error, department_shape, voronoi_shape) {
     function getLocation() {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(showPosition) // call showPosition when finished
-            
+
         } else {
             x.innerHTML = "Geolocation is not supported by this browser.";
         }
@@ -216,21 +210,21 @@ export default function (element, error, department_shape, voronoi_shape) {
       	console.log('UPDATING')
         var width = (map.latLngToLayerPoint(br).x-map.latLngToLayerPoint(tl).x)
         var height = (map.latLngToLayerPoint(br).y-map.latLngToLayerPoint(tl).y)
-        imgs.attr("transform", 
-            function(d) { 
+        imgs.attr("transform",
+            function(d) {
                 var point = map.latLngToLayerPoint(tl)
-                return "translate("+ 
-                    point.x +","+ 
+                return "translate("+
+                    point.x +","+
                     point.y +")";
             }
         )
-        imgs.attr("width", 
-            function(d) { 
+        imgs.attr("width",
+            function(d) {
                 return width;
             }
         )
-        imgs.attr("height", 
-            function(d) { 
+        imgs.attr("height",
+            function(d) {
                 return height;
             }
         )
@@ -238,72 +232,66 @@ export default function (element, error, department_shape, voronoi_shape) {
         voronoi.attr("d",path)
         update_clip()
 
-       	marker_image.attr("transform", 
+       	marker_image.attr("transform",
        		function(d) {
        			var point = map.latLngToLayerPoint([current_geoLat,current_geoLong])
-                return "translate("+ 
-                    (point.x - greenIcon.iconAnchor[0]) +","+ 
+                return "translate("+
+                    (point.x - greenIcon.iconAnchor[0]) +","+
                     (point.y - greenIcon.iconAnchor[1]) +")";
        		})
-          // if(display_coord){
-          //     map.addLayer(geomarker);
-          // }
-
     }
 
+    var layersColorUrl = {} //placehoder for the layers, to compute them only once
     function setLayer(newLayerUrl){
       console.log('SETTING LAYER', newLayerUrl)
+
+      function processImage(){
+
+      }
       if (!layersColorUrl[newLayerUrl]){
-      var json = loadFile(newLayerUrl)
-      var image_data = JSON.parse(json)
-      image_data.data=JSON.parse(image_data.data)
+        var json = loadFile(newLayerUrl)
+        var GeoImage = JSON.parse(json)
+        GeoImage.data = JSON.parse(GeoImage.data)
+        var pixels = GeoImage.data;
 
-      var image_width=image_data.width
-      var image_height=image_data.height
-        //var densityDataChosen = densityData["p"]; //phosphore for now
+        canvas.width = GeoImage.width
+        canvas.height = GeoImage.height
+        var imageData = context.createImageData(canvas.width,canvas.height);
+        var canvasData = imageData.data;
 
-          canvas.width=image_width//image_data.width
-          canvas.height=image_height//image_data.width
-
-        var context = canvas.getContext('2d');
-        var pixels = image_data.data;
-
-        var imageData=context.createImageData(image_width, image_height);
-        // The property data will contain an array of int8
-        var data=imageData.data;
 
         for (var i=0; i<canvas.height*canvas.width; i++) {
             var px = i%canvas.width
             var py = i/canvas.width
-            //var value = getRasterPixelValue(i%canvas.width,i/canvas.width)
-            if(px >= 0 && px < image_width && py >= 0 && py < image_height){
+
+            if(px >= 0 && px < canvas.width && py >= 0 && py < canvas.height){
                 var pos = i*4
 
                 var value = pixels[i]
-                //var v = (value - mean)/(std*2) + 0.5;
-                data[pos+2]   = parseInt(getColour(value),16) & 255
-                data[pos+1]   = (parseInt(getColour(value),16) >> 8) & 255
-                data[pos]   = (parseInt(getColour(value),16) >> 16) & 255
+                canvasData[pos+2]   = parseInt(getColour(value),16) & 255
+                canvasData[pos+1]   = (parseInt(getColour(value),16) >> 8) & 255
+                canvasData[pos]   = (parseInt(getColour(value),16) >> 16) & 255
                 if (pixels[i]==0){
-                    data[pos+3]=0; // alpha (transparency)
+                    canvasData[pos+3]=0; // alpha (transparency)
                 }
                 else{
-                    data[pos+3]=220;
+                    canvasData[pos+3]=220;
                 }
             }
         }
+
         context.putImageData(imageData, 0, 0); // at coords 0,0
 
-        var value=canvas.toDataURL("png");
+        var value = canvas.toDataURL("png");
 
         imgs.attr("xlink:href",value)
         layersColorUrl[newLayerUrl]={"url":value,
-                    "tl_lat":image_data.tl_lat,
-                    "tl_lng":image_data.tl_lng,
-                    "br_lat":image_data.br_lat,
-                    "br_lng":image_data.br_lng,
-                    "width":image_width,
-                    "height":image_height,
+                    "tl_lat":GeoImage.tl_lat,
+                    "tl_lng":GeoImage.tl_lng,
+                    "br_lat":GeoImage.br_lat,
+                    "br_lng":GeoImage.br_lng,
+                    "width":canvas.width,
+                    "height":canvas.height,
                     "layerUrl":newLayerUrl}
       }
 
@@ -316,11 +304,8 @@ export default function (element, error, department_shape, voronoi_shape) {
             return colour_mean(voronoi_means[info.layerUrl][i])
           })
 
-      image_width=info.width
-      image_height=info.height
-
-          canvas.width=image_width//image_data.width
-          canvas.height=image_height//image_data.width
+          canvas.width=info.width//GeoImage.width
+          canvas.height=info.height//GeoImage.width
 
         var tl = new L.LatLng(info.tl_lat,info.tl_lng)
         var br = new L.LatLng(info.br_lat,info.br_lng)
@@ -334,6 +319,6 @@ export default function (element, error, department_shape, voronoi_shape) {
         imgs.attr('xlink:href', info.url)
     }
 	map.on('viewreset', update)
-  
+
   return setLayer
 }
