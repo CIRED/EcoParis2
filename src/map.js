@@ -245,9 +245,6 @@ export default function (element, error, department_shape, voronoi_shape) {
     function setLayer(newLayerUrl){
       console.log('SETTING LAYER', newLayerUrl)
 
-      function processImage(){
-
-      }
       if (!layersColorUrl[newLayerUrl]){
         var json = loadFile(newLayerUrl)
         var GeoImage = JSON.parse(json)
@@ -256,31 +253,37 @@ export default function (element, error, department_shape, voronoi_shape) {
 
         canvas.width = GeoImage.width
         canvas.height = GeoImage.height
-        var imageData = context.createImageData(canvas.width,canvas.height);
-        var canvasData = imageData.data;
 
+        var tempContext = canvas.getContext("2d");
+        tempContext.createImageData(canvas.width,canvas.height);
 
-        for (var i=0; i<canvas.height*canvas.width; i++) {
-            var px = i%canvas.width
-            var py = i/canvas.width
+        var len = canvas.height*canvas.width;
+        var workersCount = 4;
+        var finished = 0;
+        var segmentLength = len / workersCount;
+        var blockSize = canvas.height / workersCount;
 
-            if(px >= 0 && px < canvas.width && py >= 0 && py < canvas.height){
-                var pos = i*4
+        var onWorkEnded = function (e) {
+            var canvasData = e.data.result;
+            var index = e.data.index;
 
-                var value = pixels[i]
-                canvasData[pos+2]   = parseInt(getColour(value),16) & 255
-                canvasData[pos+1]   = (parseInt(getColour(value),16) >> 8) & 255
-                canvasData[pos]   = (parseInt(getColour(value),16) >> 16) & 255
-                if (pixels[i]==0){
-                    canvasData[pos+3]=0; // alpha (transparency)
-                }
-                else{
-                    canvasData[pos+3]=220;
-                }
+            tempContext.putImageData(canvasData, 0, blockSize * index);
+            finished++;
+
+            if (finished == workersCount) {
+              console.log("done")
             }
+        };
+
+
+        for (var index = 0; index < workersCount; index++) {
+            var worker = new Worker("assets/pictureProcessor.js");
+            worker.onmessage = onWorkEnded;
+
+            var canvasData = tempContext.getImageData(0, blockSize * index, canvas.width, blockSize);
+            worker.postMessage({ canvasData: canvasData, pixels:pixels, index: index, length: segmentLength, width: canvas.width, height:canvas.height });
         }
 
-        context.putImageData(imageData, 0, 0); // at coords 0,0
 
         var value = canvas.toDataURL("png");
 
