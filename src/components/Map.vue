@@ -16,8 +16,8 @@ export default {
    * This is used to create the Leaflet map and bind the event handlers.
    */
   mounted () {
-    var urlDepartment = 'data/depts.geojson'
-    var urlVoronoi = 'data/sd-voronoi.json'
+    var urlDepartment = 'data/intercommunalites.geojson'
+    var urlVoronoi = 'data/voronois.json'
 
     queue()
       .defer(d3.json, urlDepartment)

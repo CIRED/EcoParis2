@@ -140,8 +140,13 @@ export default function (element, error, department_shape, voronoi_shape) {
             .attr('d', path)
             .attr('vector-effect', 'non-scaling-stroke')
             .style('stroke', "#333")
-            .attr("fill","#4444")
-            .attr("fill-opacity","0")
+            .attr("fill",function(d,i){// 7 9 12 14 15 17 24 30 31 32 34 44 53 56 61
+              /*if (i == 64){
+                return "#000"
+              }*/
+              return "#FFF"
+            })
+            .attr("fill-opacity","1")
             .style("pointer-events", "all")
             .on("mouseover",function(d,i){
               d3.select(this).style('fill-opacity', 1);
@@ -301,7 +306,7 @@ export default function (element, error, department_shape, voronoi_shape) {
               .domain([Math.min(...voronoi_means[info.layerUrl]),Math.max(...voronoi_means[info.layerUrl])])
 
       voronoi.attr("fill",function(d,i){
-            return colour_mean(voronoi_means[info.layerUrl][i])
+            return "#FFF"//colour_mean(voronoi_means[info.layerUrl][i])
           })
 
           canvas.width=info.width//GeoImage.width
