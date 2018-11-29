@@ -258,7 +258,7 @@ export default function (element, error, department_shape, voronoi_shape) {
         tempContext.createImageData(canvas.width,canvas.height);
 
         var len = canvas.height*canvas.width;
-        var workersCount = 4;
+        var workersCount = 1;
         var finished = 0;
         var segmentLength = len / workersCount;
         var blockSize = canvas.height / workersCount;
@@ -271,55 +271,62 @@ export default function (element, error, department_shape, voronoi_shape) {
             finished++;
 
             if (finished == workersCount) {
-              console.log("done")
+
+              var value = canvas.toDataURL("png");
+              imgs.attr("xlink:href",value)
+              layersColorUrl[newLayerUrl]={"url":value,
+                          "tl_lat":GeoImage.tl_lat,
+                          "tl_lng":GeoImage.tl_lng,
+                          "br_lat":GeoImage.br_lat,
+                          "br_lng":GeoImage.br_lng,
+                          "width":canvas.width,
+                          "height":canvas.height,
+                          "layerUrl":newLayerUrl}
+
+              setLayerComputed();
             }
         };
-
 
         for (var index = 0; index < workersCount; index++) {
             var worker = new Worker("assets/pictureProcessor.js");
             worker.onmessage = onWorkEnded;
-
             var canvasData = tempContext.getImageData(0, blockSize * index, canvas.width, blockSize);
             worker.postMessage({ canvasData: canvasData, pixels:pixels, index: index, length: segmentLength, width: canvas.width, height:canvas.height });
         }
 
 
-        var value = canvas.toDataURL("png");
-
-        imgs.attr("xlink:href",value)
-        layersColorUrl[newLayerUrl]={"url":value,
-                    "tl_lat":GeoImage.tl_lat,
-                    "tl_lng":GeoImage.tl_lng,
-                    "br_lat":GeoImage.br_lat,
-                    "br_lng":GeoImage.br_lng,
-                    "width":canvas.width,
-                    "height":canvas.height,
-                    "layerUrl":newLayerUrl}
       }
 
-      var info = layersColorUrl[newLayerUrl]
-      var colour_mean = d3.scale.linear() //change fill color according to current layer and means
-              .range(['#ffffcc','#e31a1c'])
-              .domain([Math.min(...voronoi_means[info.layerUrl]),Math.max(...voronoi_means[info.layerUrl])])
+      else{
+        setLayerComputed();
+      }
 
-      voronoi.attr("fill",function(d,i){
-            return colour_mean(voronoi_means[info.layerUrl][i])
-          })
 
-          canvas.width=info.width//GeoImage.width
-          canvas.height=info.height//GeoImage.width
+      function setLayerComputed(){
+        var info = layersColorUrl[newLayerUrl]
+        var colour_mean = d3.scale.linear() //change fill color according to current layer and means
+                .range(['#ffffcc','#e31a1c'])
+                .domain([Math.min(...voronoi_means[info.layerUrl]),Math.max(...voronoi_means[info.layerUrl])])
 
-        var tl = new L.LatLng(info.tl_lat,info.tl_lng)
-        var br = new L.LatLng(info.br_lat,info.br_lng)
+        voronoi.attr("fill",function(d,i){
+              return colour_mean(voronoi_means[info.layerUrl][i])
+            })
 
-        update_parameters.tl = tl
-        update_parameters.br = br
-        update_parameters.current_geoLat = current_geoLat
-        update_parameters.current_geoLong = current_geoLong
+            canvas.width=info.width//GeoImage.width
+            canvas.height=info.height//GeoImage.width
 
-        update()
-        imgs.attr('xlink:href', info.url)
+          var tl = new L.LatLng(info.tl_lat,info.tl_lng)
+          var br = new L.LatLng(info.br_lat,info.br_lng)
+
+          update_parameters.tl = tl
+          update_parameters.br = br
+          update_parameters.current_geoLat = current_geoLat
+          update_parameters.current_geoLong = current_geoLong
+
+          update()
+          imgs.attr('xlink:href', info.url)
+      }
+
     }
 	map.on('viewreset', update)
 

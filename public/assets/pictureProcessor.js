@@ -6,7 +6,7 @@ function getColour(d){
                       'ffffcc';
 }
 
-var processColour = function(binaryData, l, width, height, pixels){
+var processColour = function(binaryData, l, width, height, pixels, shift){
 
   for (var i=0; i<l; i++) {
       var px = i%width
@@ -15,11 +15,14 @@ var processColour = function(binaryData, l, width, height, pixels){
       if(px >= 0 && px < width && py >= 0 && py < height){
           var pos = i*4
 
-          var value = pixels[i]
+          var value = pixels[shift + i]
+          if(px==0){
+            //console.log(value)
+          }
           binaryData[pos+2]   = parseInt(getColour(value),16) & 255
           binaryData[pos+1]   = (parseInt(getColour(value),16) >> 8) & 255
           binaryData[pos]   = (parseInt(getColour(value),16) >> 16) & 255
-          if (pixels[i]==0){
+          if (pixels[shift + i]==0){
               binaryData[pos+3]=0; // alpha (transparency)
           }
           else{
@@ -39,7 +42,7 @@ self.addEventListener('message', function(e) {
   var l = e.data.length;
   var index = e.data.index;
 
-  processColour(binaryData,l,width,height,pixels)
+  processColour(binaryData,l,width,height,pixels, l*index)
 
   self.postMessage({ result: canvasData, index: index });
 }, false);
