@@ -46,7 +46,7 @@ function getColour(d){
                       'ffffcc';
 }
 
-export default function (element, error, department_shape, voronoi_shape) {
+export default function (element, error, interComm_shape, voronoi_shape) {
   var current_geoLat = 0.0;
   var current_geoLong = 0.0;
   var display_coord = 0; //Do not display the localisation marker
@@ -65,7 +65,7 @@ export default function (element, error, department_shape, voronoi_shape) {
           fillOpacity: 0
       };
   }
-  L.geoJson(department_shape,{style:blankStyle}).addTo(map); //needed! otherwise a svg isn't generated, we use this one for practical purposes
+  L.geoJson(interComm_shape,{style:blankStyle}).addTo(map); //needed! otherwise a svg isn't generated, we use this one for practical purposes
 
   var svg = d3.select(element).select("svg")
 
@@ -130,12 +130,12 @@ export default function (element, error, department_shape, voronoi_shape) {
           update_clip()
             })
             .on("click",function(d,i){
-              departments.style("pointer-events","all")
+              interComms.style("pointer-events","all")
               map.fitBounds(initialBounds) // zoom back to paris
             })
 
-    var departments = svg.append("g").selectAll("path")
-        .data(department_shape.features)
+    var interComms = svg.append("g").selectAll("path")
+        .data(interComm_shape.features)
         .enter().append('path')
             .attr('d', path)
             .attr('vector-effect', 'non-scaling-stroke')
@@ -150,7 +150,7 @@ export default function (element, error, department_shape, voronoi_shape) {
               d3.select(this).style('fill-opacity', 0);
             })
             .on("click",function(d,i){
-              departments.style("pointer-events","all") // now we can click/hover on every department
+              interComms.style("pointer-events","all") // now we can click/hover on every department
               d3.select(this).style("pointer-events","none") // except the current one!
               var BBox = d3.select(this).node().getBBox()
               var neBound = map.layerPointToLatLng(L.point(BBox.x,BBox.y))
@@ -186,8 +186,8 @@ export default function (element, error, department_shape, voronoi_shape) {
         //current_geoLong = position.coords.longitude;
         current_geoLat = 48.864716;
         current_geoLong = 2.349014;
-        for (var k=0; k<department_shape.features.length; ++k){
-            if (d3.geoContains(department_shape.features[k],[current_geoLong,current_geoLat])){
+        for (var k=0; k<interComm_shape.features.length; ++k){
+            if (d3.geoContains(interComm_shape.features[k],[current_geoLong,current_geoLat])){
                 display_coord = 1;
             }
       }
@@ -228,7 +228,7 @@ export default function (element, error, department_shape, voronoi_shape) {
                 return height;
             }
         )
-        departments.attr("d",path)
+        interComms.attr("d",path)
         voronoi.attr("d",path)
         update_clip()
 

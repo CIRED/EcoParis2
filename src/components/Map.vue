@@ -16,11 +16,11 @@ export default {
    * This is used to create the Leaflet map and bind the event handlers.
    */
   mounted () {
-    var urlDepartment = 'data/depts.geojson'
-    var urlVoronoi = 'data/sd-voronoi.json'
+    var urlInterComm = 'data/intercommunalites.geojson'
+    var urlVoronoi = 'data/voronois.json'
 
     queue()
-      .defer(d3.json, urlDepartment)
+      .defer(d3.json, urlInterComm)
       .defer(d3.json, urlVoronoi)
       .await((e, d, v) => {
         this.setLayer = displayMap(this.$refs.map, e, d, v)
