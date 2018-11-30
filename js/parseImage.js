@@ -61,7 +61,7 @@ whenDocumentLoaded(() => {
 	        .projection(transform);
 
 	    var watersheds = svg.append("g").selectAll("path")
-	        .data([voronoi_shape.features[0]])
+	        .data([voronoi_shape.features[123],voronoi_shape.features[124],voronoi_shape.features[125]])
 	        .enter().append('path')
 	            .attr('d', path)
 	            .attr('vector-effect', 'non-scaling-stroke')
@@ -279,7 +279,7 @@ whenDocumentLoaded(() => {
 		        	}
 	        	}*/
 	        	//0,0 : 124 309 311 313
-	        	if (px == image_width-1 && py == image_height-1){
+	        	/*if (px == image_width-1 && py == image_height-1){
 	        		console.log(lat,lng)
 	        		for (var k=0; k<voronoi_shape.features.length; ++k){
 						if (d3.geoContains(voronoi_shape.features[k],[lng,lat])){
@@ -288,15 +288,15 @@ whenDocumentLoaded(() => {
 			        		console.log(voronoi_shape.features[k+1])
 			        	}
 		        	}
-	        	}
-        		for (var k=0; k<2/*voronoi_shape.features.length*/; ++k){
+	        	}*/
+        		/*for (var k=0; k<voronoi_shape.features.length; ++k){
 					if (d3.geoContains(voronoi_shape.features[k],[lng,lat])){
-		        		voronoi_count[k]=voronoi_count[k]+1
-		        		voronoi_means[k]=voronoi_means[k]+value
+		        		//voronoi_count[k]=voronoi_count[k]+1
+		        		//voronoi_means[k]=voronoi_means[k]+value
 		        		depts_cont_data[i]=k+1
 		        		break
 		        	}
-	        	}
+	        	}*/
 	        	
 	        	
 	        	if (px == 0){
@@ -309,7 +309,9 @@ whenDocumentLoaded(() => {
 	        }
 	    }
 	    console.log(depts_cont_data)
-	    console.log(voronoi_count)
+	    //console.log(voronoi_count[123])
+	    //console.log(voronoi_count[124])
+	    //console.log(voronoi_count[125])
 		var voronoi_string = ""
 		for (var i=0; i<voronoi_shape.features.length;++i){
 			if (voronoi_count[i] == 0){
