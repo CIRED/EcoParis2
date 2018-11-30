@@ -17,7 +17,7 @@ export default {
    */
   mounted () {
     var urlDepartment = 'data/backup/intercommunalites.geojson'
-    var urlVoronoi = 'data/backup/voronois-10.json'
+    var urlVoronoi = 'data/backup/voronois_final.json'
 
     queue()
       .defer(d3.json, urlDepartment)
