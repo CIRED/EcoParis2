@@ -61,7 +61,7 @@ whenDocumentLoaded(() => {
 	        .projection(transform);
 
 	    var watersheds = svg.append("g").selectAll("path")
-	        .data(dpt_shape.features)
+	        .data([voronoi_shape.features[0]])
 	        .enter().append('path')
 	            .attr('d', path)
 	            .attr('vector-effect', 'non-scaling-stroke')
@@ -278,7 +278,8 @@ whenDocumentLoaded(() => {
 			        	break
 		        	}
 	        	}*/
-	        	if (px == 0 && py == 0){
+	        	//0,0 : 124 309 311 313
+	        	if (px == image_width-1 && py == image_height-1){
 	        		console.log(lat,lng)
 	        		for (var k=0; k<voronoi_shape.features.length; ++k){
 						if (d3.geoContains(voronoi_shape.features[k],[lng,lat])){
