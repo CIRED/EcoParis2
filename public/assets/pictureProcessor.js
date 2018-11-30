@@ -20,10 +20,6 @@ var processColour = function(binaryData, l, width, height, pixels, shift, contai
           var voronoi_id = voronoiContainmentData[shift + i]
           var interComm_id = voronoiContainmentData[shift + i]
 
-          if (voronoi_id == 201){
-            console.log(px)
-          }
-
           if (voronoi_id != 0){
             voronoi_counts[voronoi_id-1] += 1
             voronoi_means[voronoi_id-1] += value
@@ -45,8 +41,6 @@ var processColour = function(binaryData, l, width, height, pixels, shift, contai
           }
       }
   }
-
-  console.log(interComm_counts)
 }
 
 self.addEventListener('message', function(e) {

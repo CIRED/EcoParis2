@@ -384,7 +384,7 @@ export default function (element, error, interComm_shape, voronoi_shape) {
               return colour_mean(voronoi_means[info.layerUrl][i])
             })
         interComms.attr("fill",function(d,i){
-              return colour_mean2(interComm_means[info.layerUrl][i])
+              return colour_mean(interComm_means[info.layerUrl][i])
             })
 
             canvas.width=info.width//GeoImage.width
