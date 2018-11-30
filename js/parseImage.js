@@ -8,8 +8,8 @@ function whenDocumentLoaded(action) {
 }
 
 whenDocumentLoaded(() => {
-	var urlDPT = "depts.geojson";
-	var urlVoronoi = "sd-voronoi.json";
+	var urlDPT = "intercommunalites.geojson";
+	var urlVoronoi = "voronois.json";
 
 	// Load the JSON file(s)
 	queue()
@@ -120,7 +120,7 @@ whenDocumentLoaded(() => {
             
             
             
-            var fc = {'type': 'FeatureCollection','features': []}
+            /*var fc = {'type': 'FeatureCollection','features': []}
             var poly = '{"type": "Feature","properties": {},"geometry": {"type": "Polygon","coordinates": []}}'
                 
             for (i=0;i<paths.length;i++){
@@ -196,7 +196,7 @@ whenDocumentLoaded(() => {
             		})
             	})
             })
-        	download(JSON.stringify(fc, null, 2), 'sd-voronoi.json', "json", 8)
+        	download(JSON.stringify(fc, null, 2), 'sd-voronoi.json', "json", 8)*/
               
 	    }
 	    
@@ -228,7 +228,8 @@ whenDocumentLoaded(() => {
 	    var data=imageData.data;
 
 	    
-		var myArray=[]
+		var pixels_data=[]
+		var depts_cont_data=[]
 		var string=[]
 
 		var voronoi_means = []
@@ -259,21 +260,30 @@ whenDocumentLoaded(() => {
 	            else{
 	                data[pos+3]=180;
 	            }
-	        	myArray[i]=value;
+	        	pixels_data[i]=value;
+	        	depts_cont_data[i]=0;
 
 	        	var tx = px/(canvas.width-1)
 	        	var ty = py/(canvas.height-1)
-	        	/*for (var k=0; k<1; ++k){
-	        		if (d3.geoContains(dpt_shape.features[k],[tl.lng * (1-tx) + br.lng*tx,tl.lat * (1-ty) + br.lat*ty])){
-		        		for (var j=0; j<value/51; ++j){
-			        		string[k] += ""+px+","+py+"\n"
-			        	}
+
+	        	var lat = tl.lat * (1-ty) + br.lat*ty
+	        	var lng = tl.lng * (1-tx) + br.lng*tx
+	        	/*for (var k=0; k<dpt_shape.features.length; ++k){
+	        		if (d3.geoContains(dpt_shape.features[k],[lng,lat])){
+	        			//console.log(px,py,tl.lng * (1-tx) + br.lng*tx,tl.lat * (1-ty) + br.lat*ty)
+		        		//for (var j=0; j<value/51; ++j){
+			        	//	string[k] += ""+px+","+py+"\n"
+			        	//}
+			        	depts_cont_data[i]=k+1
+			        	break
 		        	}
 	        	}*/
         		/*for (var k=0; k<voronoi_shape.features.length; ++k){
-					if (d3.geoContains(voronoi_shape.features[k],[tl.lng * (1-tx) + br.lng*tx,tl.lat * (1-ty) + br.lat*ty])){
-		        		voronoi_count[k]=voronoi_count[k]+1
-		        		voronoi_means[k]=voronoi_means[k]+value
+					if (d3.geoContains(voronoi_shape.features[k],[lng,lat])){
+		        		//voronoi_count[k]=voronoi_count[k]+1
+		        		//voronoi_means[k]=voronoi_means[k]+value
+		        		depts_cont_data[i]=k+1
+		        		break
 		        	}
 	        	}*/
 	        	
@@ -284,9 +294,10 @@ whenDocumentLoaded(() => {
 	        	//console.log(i)
 	        }
 	        else{
-	        	myArray[i]=0;
+	        	pixels_data[i]=0;
 	        }
 	    }
+	    console.log(depts_cont_data)
 		var voronoi_string = ""
 		for (var i=0; i<voronoi_shape.features.length;++i){
 			if (voronoi_count[i] == 0){
@@ -297,7 +308,7 @@ whenDocumentLoaded(() => {
 			}
 			voronoi_string = voronoi_string+voronoi_means[i]+"\n"
 		}
-	    //console.log(JSON.stringify(myArray))
+	    //console.log(JSON.stringify(pixels_data))
 	    function download(text, name, type, id) {
 	      d3.select(".container").append("a").attr("id","a"+id)
 		  var a = document.getElementById("a"+id);
@@ -314,7 +325,10 @@ whenDocumentLoaded(() => {
 								"tl_lng":tl.lng,
 								"br_lat":br.lat,
 								"br_lng":br.lng,
-								"data":JSON.stringify(myArray)}),"p_export.json","json")*/
+								"data":JSON.stringify(pixels_data)}),"p_export.json","json",12)*/
+		download(JSON.stringify({"width" : img.width,
+								"height" : img.height,
+								"data" : JSON.stringify(depts_cont_data)}),"voronoi_cont.json","json",12)
 		for (var i=0; i<8; ++i){
 
 			download(string[i],"points_"+i+".txt","txt",i)
