@@ -278,14 +278,24 @@ whenDocumentLoaded(() => {
 			        	break
 		        	}
 	        	}*/
-        		/*for (var k=0; k<voronoi_shape.features.length; ++k){
+	        	if (px == 0 && py == 0){
+	        		console.log(lat,lng)
+	        		for (var k=0; k<voronoi_shape.features.length; ++k){
+						if (d3.geoContains(voronoi_shape.features[k],[lng,lat])){
+			        		console.log("matching with",k)
+			        		console.log(voronoi_shape.features[k])
+			        		console.log(voronoi_shape.features[k+1])
+			        	}
+		        	}
+	        	}
+        		for (var k=0; k<2/*voronoi_shape.features.length*/; ++k){
 					if (d3.geoContains(voronoi_shape.features[k],[lng,lat])){
-		        		//voronoi_count[k]=voronoi_count[k]+1
-		        		//voronoi_means[k]=voronoi_means[k]+value
+		        		voronoi_count[k]=voronoi_count[k]+1
+		        		voronoi_means[k]=voronoi_means[k]+value
 		        		depts_cont_data[i]=k+1
 		        		break
 		        	}
-	        	}*/
+	        	}
 	        	
 	        	
 	        	if (px == 0){
@@ -298,6 +308,7 @@ whenDocumentLoaded(() => {
 	        }
 	    }
 	    console.log(depts_cont_data)
+	    console.log(voronoi_count)
 		var voronoi_string = ""
 		for (var i=0; i<voronoi_shape.features.length;++i){
 			if (voronoi_count[i] == 0){
