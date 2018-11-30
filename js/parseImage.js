@@ -9,7 +9,7 @@ function whenDocumentLoaded(action) {
 
 whenDocumentLoaded(() => {
 	var urlDPT = "intercommunalites.geojson";
-	var urlVoronoi = "voronois.json";
+	var urlVoronoi = "public/data/backup/voronois-10.json";
 
 	// Load the JSON file(s)
 	queue()
