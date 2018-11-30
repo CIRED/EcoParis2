@@ -122,28 +122,58 @@ export default function (element, error, interComm_shape, voronoi_shape) {
   //voronoi_means[urlPhosphore] = paraseMeans(loadFile("data/voronoi_means_p.txt"))
   //voronoi_means[urlAzote] = paraseMeans(loadFile("data/voronoi_means_n.txt"))
 
+    var emptyOpacity = 0
+    var fadedOpacity = 0.4
+    var semiFullOpacity = 0.7
+    var fullOpacity = 1
+
     var voronoi = svg.append("g").selectAll("path")
         .data(voronoi_shape.features)
         .enter().append('path')
             .attr('d', path)
             .attr('vector-effect', 'non-scaling-stroke')
             .style('stroke', "#666")
-            .style("fill-opacity",0.7)
+            .style("fill-opacity",emptyOpacity)
+            .style("stroke-opacity",emptyOpacity)
             .on("mouseover",function(d,i){
-              d3.select(this).style('fill-opacity', 0);
-          defs_path.datum(d.geometry)
-          update_clip()
+              d3.select(this).style('fill-opacity', emptyOpacity);
+              defs_path.datum(d.geometry)
+              update_clip()
             })
             .on("mouseout",function(d,i){
-              d3.select(this).style('fill-opacity', 0.7);
-          defs_path.datum([])
-          update_clip()
+              if (highlightedInterComm != -1){
+                console.log(highlightedInterComm,i)
+                d3.select(this).style('fill-opacity', oneIfInInterComm(highlightedInterComm)(d,i));
+                d3.select(this).style('stroke-opacity', oneIfInInterComm(highlightedInterComm)(d,i));
+              }
+              
+              defs_path.datum([])
+              update_clip()
             })
             .on("click",function(d,i){
               interComms.style("pointer-events","all")
               map.fitBounds(initialBounds) // zoom back to paris
+              highlightedInterComm = -1
+              interComms.style("fill-opacity",fullOpacity)
+              voronoi.style("fill-opacity",emptyOpacity)
+              voronoi.style("stroke-opacity",emptyOpacity)
+
+              defs_path.datum([])
+              update_clip()
             })
 
+    var highlightedInterComm = -1
+    function oneIfInInterComm(interCommIndex){
+      function oneIfInInterComm_(p,j){
+        if (firstVoronoiByInterComm[interCommIndex] <= j && (interCommIndex == interComm_shape.features.length-1 || firstVoronoiByInterComm[interCommIndex+1] > j)){
+          return 1
+        }
+        else{
+          return 0
+        }
+      }
+      return oneIfInInterComm_
+    }
     var interComms = svg.append("g").selectAll("path")
         .data(interComm_shape.features)
         .enter().append('path')
@@ -151,17 +181,46 @@ export default function (element, error, interComm_shape, voronoi_shape) {
             .attr('vector-effect', 'non-scaling-stroke')
             .style('stroke', "#333")
             .attr("fill","#4444")
-            .attr("fill-opacity","0")
+            .attr("fill-opacity",fullOpacity)
             .style("pointer-events", "all")
             .on("mouseover",function(d,i){
-              d3.select(this).style('fill-opacity', 1);
+              if (highlightedInterComm != -1){
+                if (i != highlightedInterComm){
+                  d3.select(this).style('fill-opacity', fullOpacity);
+                }
+                else{
+                  d3.select(this).style('fill-opacity', emptyOpacity);
+                }
+              }
+              else{
+                d3.select(this).style('fill-opacity', fadedOpacity);
+              }
             })
             .on("mouseout",function(d,i){
-              d3.select(this).style('fill-opacity', 0);
+              if (highlightedInterComm != -1){
+                if (i == highlightedInterComm){
+                  d3.select(this).style('fill-opacity', emptyOpacity);
+                }
+                else{
+                  d3.select(this).style('fill-opacity', fadedOpacity);
+                }
+              }
+              else{
+                d3.select(this).style('fill-opacity', fullOpacity);
+              }
             })
             .on("click",function(d,i){
               interComms.style("pointer-events","all") // now we can click/hover on every department
               d3.select(this).style("pointer-events","none") // except the current one!
+
+              interComms.style("fill-opacity",fadedOpacity) //same here, show every intercomm except this one
+              d3.select(this).style('fill-opacity', emptyOpacity);
+              highlightedInterComm = i
+
+              
+              voronoi.style("fill-opacity", oneIfInInterComm(i))
+              voronoi.style("stroke-opacity", oneIfInInterComm(i))
+
               var BBox = d3.select(this).node().getBBox()
               var neBound = map.layerPointToLatLng(L.point(BBox.x,BBox.y))
               var swBound = map.layerPointToLatLng(L.point(BBox.x+BBox.width,BBox.y+BBox.height))
@@ -254,6 +313,8 @@ export default function (element, error, interComm_shape, voronoi_shape) {
     var voronoiContainment = loadContainmentFile("data/voronoi_cont.json")
     var interCommContainment = loadContainmentFile("data/intercomm_cont.json")
 
+    var firstVoronoiByInterComm = []
+
     var layersColorUrl = {} //placehoder for the layers, to compute them only once
     function setLayer(newLayerUrl){
       console.log('SETTING LAYER', newLayerUrl)
@@ -293,6 +354,12 @@ export default function (element, error, interComm_shape, voronoi_shape) {
           interComm_means[newLayerUrl][i] = 0
         }
 
+        firstVoronoiByInterComm = []
+        for (var i=0; i<interComm_shape.features.length; ++i){
+          firstVoronoiByInterComm[i] = 10000 //bigger than the max, ~670
+        }
+
+
         var onWorkEnded = function (e) {
             var canvasData = e.data.result;
             var index = e.data.index;
@@ -301,6 +368,7 @@ export default function (element, error, interComm_shape, voronoi_shape) {
             var interComm_means_portion = e.data.interComm_means
             var voronoi_counts_portion = e.data.voronoi_counts
             var voronoi_means_portion = e.data.voronoi_means
+            var firstVoronoiByInterCommPortion = e.data.firstVoronoiByInterComm
 
             for (var i=0; i<voronoi_shape.features.length; ++i){
               voronoi_counts[newLayerUrl][i] += voronoi_counts_portion[i]
@@ -309,6 +377,15 @@ export default function (element, error, interComm_shape, voronoi_shape) {
             for (var i=0; i<interComm_shape.features.length; ++i){
               interComm_counts[newLayerUrl][i] += interComm_counts_portion[i]
               interComm_means[newLayerUrl][i] += interComm_means_portion[i]
+            }
+
+            for (var i=0; i<interComm_shape.features.length; ++i){
+              interComm_counts[newLayerUrl][i] += interComm_counts_portion[i]
+              interComm_means[newLayerUrl][i] += interComm_means_portion[i]
+
+              if (firstVoronoiByInterComm[i] > firstVoronoiByInterCommPortion[i]){
+                firstVoronoiByInterComm[i] = firstVoronoiByInterCommPortion[i]
+              }
             }
 
             tempContext.putImageData(canvasData, 0, blockSize * index);
@@ -340,6 +417,7 @@ export default function (element, error, interComm_shape, voronoi_shape) {
                           "layerUrl":newLayerUrl}
 
               setLayerComputed();
+              console.log(firstVoronoiByInterComm)
             }
         };
 
@@ -363,7 +441,6 @@ export default function (element, error, interComm_shape, voronoi_shape) {
 
 
       }
-
       else{
         setLayerComputed();
       }

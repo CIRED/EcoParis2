@@ -6,8 +6,9 @@ function getColour(d){
                       'ffffcc';
 }
 
-var processColour = function(binaryData, l, width, height, pixels, shift, containmentWidth, containmentHeight, voronoiContainmentData, interCommContainmentData, voronoi_means, voronoi_counts ,interComm_means, interComm_counts){
+var processColour = function(binaryData, l, width, height, pixels, shift, containmentWidth, containmentHeight, voronoiContainmentData, interCommContainmentData, voronoi_means, voronoi_counts ,interComm_means, interComm_counts, firstVoronoiByInterComm){
 
+  var  voronoiInInterCommCount = []
   for (var i=0; i<l; i++) {
       var px = i%width
       var py = i/width
@@ -18,7 +19,7 @@ var processColour = function(binaryData, l, width, height, pixels, shift, contai
           var value = pixels[shift + i]
 
           var voronoi_id = voronoiContainmentData[shift + i]
-          var interComm_id = voronoiContainmentData[shift + i]
+          var interComm_id = interCommContainmentData[shift + i]
 
           if (voronoi_id != 0){
             voronoi_counts[voronoi_id-1] += 1
@@ -28,6 +29,22 @@ var processColour = function(binaryData, l, width, height, pixels, shift, contai
           if (interComm_id != 0){
             interComm_counts[interComm_id-1] += 1
             interComm_means[interComm_id-1] += value
+          }
+
+          if (voronoi_id != 0 && interComm_id != 0){ //voronoi inside an interComm, is it the first one?
+
+            while (interComm_id - 1 >= voronoiInInterCommCount.length){
+              voronoiInInterCommCount[voronoiInInterCommCount.length] = []
+            }
+
+            while (voronoi_id - 1 >= voronoiInInterCommCount[interComm_id-1].length){
+              voronoiInInterCommCount[interComm_id - 1][voronoiInInterCommCount[interComm_id - 1].length] = 0
+            }
+
+            voronoiInInterCommCount[interComm_id - 1][voronoi_id - 1] += 1
+            /*if (firstVoronoiByInterComm[interComm_id-1] > voronoi_id - 1){
+              firstVoronoiByInterComm[interComm_id-1] = voronoi_id - 1
+            }*/
           }
 
           binaryData[pos+2]   = parseInt(getColour(value),16) & 255
@@ -41,6 +58,17 @@ var processColour = function(binaryData, l, width, height, pixels, shift, contai
           }
       }
   }
+
+  console.log(voronoiInInterCommCount)
+  voronoiInInterCommCount.forEach((p,i) => {
+    var index = 100000
+    p.forEach((d,j) => { //first index where greater than a given value
+      if (d > 20 && j < index){
+        index = j
+      }
+    })
+    firstVoronoiByInterComm[i]=index
+  })
 }
 
 self.addEventListener('message', function(e) {
@@ -79,12 +107,19 @@ self.addEventListener('message', function(e) {
     interComm_means[i] = 0
   }
 
-  processColour(binaryData,l,width,height,pixels, l*index, containmentWidth, containmentHeight, voronoiContainmentData, interCommContainmentData, voronoi_means, voronoi_counts ,interComm_means, interComm_counts)
+  var firstVoronoiByInterComm = []
+
+  for (var i=0; i<numInterComms; ++i){
+    firstVoronoiByInterComm[i]=10000 // bigger than the max, which is around 670
+  }
+
+  processColour(binaryData,l,width,height,pixels, l*index, containmentWidth, containmentHeight, voronoiContainmentData, interCommContainmentData, voronoi_means, voronoi_counts ,interComm_means, interComm_counts, firstVoronoiByInterComm)
 
   self.postMessage({result: canvasData, 
                     index: index,
                     voronoi_means:voronoi_means,
                     voronoi_counts:voronoi_counts,
-                    interComm_means,interComm_means,
-                    interComm_counts:interComm_counts });
+                    interComm_means:interComm_means,
+                    interComm_counts:interComm_counts,
+                    firstVoronoiByInterComm:firstVoronoiByInterComm });
 }, false);
