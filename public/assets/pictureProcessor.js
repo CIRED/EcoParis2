@@ -6,8 +6,9 @@ function getColour(d){
                       'ffffcc';
 }
 
-var processColour = function(binaryData, l, width, height, pixels, shift, containmentWidth, containmentHeight, voronoiContainmentData, interCommContainmentData, voronoi_means, voronoi_counts ,interComm_means, interComm_counts, firstVoronoiByInterComm){
+var processColour = function(binaryData, l, width, height, pixels, shift, containmentWidth, containmentHeight, voronoiContainmentData, interCommContainmentData, voronoi_means, voronoi_counts , voronoi_hist, interComm_means, interComm_counts, interComm_hist, firstVoronoiByInterComm){
 
+  //console.log(voronoi_hist)
   var  voronoiInInterCommCount = []
   for (var i=0; i<l; i++) {
       var px = i%width
@@ -24,11 +25,13 @@ var processColour = function(binaryData, l, width, height, pixels, shift, contai
           if (voronoi_id != 0){
             voronoi_counts[voronoi_id-1] += 1
             voronoi_means[voronoi_id-1] += value
+            voronoi_hist[voronoi_id-1].push(value)
           }
 
           if (interComm_id != 0){
             interComm_counts[interComm_id-1] += 1
             interComm_means[interComm_id-1] += value
+            interComm_hist[interComm_id-1].push(value)
           }
 
           if (voronoi_id != 0 && interComm_id != 0){ //voronoi inside an interComm, is it the first one?
@@ -93,18 +96,22 @@ self.addEventListener('message', function(e) {
   //initalize means and counts arrays
   var voronoi_means = []
   var voronoi_counts = []
+  var voronoi_hist = {}
 
   for (var i=0; i<numVoronois; ++i){
     voronoi_counts[i] = 0
     voronoi_means[i] = 0
+    voronoi_hist[i] = []
   }
 
   var interComm_means = []
   var interComm_counts = []
+  var interComm_hist = {}
 
   for (var i=0; i<numInterComms; ++i){
     interComm_counts[i] = 0
     interComm_means[i] = 0
+    interComm_hist[i] = []
   }
 
   var firstVoronoiByInterComm = []
@@ -113,13 +120,15 @@ self.addEventListener('message', function(e) {
     firstVoronoiByInterComm[i]=10000 // bigger than the max, which is around 670
   }
 
-  processColour(binaryData,l,width,height,pixels, l*index, containmentWidth, containmentHeight, voronoiContainmentData, interCommContainmentData, voronoi_means, voronoi_counts ,interComm_means, interComm_counts, firstVoronoiByInterComm)
+  processColour(binaryData,l,width,height,pixels, l*index, containmentWidth, containmentHeight, voronoiContainmentData, interCommContainmentData, voronoi_means, voronoi_counts ,voronoi_hist,interComm_means, interComm_counts, interComm_hist, firstVoronoiByInterComm)
 
-  self.postMessage({result: canvasData, 
+  self.postMessage({result: canvasData,
                     index: index,
                     voronoi_means:voronoi_means,
                     voronoi_counts:voronoi_counts,
+                    voronoi_hist:voronoi_hist,
                     interComm_means:interComm_means,
                     interComm_counts:interComm_counts,
+                    interComm_hist:interComm_hist,
                     firstVoronoiByInterComm:firstVoronoiByInterComm });
 }, false);

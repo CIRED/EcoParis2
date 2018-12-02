@@ -115,17 +115,11 @@ export default function (element, error, interComm_shape, voronoi_shape) {
     }
 
 
-  var voronoi_means = {}
-  var voronoi_counts = {}
-  var interComm_means = {}
-  var interComm_counts = {}
-  //voronoi_means[urlPhosphore] = paraseMeans(loadFile("data/voronoi_means_p.txt"))
-  //voronoi_means[urlAzote] = paraseMeans(loadFile("data/voronoi_means_n.txt"))
-
     var emptyOpacity = 0
     var fadedOpacity = 0.4
     var semiFullOpacity = 0.7
     var fullOpacity = 1
+    var current_layer = ""
 
     var voronoi = svg.append("g").selectAll("path")
         .data(voronoi_shape.features)
@@ -139,14 +133,15 @@ export default function (element, error, interComm_shape, voronoi_shape) {
               d3.select(this).style('fill-opacity', emptyOpacity);
               defs_path.datum(d.geometry)
               update_clip()
+              update_chart(i,current_layer,true)
             })
             .on("mouseout",function(d,i){
               if (highlightedInterComm != -1){
-                console.log(highlightedInterComm,i)
+                //console.log(highlightedInterComm,i)
                 d3.select(this).style('fill-opacity', oneIfInInterComm(highlightedInterComm)(d,i));
                 d3.select(this).style('stroke-opacity', oneIfInInterComm(highlightedInterComm)(d,i));
               }
-              
+
               defs_path.datum([])
               update_clip()
             })
@@ -195,6 +190,7 @@ export default function (element, error, interComm_shape, voronoi_shape) {
               else{
                 d3.select(this).style('fill-opacity', fadedOpacity);
               }
+              update_chart(i,current_layer,false)
             })
             .on("mouseout",function(d,i){
               if (highlightedInterComm != -1){
@@ -217,7 +213,7 @@ export default function (element, error, interComm_shape, voronoi_shape) {
               d3.select(this).style('fill-opacity', emptyOpacity);
               highlightedInterComm = i
 
-              
+
               voronoi.style("fill-opacity", oneIfInInterComm(i))
               voronoi.style("stroke-opacity", oneIfInInterComm(i))
 
@@ -269,6 +265,28 @@ export default function (element, error, interComm_shape, voronoi_shape) {
     var currentUpdateFunction = getColour(0)//litteraly anything other than null
 
     var update_parameters = {};
+
+
+    function update_chart (i,layerURl,voro){
+      var info = layersColorUrl[layerURl]
+      if(!info){
+        return ;
+      }
+      if(voro=true){
+        var data = info.voronoi_hist[i]
+      }
+      else{
+        var data = info.interComm_hist[i]
+      }
+
+      console.log(data)
+      var myBarChart = new Chart(context, {
+        type: 'bar',
+        data: data,
+      });
+
+    }
+
 
 	function update() { //add here everything that could potentially change
 		var tl = update_parameters.tl
@@ -338,20 +356,24 @@ export default function (element, error, interComm_shape, voronoi_shape) {
         var blockSize = canvas.height / workersCount;
 
         //initalize means and counts arrays
-        voronoi_means[newLayerUrl] = []
-        voronoi_counts[newLayerUrl] = []
+        var voronoi_means = []
+        var voronoi_counts = []
+        var voronoi_hist = {}
 
         for (var i=0; i<voronoi_shape.features.length; ++i){
-          voronoi_counts[newLayerUrl][i] = 0
-          voronoi_means[newLayerUrl][i] = 0
+          voronoi_counts[i] = 0
+          voronoi_means[i] = 0
+          voronoi_hist[i] = []
         }
 
-        interComm_means[newLayerUrl] = []
-        interComm_counts[newLayerUrl] = []
+        var interComm_means = []
+        var interComm_counts = []
+        var interComm_hist = {}
 
         for (var i=0; i<interComm_shape.features.length; ++i){
-          interComm_counts[newLayerUrl][i] = 0
-          interComm_means[newLayerUrl][i] = 0
+          interComm_counts[i] = 0
+          interComm_means[i] = 0
+          interComm_hist[i] = []
         }
 
         firstVoronoiByInterComm = []
@@ -369,19 +391,19 @@ export default function (element, error, interComm_shape, voronoi_shape) {
             var voronoi_counts_portion = e.data.voronoi_counts
             var voronoi_means_portion = e.data.voronoi_means
             var firstVoronoiByInterCommPortion = e.data.firstVoronoiByInterComm
+            var voronoi_hist_portion = e.data.voronoi_hist
+            var interComm_hist_portion = e.data.interComm_hist
 
             for (var i=0; i<voronoi_shape.features.length; ++i){
-              voronoi_counts[newLayerUrl][i] += voronoi_counts_portion[i]
-              voronoi_means[newLayerUrl][i] += voronoi_means_portion[i]
-            }
-            for (var i=0; i<interComm_shape.features.length; ++i){
-              interComm_counts[newLayerUrl][i] += interComm_counts_portion[i]
-              interComm_means[newLayerUrl][i] += interComm_means_portion[i]
+              voronoi_counts[i] += voronoi_counts_portion[i]
+              voronoi_means[i] += voronoi_means_portion[i]
+              voronoi_hist[i] = voronoi_hist[i].concat(voronoi_hist_portion[i])
             }
 
             for (var i=0; i<interComm_shape.features.length; ++i){
-              interComm_counts[newLayerUrl][i] += interComm_counts_portion[i]
-              interComm_means[newLayerUrl][i] += interComm_means_portion[i]
+              interComm_counts[i] += interComm_counts_portion[i]
+              interComm_means[i] += interComm_means_portion[i]
+              interComm_hist[i] = interComm_hist[i].concat(interComm_hist_portion[i])
 
               if (firstVoronoiByInterComm[i] > firstVoronoiByInterCommPortion[i]){
                 firstVoronoiByInterComm[i] = firstVoronoiByInterCommPortion[i]
@@ -391,17 +413,17 @@ export default function (element, error, interComm_shape, voronoi_shape) {
             tempContext.putImageData(canvasData, 0, blockSize * index);
             finished++;
 
-            console.log(voronoi_means)
+            //console.log(voronoi_means)
             if (finished == workersCount) {
 
               for (var i=0; i<voronoi_shape.features.length; ++i){
-                if (voronoi_counts[newLayerUrl][i] != 0){
-                  voronoi_means[newLayerUrl][i] /= voronoi_counts[newLayerUrl][i]
+                if (voronoi_counts[i] != 0){
+                  voronoi_means[i] /= voronoi_counts[i]
                 }
               }
               for (var i=0; i<interComm_shape.features.length; ++i){
-                if (interComm_counts[newLayerUrl][i] != 0){
-                  interComm_means[newLayerUrl][i] /= interComm_counts[newLayerUrl][i]
+                if (interComm_counts[i] != 0){
+                  interComm_means[i] /= interComm_counts[i]
                 }
               }
 
@@ -414,10 +436,14 @@ export default function (element, error, interComm_shape, voronoi_shape) {
                           "br_lng":GeoImage.br_lng,
                           "width":canvas.width,
                           "height":canvas.height,
+                          "voronoi_means":voronoi_means,
+                          "interComm_means":interComm_means,
+                          "voronoi_hist":voronoi_hist,
+                          "interComm_hist":interComm_hist,
                           "layerUrl":newLayerUrl}
 
               setLayerComputed();
-              console.log(firstVoronoiByInterComm)
+              //console.log(firstVoronoiByInterComm)
             }
         };
 
@@ -425,11 +451,11 @@ export default function (element, error, interComm_shape, voronoi_shape) {
             var worker = new Worker("assets/pictureProcessor.js");
             worker.onmessage = onWorkEnded;
             var canvasData = tempContext.getImageData(0, blockSize * index, canvas.width, blockSize);
-            worker.postMessage({canvasData: canvasData, 
-                                pixels:pixels, 
-                                index: index, 
-                                length: segmentLength, 
-                                width: canvas.width, 
+            worker.postMessage({canvasData: canvasData,
+                                pixels:pixels,
+                                index: index,
+                                length: segmentLength,
+                                width: canvas.width,
                                 height:canvas.height,
                                 containmentWidth : voronoiContainment.width,
                                 containmentHeight : voronoiContainment.height,
@@ -450,18 +476,18 @@ export default function (element, error, interComm_shape, voronoi_shape) {
         var info = layersColorUrl[newLayerUrl]
         var colour_mean = d3.scale.linear() //change fill color according to current layer and means
                 .range(['#ffffcc','#e31a1c'])
-                .domain([Math.min(...voronoi_means[info.layerUrl]),Math.max(...voronoi_means[info.layerUrl])])
+                .domain([Math.min(...info.voronoi_means),Math.max(...info.voronoi_means)])
 
 
         var colour_mean2 = d3.scale.linear() //change fill color according to current layer and means
                 .range(['#ffffcc','#e31a1c'])
-                .domain([Math.min(...interComm_means[info.layerUrl]),Math.max(...interComm_means[info.layerUrl])])
+                .domain([Math.min(...info.interComm_means),Math.max(...info.interComm_means)])
 
         voronoi.attr("fill",function(d,i){
-              return colour_mean(voronoi_means[info.layerUrl][i])
+              return colour_mean(info.voronoi_means[i])
             })
         interComms.attr("fill",function(d,i){
-              return colour_mean(interComm_means[info.layerUrl][i])
+              return colour_mean(info.interComm_means[i])
             })
 
             canvas.width=info.width//GeoImage.width
@@ -476,6 +502,7 @@ export default function (element, error, interComm_shape, voronoi_shape) {
           update_parameters.current_geoLong = current_geoLong
 
           update()
+          current_layer = newLayerUrl
           imgs.attr('xlink:href', info.url)
       }
 
