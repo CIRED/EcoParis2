@@ -26,8 +26,10 @@ whenDocumentLoaded(() => {
 	        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 	    });
 
-	    var tl = new L.LatLng(49.2485668,1.4403262)
-	    var br = new L.LatLng(48.1108602,3.5496114)
+	    //var tl = new L.LatLng(49.2485668,1.4403262) -- for first set of geojsons (about 1900 x 1500)
+	    //var br = new L.LatLng(48.1108602,3.5496114)
+	    var tl = new L.LatLng(49.2484152,1.4405301) // for the new set of geojsons (about 8000 x 6000)
+	    var br = new L.LatLng(48.1106774,3.5658312)
 
 	    // Zoomed on Paris
 	    var map = L.map('ParisMap', {zoomControl: true}).fitBounds(L.latLngBounds(tl,br));
