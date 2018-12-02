@@ -57,15 +57,8 @@ var processColour = function(binaryData, l, width, height, pixels, shift, vorono
             voronoi_id = voronoiContainmentData[shift + containment_index]
             interComm_id = interCommContainmentData[shift + containment_index]
           }// else, this image is bigger, this pixel is outside! so in no voronoi or interComm..
-
-          
-
-          if (containment_index >= original_width * original_height || containment_index < 0){ //if this pixel was outside the
-            console.log("oops")
-          }
-          //console.log(containment_index,px,py)
-
-          
+      
+      
 
           if (voronoi_id != 0){
             voronoi_counts[voronoi_id-1] += 1
