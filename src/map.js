@@ -102,10 +102,18 @@ export default function (element, error, interComm_shape, voronoi_shape) {
     function update_clip(){
 
       function clip_projectPoint(x, y) {
-          var width = (map.latLngToLayerPoint(default_br).x-map.latLngToLayerPoint(default_tl).x)
-          var height = (map.latLngToLayerPoint(default_br).y-map.latLngToLayerPoint(default_tl).y)
-          var tx = (x - default_tl.lng)/(default_br.lng - default_tl.lng) * (width-1)
-          var ty = (default_tl.lat+0.00314 - y)/(default_tl.lat - default_br.lat) * (height-1) //it is slightly offset, and I have no idea why
+
+          var default_tl_point = map.latLngToLayerPoint([layersColorUrl[current_layer].tl_lat,layersColorUrl[current_layer].tl_lng])
+          var default_br_point = map.latLngToLayerPoint([layersColorUrl[current_layer].br_lat,layersColorUrl[current_layer].br_lng])
+
+          var width = (default_br_point.x-default_tl_point.x)
+          var height = (default_br_point.y-default_tl_point.y)
+
+          var point = map.latLngToLayerPoint(L.latLng(y,x))
+
+          var tx = (point.x - default_tl_point.x)/(default_br_point.x - default_tl_point.x) * (width - 1)
+          var ty = (point.y - default_tl_point.y)/(default_br_point.y - default_tl_point.y) * (height - 1)
+
           this.stream.point(tx, ty);
       }
 
