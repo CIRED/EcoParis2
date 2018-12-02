@@ -42,6 +42,7 @@ function loadContainmentFile(url){
     var json = loadFile(url)
     var containment = JSON.parse(json)
     containment.data = JSON.parse(containment.data)
+    console.log(containment)
     return containment
 }
 
@@ -479,7 +480,11 @@ export default function (element, error, interComm_shape, voronoi_shape) {
                                 voronoiContainmentData : voronoiContainment.data,
                                 interCommContainmentData : interCommContainment.data,
                                 numVoronois : voronoi_shape.features.length,
-                                numInterComms : interComm_shape.features.length});
+                                numInterComms : interComm_shape.features.length,
+                                tl_lat : GeoImage.tl_lat,
+                                tl_lng : GeoImage.tl_lng,
+                                br_lat : GeoImage.br_lat,
+                                br_lng : GeoImage.br_lng});
         }
 
 

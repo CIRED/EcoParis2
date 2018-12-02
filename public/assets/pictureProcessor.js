@@ -6,21 +6,66 @@ function getColour(d){
                       'ffffcc';
 }
 
-var processColour = function(binaryData, l, width, height, pixels, shift, voronoiContainmentData, interCommContainmentData, voronoi_means, voronoi_counts , voronoi_hist, interComm_means, interComm_counts, interComm_hist, firstVoronoiByInterComm){
+var processColour = function(binaryData, l, width, height, pixels, shift, voronoiContainmentData, interCommContainmentData, voronoi_means, voronoi_counts , voronoi_hist, interComm_means, interComm_counts, interComm_hist, firstVoronoiByInterComm, bounds){
+
+
+  const original_tl_lat = 49.2485668
+  const original_tl_lng = 1.4403262
+
+  const original_br_lat = 48.1108602
+  const original_br_lng = 3.5496114
+
+  const original_width = 1977
+  const original_height = 1590
 
   //console.log(voronoi_hist)
+  console.log(bounds)
   var  voronoiInInterCommCount = []
   for (var i=0; i<l; i++) {
+
       var px = i%width
-      var py = i/width
+      var py = Math.floor(i/width)
 
       if(px >= 0 && px < width && py >= 0 && py < height){
           var pos = i*4
 
           var value = pixels[shift + i]
 
-          var voronoi_id = voronoiContainmentData[shift + i]
-          var interComm_id = interCommContainmentData[shift + i]
+          //careful here! our data is always between image_width and image_height (well, inside this rectangle), but the containment
+          //data was always between default_tl and default_br, so we have to compute the location in this referential before sampling
+          //the containment data!
+
+          var current_tx = px / (width - 1) //between 0 and 1 included
+          var current_ty = py / (height - 1)
+
+          var current_lng = (1-current_tx) * bounds.tl_lng + current_tx * bounds.br_lng
+          var current_lat = (1-current_ty) * bounds.tl_lat + current_ty * bounds.br_lat
+
+          var original_tx = (current_lng - original_tl_lng) / (original_br_lng - original_tl_lng) //between 0 and 1, included (should anyway)
+          var original_ty = (original_tl_lat - current_lat) / (original_tl_lat - original_br_lat)
+
+          var original_px = Math.floor(original_tx * (original_width - 1))
+          var original_py = Math.floor(original_ty * (original_height - 1)) //in the original image, the one that generated the containment data
+
+
+          var voronoi_id = 0
+          var interComm_id = 0
+
+          if (original_px >= 0 && original_py >= 0 && original_px < original_width && original_py < original_width){ 
+            var containment_index = original_px + original_py * original_width
+
+            voronoi_id = voronoiContainmentData[shift + containment_index]
+            interComm_id = interCommContainmentData[shift + containment_index]
+          }// else, this image is bigger, this pixel is outside! so in no voronoi or interComm..
+
+          
+
+          if (containment_index >= original_width * original_height || containment_index < 0){ //if this pixel was outside the
+            console.log("oops")
+          }
+          //console.log(containment_index,px,py)
+
+          
 
           if (voronoi_id != 0){
             voronoi_counts[voronoi_id-1] += 1
@@ -87,6 +132,10 @@ self.addEventListener('message', function(e) {
   var interCommContainmentData = e.data.interCommContainmentData
   var numVoronois = e.data.numVoronois
   var numInterComms = e.data.numInterComms
+  var tl_lat = e.data.tl_lat
+  var tl_lng = e.data.tl_lng
+  var br_lat = e.data.br_lat
+  var br_lng = e.data.br_lng
 
   var l = e.data.length;
   var index = e.data.index;
@@ -118,7 +167,11 @@ self.addEventListener('message', function(e) {
     firstVoronoiByInterComm[i]=10000 // bigger than the max, which is around 670
   }
 
-  processColour(binaryData,l,width,height,pixels, l*index, voronoiContainmentData, interCommContainmentData, voronoi_means, voronoi_counts ,voronoi_hist,interComm_means, interComm_counts, interComm_hist, firstVoronoiByInterComm)
+  processColour(binaryData,l,width,height,pixels, l*index, voronoiContainmentData, interCommContainmentData, voronoi_means, voronoi_counts ,voronoi_hist,interComm_means, interComm_counts, interComm_hist, firstVoronoiByInterComm,
+                {tl_lat:tl_lat,
+                tl_lng:tl_lng,
+                br_lat:br_lat,
+                br_lng:br_lng})
 
   self.postMessage({result: canvasData,
                     index: index,
