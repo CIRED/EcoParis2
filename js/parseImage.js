@@ -245,11 +245,11 @@ whenDocumentLoaded(() => {
 		var objective_width = 1943
 		var objective_height = 1586
 	    for (var i=0; i<objective_height*objective_width; i++) {
-	        var px = Math.floor(i*canvas.width / objective_width) %canvas.width
+	        var px = Math.floor((i%objective_width) * canvas.width / objective_width)
 	        var py = Math.floor(Math.floor(i/objective_width) * (canvas.height / objective_height))
 	        //var value = getRasterPixelValue(i%canvas.width,i/canvas.width)
 	        if(px >= 0 && px < image_width && py >= 0 && py < image_height){
-	            pos = (px + py * objective_width)*4
+	            pos = (px + py * canvas.width)*4
 
 	            var value = pixels[pos]
 	            //var v = (value - mean)/(std*2) + 0.5;
