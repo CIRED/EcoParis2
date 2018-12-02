@@ -272,7 +272,7 @@ export default function (element, error, interComm_shape, voronoi_shape) {
       if(!info){
         return ;
       }
-      if(voro=true){
+      if(voro == true){
         var data = info.voronoi_hist[i]
       }
       else{
@@ -280,10 +280,25 @@ export default function (element, error, interComm_shape, voronoi_shape) {
       }
 
       console.log(data)
-      var myBarChart = new Chart(context, {
+
+      var buckets = []
+      for (var j=0; j<info.hist_buckets.length+1; ++j){
+        buckets[j]=0
+      }
+      data.forEach((d,j) => {
+        for (var j=0; j<info.hist_buckets.length; ++j){
+          if (d <= info.hist_buckets[j]){
+            buckets[j]++;
+            return;
+          }
+        }
+        buckets[info.hist_buckets.length]++ //larger than any separation ==> in the last bucket!
+      })
+      console.log(buckets)
+      /*var myBarChart = new Chart(context, {
         type: 'bar',
         data: data,
-      });
+      });*/
 
     }
 
@@ -415,6 +430,7 @@ export default function (element, error, interComm_shape, voronoi_shape) {
 
             //console.log(voronoi_means)
             if (finished == workersCount) {
+              console.log("finished :",interComm_hist[0].length)
 
               for (var i=0; i<voronoi_shape.features.length; ++i){
                 if (voronoi_counts[i] != 0){
@@ -426,6 +442,8 @@ export default function (element, error, interComm_shape, voronoi_shape) {
                   interComm_means[i] /= interComm_counts[i]
                 }
               }
+
+              var hist_buckets = [70,140]; //TODO: change acodring to layer (hard-coded...)
 
               var value = canvas.toDataURL("png");
               imgs.attr("xlink:href",value)
@@ -440,6 +458,7 @@ export default function (element, error, interComm_shape, voronoi_shape) {
                           "interComm_means":interComm_means,
                           "voronoi_hist":voronoi_hist,
                           "interComm_hist":interComm_hist,
+                          "hist_buckets":hist_buckets,
                           "layerUrl":newLayerUrl}
 
               setLayerComputed();
