@@ -28,8 +28,16 @@ whenDocumentLoaded(() => {
 
 	    //var tl = new L.LatLng(49.2485668,1.4403262) -- for first set of geojsons (about 1900 x 1500)
 	    //var br = new L.LatLng(48.1108602,3.5496114)
-	    var tl = new L.LatLng(49.2484152,1.4405301) // for the new set of geojsons (about 8000 x 6000)
-	    var br = new L.LatLng(48.1106774,3.5658312)
+	    //var tl = new L.LatLng(49.248402684,1.440530526) // n_ret ref & cc
+	    //var br = new L.LatLng(48.110679214,3.565831072)
+	    var tl = new L.LatLng(49.248415209,1.440530148) // pollination ref & cc
+	    var br = new L.LatLng(48.110677418,3.565831209)
+	    //var tl = new L.LatLng(49.248416421,1.440530148) // T air ref
+	    //var br = new L.LatLng(48.110855080,3.549359301)
+	    //var tl = new L.LatLng(49.248402684,1.440530526) // T air cc
+	    //var br = new L.LatLng(48.110679214,3.565831072)
+	    //var tl = new L.LatLng(49.248416431,1.440330728) // L ref & cc
+	    //var br = new L.LatLng(48.110709699,3.549609828)
 
 	    // Zoomed on Paris
 	    var map = L.map('ParisMap', {zoomControl: true}).fitBounds(L.latLngBounds(tl,br));
@@ -246,6 +254,7 @@ whenDocumentLoaded(() => {
 
 		var objective_width = 1943
 		var objective_height = 1586
+
 	    for (var i=0; i<objective_height*objective_width; i++) {
 	        var px = Math.floor((i%objective_width) * canvas.width / objective_width)
 	        var py = Math.floor(Math.floor(i/objective_width) * (canvas.height / objective_height))
