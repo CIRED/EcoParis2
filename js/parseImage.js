@@ -120,7 +120,7 @@ whenDocumentLoaded(() => {
             
             
             
-            var fc = {'type': 'FeatureCollection','features': []}
+            /*var fc = {'type': 'FeatureCollection','features': []}
             var poly = '{"type": "Feature","properties": {},"geometry": {"type": "Polygon","coordinates": []}}'
                 
             for (i=0;i<paths.length;i++){
@@ -196,7 +196,7 @@ whenDocumentLoaded(() => {
             		})
             	})
             })
-        	download(JSON.stringify(fc, null, 2), 'sd-voronoi.json', "json", 8)
+        	download(JSON.stringify(fc, null, 2), 'sd-voronoi.json', "json", 8)*/
               
 	    }
 	    
@@ -241,19 +241,22 @@ whenDocumentLoaded(() => {
 			voronoi_means[i]=0
 		}
 		console.log(dpt_shape.features)
-	    for (var i=0; i<canvas.height*canvas.width; i++) {
-	        var px = i%canvas.width
-	        var py = Math.floor(i/canvas.width)
+
+		var objective_width = 1943
+		var objective_height = 1586
+	    for (var i=0; i<objective_height*objective_width; i++) {
+	        var px = Math.floor(i*canvas.width / objective_width) %canvas.width
+	        var py = Math.floor(Math.floor(i/objective_width) * (canvas.height / objective_height))
 	        //var value = getRasterPixelValue(i%canvas.width,i/canvas.width)
 	        if(px >= 0 && px < image_width && py >= 0 && py < image_height){
-	            pos = i*4
+	            pos = (px + py * objective_width)*4
 
-	            var value = pixels[i*4]
+	            var value = pixels[pos]
 	            //var v = (value - mean)/(std*2) + 0.5;
 	            data[pos]   = parseInt(getColour(value),16) & 255
 	            data[pos+1]   = (parseInt(getColour(value),16) >> 8) & 255
 	            data[pos+2]   = (parseInt(getColour(value),16) >> 16) & 255
-	            if (pixels[i*4]==0){
+	            if (pixels[pos]==0){
 	                data[pos+3]=0; // alpha (transparency)
 	            }
 	            else{
@@ -308,13 +311,13 @@ whenDocumentLoaded(() => {
 		  a.download = name;
 		}
 		console.log(img.width,img.height)
-		/*download(JSON.stringify({"width":img.width,
-								"height":img.height,
+		download(JSON.stringify({"width":objective_width,
+								"height":objective_height,
 								"tl_lat":tl.lat,
 								"tl_lng":tl.lng,
 								"br_lat":br.lat,
 								"br_lng":br.lng,
-								"data":JSON.stringify(myArray)}),"p_export.json","json")*/
+								"data":JSON.stringify(myArray)}),"p_export.json","json",43)
 		for (var i=0; i<8; ++i){
 
 			download(string[i],"points_"+i+".txt","txt",i)
