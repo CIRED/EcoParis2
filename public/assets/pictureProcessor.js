@@ -6,7 +6,7 @@ function getColour(d){
                       'ffffcc';
 }
 
-var processColour = function(binaryData, l, width, height, pixels, shift, containmentWidth, containmentHeight, voronoiContainmentData, interCommContainmentData, voronoi_means, voronoi_counts , voronoi_hist, interComm_means, interComm_counts, interComm_hist, firstVoronoiByInterComm){
+var processColour = function(binaryData, l, width, height, pixels, shift, voronoiContainmentData, interCommContainmentData, voronoi_means, voronoi_counts , voronoi_hist, interComm_means, interComm_counts, interComm_hist, firstVoronoiByInterComm){
 
   //console.log(voronoi_hist)
   var  voronoiInInterCommCount = []
@@ -83,8 +83,6 @@ self.addEventListener('message', function(e) {
   var width = e.data.width;
   var height = e.data.height;
   var pixels = e.data.pixels;
-  var containmentWidth = e.data.containmentWidth
-  var containmentHeight = e.data.containmentHeight
   var voronoiContainmentData = e.data.voronoiContainmentData
   var interCommContainmentData = e.data.interCommContainmentData
   var numVoronois = e.data.numVoronois
@@ -120,7 +118,7 @@ self.addEventListener('message', function(e) {
     firstVoronoiByInterComm[i]=10000 // bigger than the max, which is around 670
   }
 
-  processColour(binaryData,l,width,height,pixels, l*index, containmentWidth, containmentHeight, voronoiContainmentData, interCommContainmentData, voronoi_means, voronoi_counts ,voronoi_hist,interComm_means, interComm_counts, interComm_hist, firstVoronoiByInterComm)
+  processColour(binaryData,l,width,height,pixels, l*index, voronoiContainmentData, interCommContainmentData, voronoi_means, voronoi_counts ,voronoi_hist,interComm_means, interComm_counts, interComm_hist, firstVoronoiByInterComm)
 
   self.postMessage({result: canvasData,
                     index: index,

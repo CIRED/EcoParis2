@@ -476,8 +476,6 @@ export default function (element, error, interComm_shape, voronoi_shape) {
                                 length: segmentLength,
                                 width: canvas.width,
                                 height:canvas.height,
-                                containmentWidth : voronoiContainment.width,
-                                containmentHeight : voronoiContainment.height,
                                 voronoiContainmentData : voronoiContainment.data,
                                 interCommContainmentData : interCommContainment.data,
                                 numVoronois : voronoi_shape.features.length,
