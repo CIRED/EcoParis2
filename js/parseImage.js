@@ -21,7 +21,7 @@
 
 // ========= CHANGE PARAMETERS HERE =========
 
-var FileName = "pollination_cc_image.tif"
+var FileName = "L_ref_image.tif"
 var OutputFileName = "L_ref.json" //.json
 
 var North = 49.248416431
@@ -43,8 +43,9 @@ function whenDocumentLoaded(action) {
 
 
 whenDocumentLoaded(() => {
-		document.getElementById("my-image").src=FileName
-		console.log(document.getElementById("my-image").src)
+
+	document.getElementById("my-image").src=FileName
+
 	var urlDPT = "depts.geojson";
 	var urlVoronoi = "sd-voronoi.json";
 
