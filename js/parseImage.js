@@ -1,3 +1,37 @@
+/**
+ *	Use this page to parse new geotiffs (or .tif[f]) and convert them to the json the website uses (but this part is easily done locally, no need for the actual server).
+ *	(keep in mind that my program is in french, translations might not be exact)
+ *  (Ok apparently htis can only run on Safari (I did not test them all though), Google Chrome cannot load tif images, sorry about that)
+ *
+ *	STEPS:
+ *
+ *		- Open QGIS
+ *		- Open your tiff file with it
+ *		- On the "layers" pannel, select your tiff and right-click, export => save as...
+ *		- Output mode, select image
+ *		- (Choose file location/name, and write its name down there)
+ *		- SCR: choose default (EPSG:4326 - WGS 84)
+ *		- Write down the North/East/West/South values down there
+ *		- Go back to SCR = EPSG-102110-RGF_1993_Lambert_93 (or whatever it was, actually)
+ *		- Save
+ *		- Choose bin thresholds for the categories of the histograms on the right (values go from 0 to 255, choose an array of separators)
+ *		- Run the server locally (npm won't work here, "python -m http.server" will do)
+ *		- At the bottom of the page, download you file.
+ */
+
+// ========= CHANGE PARAMETERS HERE =========
+
+var FileName = "pollination_cc_image.tif"
+var OutputFileName = "L_ref.json" //.json
+
+var North = 49.248416431
+var South = 48.110709699
+var West = 1.440326192
+var East = 3.549611427
+
+var HistogramBins = [80,160] //3 categories: 0-80, 81-160, 161-255
+
+
 function whenDocumentLoaded(action) {
 	if (document.readyState === "loading") {
 		document.addEventListener("DOMContentLoaded", action);
@@ -7,7 +41,10 @@ function whenDocumentLoaded(action) {
 	}
 }
 
+
 whenDocumentLoaded(() => {
+		document.getElementById("my-image").src=FileName
+		console.log(document.getElementById("my-image").src)
 	var urlDPT = "depts.geojson";
 	var urlVoronoi = "sd-voronoi.json";
 
@@ -20,63 +57,9 @@ whenDocumentLoaded(() => {
 
 	function loadGeoJSON(error, dpt_shape, voronoi_shape){
 
-	    //General Map
-	    var basemap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-	        maxZoom: 19,
-	        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-	    });
+	    var tl = new L.LatLng(North,West)
+	    var br = new L.LatLng(South,East)
 
-	    //var tl = new L.LatLng(49.2485668,1.4403262) -- for first set of geojsons (about 1900 x 1500)
-	    //var br = new L.LatLng(48.1108602,3.5496114)
-	    //var tl = new L.LatLng(49.248402684,1.440530526) // n_ret ref & cc
-	    //var br = new L.LatLng(48.110679214,3.565831072)
-	    //var tl = new L.LatLng(49.248415209,1.440530148) // pollination ref & cc
-	    //var br = new L.LatLng(48.110677418,3.565831209)
-	    //var tl = new L.LatLng(49.248416421,1.440530148) // T air ref
-	    //var br = new L.LatLng(48.110855080,3.549359301)
-	    //var tl = new L.LatLng(49.248402684,1.440530526) // T air cc
-	    //var br = new L.LatLng(48.110679214,3.565831072)
-	    var tl = new L.LatLng(49.248416431,1.440330728) // L ref & cc
-	    var br = new L.LatLng(48.110709699,3.549609828)
-
-	    // Zoomed on Paris
-	    var map = L.map('ParisMap', {zoomControl: true}).fitBounds(L.latLngBounds(tl,br));
-	    basemap.addTo(map);
-
-	    function style(feature) {
-	        return {
-	            opacity:0,
-	            fillOpacity: 0
-	        };
-	    }
-
-	    L.geoJson(dpt_shape,{style:style}).addTo(map);
-
-	    var svg = d3.select("#ParisMap").select("svg")
-
-	    var imgs = svg.selectAll("image").data([0,0]);
-	    imgs.enter()
-	        .append("svg:image")
-	        .attr('x', 0)
-	        .attr('y', 0)
-	        .attr("xlink:href", "")
-
-	    function projectPoint(x, y) {
-	        var point = map.latLngToLayerPoint(new L.LatLng(y, x));
-	        this.stream.point(point.x, point.y);
-	    }
-
-	    transform = d3.geo.transform({point: projectPoint});
-	    var path = d3.geo.path()
-	        .projection(transform);
-
-	    var watersheds = svg.append("g").selectAll("path")
-	        .data(dpt_shape.features)
-	        .enter().append('path')
-	            .attr('d', path)
-	            .attr('vector-effect', 'non-scaling-stroke')
-	            .style('stroke', "#000")
-	            .attr("fill","none")
 
 	    var img = document.getElementById('my-image');
 	    var image_width = img.width
@@ -86,147 +69,14 @@ whenDocumentLoaded(() => {
 	        canvas.width=image_width//image_data.width
 	        canvas.height=image_height//image_data.width
 
-	    var paths = ['data/points_0_out.txt','data/points_1_out.txt',
-            'data/points_2_out.txt','data/points_3_out.txt',
-            'data/points_4_out.txt','data/points_5_out.txt',
-            'data/points_6_out.txt','data/points_7_out.txt']
-
-	    var polygons = []
-	    for (var i=0; i<paths.length;++i){
-	    	polygons[i] = svg.append("g").attr("class","polygons")
-	    }
-        
-        map.on("viewreset", update);
-	    update();
-        
-	    function update() {
-	        var width = (map.latLngToLayerPoint(br).x-map.latLngToLayerPoint(tl).x)
-	        var height = (map.latLngToLayerPoint(br).y-map.latLngToLayerPoint(tl).y)
-            
-	        imgs.attr("transform", 
-	            function(d) { 
-	                var point = map.latLngToLayerPoint(tl)
-	                return "translate("+ 
-	                    point.x +","+ 
-	                    point.y +")";
-	            }
-	        )
-            
-	        imgs.attr("width", 
-	            function(d) { 
-	                return width;
-	            }
-	        )
-            
-	        imgs.attr("height", 
-	            function(d) { 
-	                return height;
-	            }
-	        )
-	        imgs.attr("xlink:href",value)
-            
-	        watersheds.attr("d",path)
-
-            
-            
-            
-            /*var fc = {'type': 'FeatureCollection','features': []}
-            var poly = '{"type": "Feature","properties": {},"geometry": {"type": "Polygon","coordinates": []}}'
-                
-            for (i=0;i<paths.length;i++){
-                dpt_index = i;
-                data = loadFile(paths[i])
-                data_splitted = data.split(",")
-                data_real=[]
-                for(j=0;j<data_splitted.length;j++){
-                    if(j==0){
-                        
-                    }
-                    else if(j%2==1){
-                        data_real.push(parseFloat(""+data_splitted[j]))
-                    }
-                    else{
-                        data_real.push(parseFloat(""+data_splitted[j].slice(0,7)))
-                    }
-                }
-
-                var json_data = []
-                for(k=0;k<data_real.length;k=k+2){
-                    json_data.push({x:data_real[k], y:data_real[k+1]})
-                }
-
-                function imageToLatLng(x,y){
-                    var tx = x/(image_width-1)
-                    var ty = y/(image_height-1)
-                    return L.latLng(tl.lat * (1-ty) + br.lat * ty, tl.lng * (1-tx) + br.lng * tx)
-                }
-
-                var voronoi = d3.voronoi()
-                    .x(function(d) { return map.latLngToLayerPoint(imageToLatLng(d.x,d.y)).x; })
-                    .y(function(d) { return map.latLngToLayerPoint(imageToLatLng(d.x,d.y)).y; })
-                    .extent([[-100000, -100000], [100000,100000]]);//[canvas.width, canvas.height]]);
-                    
-                voronoi_clipped_data = voronoi(json_data).polygons().map(function(d) {
-                        var mapped = dpt_shape.features[dpt_index].geometry.coordinates[0].map(function(p) {
-                            projected_pt = map.latLngToLayerPoint(L.latLng(p[1],p[0]))
-                            return [projected_pt.x,projected_pt.y]
-                        });
-                        var polygon_mask = d3.geom.polygon(mapped)
-                        var polygon = d3.geom.polygon(d)
-                        var clipped = polygon.clip(polygon_mask) 
-                        return clipped
-                    })
-                    
-                var voronoi_clipped = polygons[i]
-                    .selectAll("path")
-                    .data(voronoi_clipped_data)
-                    .enter()
-                    .append("path")
-                    .attr("d",function(d){return ((d != null && d.length != 0) ? "M"+d.join("L")+"Z" : "") })
-                    .style("stroke", function(d){  return "#000000"} )
-                    .style("fill","none");
-
-                polygons[i]
-                    .selectAll("path")
-                    .attr("d",function(d){return ((d != null && d.length != 0) ? "M"+d.join("L")+"Z" : "") })
-                    
-                voronoi_clipped_data.forEach(p => {
-                    let feature = JSON.parse(poly)
-                    p.reverse().push(p[0])
-                    feature.geometry.coordinates.push(p)
-                    fc.features.push(feature)
-                })
-            }
-            //todo: map fc to latlng
-            fc.features.forEach((feature,i) =>{
-            	feature.geometry.coordinates.forEach((coordinates,j) => {
-            		coordinates.forEach((point,k) => {
-            			var latLng = map.layerPointToLatLng(L.point(point[0],point[1]))
-            			fc.features[i].geometry.coordinates[j][k] = [latLng.lng,latLng.lat]
-            		})
-            	})
-            })
-        	download(JSON.stringify(fc, null, 2), 'sd-voronoi.json', "json", 8)*/
-              
-	    }
 	    
-	    function getColour(d){
+	    function getColour(d){ //this doesn't affect the json at all, but tweak a bit if you want to choose nice colours while you can see the whole image
 	        return  d > 200 ? '1c1ae3':
 	                d > 150 ? '2a4efc':
 	                d > 100 ? '3c8dfd':
 	                d > 50 ? '4cb2fe':
 	                          'ccffff';
 	    }
-	    function loadFile(filePath) {
-			var result = null;
-			var xmlhttp = new XMLHttpRequest();
-			xmlhttp.open("GET", filePath, false);
-			xmlhttp.send();
-			if (xmlhttp.status==200) {
-				result = xmlhttp.responseText;
-			}
-			return result;
-		}
 
 	    canvas.getContext('2d').drawImage(img, 0, 0, image_width, image_height);
 	    var context = canvas.getContext('2d');
@@ -237,112 +87,67 @@ whenDocumentLoaded(() => {
 	    // The property data will contain an array of int8
 	    var data=imageData.data;
 
-	    
 		var myArray=[]
-		var string=[]
 
-		var voronoi_means = []
-		var voronoi_count = []
-		for (var i=0; i<8; ++i){
-			string[i]=""
-		}
-		for (var i=0; i<voronoi_shape.features.length;++i){
-			voronoi_count[i]=0
-			voronoi_means[i]=0
-		}
-		console.log(dpt_shape.features)
-
-		var objective_width = 1943
+		var objective_width = 1943 //same as our reference image, so that the image is not too big (8000 x 6000...)
 		var objective_height = 1586
 
 	    for (var i=0; i<objective_height*objective_width; i++) {
 	        var px = Math.floor((i%objective_width) * canvas.width / objective_width)
 	        var py = Math.floor(Math.floor(i/objective_width) * (canvas.height / objective_height))
-	        //var value = getRasterPixelValue(i%canvas.width,i/canvas.width)
+
 	        if(px >= 0 && px < image_width && py >= 0 && py < image_height){
 	            pos = (px + py * canvas.width)*4
 
 	            var value = pixels[pos]
-	            //var v = (value - mean)/(std*2) + 0.5;
-	            data[pos]   = parseInt(getColour(value),16) & 255
-	            data[pos+1]   = (parseInt(getColour(value),16) >> 8) & 255
-	            data[pos+2]   = (parseInt(getColour(value),16) >> 16) & 255
+
+	            //this part is actually not useful, but it is nice to see the result beforehand
+	            var reference_size_pos = (Math.floor(i / objective_width) * canvas.width + (i % objective_width))*4
+	            data[reference_size_pos]   = parseInt(getColour(value),16) & 255 //r
+	            data[reference_size_pos+1]   = (parseInt(getColour(value),16) >> 8) & 255 //g
+	            data[reference_size_pos+2]   = (parseInt(getColour(value),16) >> 16) & 255 //b
 	            if (pixels[pos]==0){
-	                data[pos+3]=0; // alpha (transparency)
+	                data[reference_size_pos+3]=0; // alpha (transparency)
 	            }
 	            else{
-	                data[pos+3]=180;
+	                data[reference_size_pos+3]=180;
 	            }
 	        	myArray[i]=value;
-
-	        	var tx = px/(canvas.width-1)
-	        	var ty = py/(canvas.height-1)
-	        	/*for (var k=0; k<1; ++k){
-	        		if (d3.geoContains(dpt_shape.features[k],[tl.lng * (1-tx) + br.lng*tx,tl.lat * (1-ty) + br.lat*ty])){
-		        		for (var j=0; j<value/51; ++j){
-			        		string[k] += ""+px+","+py+"\n"
-			        	}
-		        	}
-	        	}*/
-        		/*for (var k=0; k<voronoi_shape.features.length; ++k){
-					if (d3.geoContains(voronoi_shape.features[k],[tl.lng * (1-tx) + br.lng*tx,tl.lat * (1-ty) + br.lat*ty])){
-		        		voronoi_count[k]=voronoi_count[k]+1
-		        		voronoi_means[k]=voronoi_means[k]+value
-		        	}
-	        	}*/
-	        	
 	        	
 	        	if (px == 0){
-	        		console.log(py)
+	        		console.log(py+'/'+canvas.height)
 	        	}
-	        	//console.log(i)
 	        }
 	        else{
 	        	myArray[i]=0;
 	        }
 	    }
-		var voronoi_string = ""
-		for (var i=0; i<voronoi_shape.features.length;++i){
-			if (voronoi_count[i] == 0){
-				voronoi_means[i]=0
-			}
-			else{
-				voronoi_means[i]=voronoi_means[i]/voronoi_count[i]
-			}
-			voronoi_string = voronoi_string+voronoi_means[i]+"\n"
-		}
 	    //console.log(JSON.stringify(myArray))
-	    function download(text, name, type, id) {
-	      d3.select(".container").append("a").attr("id","a"+id)
-		  var a = document.getElementById("a"+id);
-		  var file = new Blob([text], {type: type});
+	    function download(text) {
+	      d3.select(".container").append("a").attr("id","a_image")
+		  var a = document.getElementById("a_image");
+		  var file = new Blob([text], {type: 'json'});
 		  a.href = URL.createObjectURL(file);
-		  a.innerHTML="Click here to download points_"+id+".txt"
+		  a.innerHTML="Click here to download "+OutputFileName
 	      d3.select(".container").append("br")
-		  a.download = name;
+		  a.download = OutputFileName;
 		}
-		console.log(img.width,img.height)
+
 		download(JSON.stringify({"width":objective_width,
 								"height":objective_height,
 								"tl_lat":tl.lat,
 								"tl_lng":tl.lng,
 								"br_lat":br.lat,
 								"br_lng":br.lng,
-								"data":JSON.stringify(myArray)}),"p_export.json","json",43)
-		for (var i=0; i<8; ++i){
+								"buckets":JSON.stringify(HistogramBins),
+								"data":JSON.stringify(myArray)}))
 
-			download(string[i],"points_"+i+".txt","txt",i)
-		}
-		download(voronoi_string,"voronoi_means_p.txt","txt",9)
-	    // we put this random image in the context
 	    context.putImageData(imageData, 0, 0); // at coords 0,0
-
 
 	    var value=canvas.toDataURL("png");
 	    document.getElementById("my-second-image").src=value
+	    alert("Conversion succesful!")
 
-	    imgs.attr("xlink:href",value)
-	    console.log("ok!")
 	}
 });
 
