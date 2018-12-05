@@ -452,7 +452,7 @@ function kmeans(groups){
   var results = []
   for (var i=0; i<groups.length; ++i){
     var points = groups[i]
-    var num_clusters = 4
+    var num_clusters = 10
 
     var max_x = d3.max(points,(d) => d.x)
     var max_y = d3.max(points,(d) => d.y)
@@ -467,7 +467,7 @@ function kmeans(groups){
       clusters[j] = []
     }
     console.log(centers)
-    for (var iter=0; iter<1; ++iter){
+    for (var iter=0; iter<50; ++iter){
       points.forEach((d) => {
         var dists = computeDistances(centers,d)
         var min = 10000;
