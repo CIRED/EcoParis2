@@ -3,7 +3,8 @@
 </template>
 
 <script>
-import displayMap from '../map_create_voronoi'
+//import displayMap from '../map_generate_voronoi' // ======= here! ======= 
+import displayMap from '../map_check_voronoi' 
 
 export default {
   props: ['currentLayer'],
@@ -16,8 +17,8 @@ export default {
    * This is used to create the Leaflet map and bind the event handlers.
    */
   mounted () {
-    var urlDepartment = 'data/backup/intercommunalites.geojson'
-    var urlVoronoi = 'data/backup/voronois_final.json'
+    var urlDepartment = 'data/intercommunalites.geojson' // ======= here! ======= 
+    var urlVoronoi = 'data/voronois.json' // ======= here! ======= 
 
     queue()
       .defer(d3.json, urlDepartment)
