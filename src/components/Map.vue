@@ -6,7 +6,7 @@
 import displayMap from '../map'
 
 export default {
-  props: ['currentLayer'],
+  props: ['currentLayer', 'onHist'],
   data: () => ({
     setLayer: () => {},
   }),
@@ -23,7 +23,7 @@ export default {
       .defer(d3.json, urlInterComm)
       .defer(d3.json, urlVoronoi)
       .await((e, d, v) => {
-        this.setLayer = displayMap(this.$refs.map, e, d, v)
+        this.setLayer = displayMap(this.$refs.map, e, d, v, (data, bins) => this.onHist(data))
         this.setLayer(this.currentLayer)
       })
   },

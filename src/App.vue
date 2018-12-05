@@ -9,8 +9,8 @@
       <Layers v-model="currentLayer" />
     </section>
     <section class="container">
-      <Map :currentLayer="currentLayer" />
-      <Sidebar :currentLayer="currentLayer" />
+      <Map :currentLayer="currentLayer" :onHist="hist => this.histData = hist" />
+      <Sidebar :currentLayer="currentLayer" :histData="histData" />
     </section>
   </div>
 </template>
@@ -27,6 +27,7 @@ export default {
     currentLayer: 'data/p_export.json',
     introVisible: true,
     sidebarVisible: false,
+    histData: null,
   }),
 
   components: { Intro, ZoomControl, Layers, Map, Sidebar }

@@ -54,7 +54,7 @@ function getColour(d){
                       'ffffcc';
 }
 
-export default function (element, error, interComm_shape, voronoi_shape) {
+export default function (element, error, interComm_shape, voronoi_shape, onHistChange) {
   var current_geoLat = 0.0;
   var current_geoLong = 0.0;
   var display_coord = 0; //Do not display the localisation marker
@@ -146,7 +146,6 @@ export default function (element, error, interComm_shape, voronoi_shape) {
             })
             .on("mouseout",function(d,i){
               if (highlightedInterComm != -1){
-                //console.log(highlightedInterComm,i)
                 d3.select(this).style('fill-opacity', oneIfInInterComm(highlightedInterComm)(d,i));
                 d3.select(this).style('stroke-opacity', oneIfInInterComm(highlightedInterComm)(d,i));
               }
@@ -288,12 +287,11 @@ export default function (element, error, interComm_shape, voronoi_shape) {
         var data = info.interComm_hist[i]
       }
 
-      console.log(data)
-
       var buckets = []
       for (var j=0; j<info.hist_buckets.length+1; ++j){
         buckets[j]=0
       }
+
       data.forEach((d,j) => {
         for (var j=0; j<info.hist_buckets.length; ++j){
           if (d <= info.hist_buckets[j]){
@@ -303,12 +301,8 @@ export default function (element, error, interComm_shape, voronoi_shape) {
         }
         buckets[info.hist_buckets.length]++ //larger than any separation ==> in the last bucket!
       })
-      console.log(buckets)
-      /*var myBarChart = new Chart(context, {
-        type: 'bar',
-        data: data,
-      });*/
 
+      onHistChange(data, buckets)
     }
 
 
@@ -469,6 +463,8 @@ export default function (element, error, interComm_shape, voronoi_shape) {
                           "interComm_hist":interComm_hist,
                           "hist_buckets":hist_buckets,
                           "layerUrl":newLayerUrl}
+
+              // TODO(liautaud): Unmask the layer.
 
               setLayerComputed();
               //console.log(firstVoronoiByInterComm)
