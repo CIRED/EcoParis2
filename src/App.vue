@@ -32,7 +32,8 @@ import Sidebar from './components/Sidebar.vue'
 
 export default {
   data: () => ({
-    currentLayer: 'data/p_export.json',
+    // currentLayer: 'data/p_export.json',
+    currentLayer: null,
     currentLocation: null,
     currentHistogram: null,
     introVisible: false,
@@ -112,6 +113,7 @@ p {
   box-shadow: 0 0 3px rgba(#000, .2);
   background: #fff;
   display: flex;
+  margin: 20px 0;
   flex-basis: content;
 
   a {

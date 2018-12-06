@@ -331,7 +331,10 @@ export default function (element, error, interComm_shape, voronoi_shape, onHistC
       data.forEach((d,j) => {
         for (var j=0; j<info.hist_buckets.length; ++j){
           if (d <= info.hist_buckets[j]){
-            buckets[j]++;
+            // FIXME(liautaud): Does it make sense to plot 0 values on the histograms?
+            if (d > 0) {
+              buckets[j]++;
+            }
             return;
           }
         }

@@ -1,4 +1,18 @@
 {
+	"layers": [
+		{
+			"path": "data/p_export.json",
+			"name": "Phosph.",
+			"icon": "P"
+		},
+
+		{
+			"path": "data/n_export.json",
+			"name": "Nitrog.",
+			"icon": "N"
+		}
+	],
+
 	"viewport":	{
 		"topLatitude": 49.2485668,
 		"bottomLatitude": 48.1108602,

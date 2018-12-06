@@ -3,26 +3,39 @@
     <h3>Layers</h3>
 
     <div class="buttons">
-      <a href="#"
-        :class="{ active: value == 'data/p_export.json' }"
-        @click="$emit('input', 'data/p_export.json')">
-        <span>P</span>
-        Phosph.
-      </a>
-
-      <a href="#"
-        :class="{ active: value == 'data/n_export.json' }"
-        @click="$emit('input', 'data/n_export.json')">
-        <span>N</span>
-        Nitrog.
+      <a v-for="layer in layers"
+        :class="{ active: value == layer.path }"
+        @click.prevent="select(layer)">
+        <span v-html="layer.icon"></span>
+        {{ layer.name }}
       </a>
     </div>
   </section>
 </template>
 
 <script>
+import Config from '../config.json'
+
 export default {
-  props: ['value']
+  props: ['value'],
+
+  data: () => ({
+    layers: Config.layers.map(layer => ({
+      'name': layer.name,
+      'path': layer.path,
+      'icon': layer.icon,
+      'loading': false,
+    }))
+  }),
+
+  methods: {
+    select(layer) {
+      if (!layer.loading) {
+      console.log(layer.path)
+        this.$emit('input', layer.path)
+      }
+    }
+  }
 }
 </script>
 
@@ -36,7 +49,6 @@ export default {
   background: #fff;
   display: flex;
   flex-direction: column;
-  margin: 20px 0;
 }
 
 .layers h3, .layers a {
@@ -66,6 +78,7 @@ export default {
   align-items: center;
   justify-content: center;
   outline: none;
+  cursor: pointer;
 
   height: 80px;
   text-decoration: none;
@@ -75,7 +88,7 @@ export default {
 
   &.active {
     color: #fff;
-    background: #bbe069;
+    background: #6b79ca;
     box-shadow: inset 0 0 2px rgba(0, 0, 0, .2);
   }
 
