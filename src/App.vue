@@ -5,12 +5,19 @@
     </transition>
 
     <section class="menu">
-      <ZoomControl />
+      <LocationControl
+        :onLocation="loc => this.currentLocation = loc" />
       <Layers v-model="currentLayer" />
+      <ZoomControl />
     </section>
     <section class="container">
-      <Map :currentLayer="currentLayer" :onHist="hist => this.histData = hist" />
-      <Sidebar :currentLayer="currentLayer" :histData="histData" />
+      <Map
+        :currentLayer="currentLayer"
+        :currentLocation="currentLocation"
+        :onHist="hist => this.currentHistogram = hist" />
+      <Sidebar
+        :currentLayer="currentLayer"
+        :currentHistogram="currentHistogram" />
     </section>
   </div>
 </template>
@@ -18,6 +25,7 @@
 <script>
 import Intro from './components/Intro.vue'
 import ZoomControl from './components/ZoomControl.vue'
+import LocationControl from './components/LocationControl.vue'
 import Layers from './components/Layers.vue'
 import Map from './components/Map.vue'
 import Sidebar from './components/Sidebar.vue'
@@ -25,12 +33,14 @@ import Sidebar from './components/Sidebar.vue'
 export default {
   data: () => ({
     currentLayer: 'data/p_export.json',
-    introVisible: true,
+    currentLocation: null,
+    currentHistogram: null,
+    introVisible: false,
+    // introVisible: true,
     sidebarVisible: false,
-    histData: null,
   }),
 
-  components: { Intro, ZoomControl, Layers, Map, Sidebar }
+  components: { Intro, ZoomControl, LocationControl, Layers, Map, Sidebar }
 }
 </script>
 
@@ -94,5 +104,30 @@ p {
   background: #000;
   width: 100%;
   height: 100%;
+}
+
+.zoom-control, .location-control {
+  height: 40px;
+  border: 1px solid #bbb;
+  box-shadow: 0 0 3px rgba(#000, .2);
+  background: #fff;
+  display: flex;
+  flex-basis: content;
+
+  a {
+    outline: none;
+    height: 40px;
+    width: 39px;
+    font-family: Courier New;
+    font-size: 18pt;
+    line-height: 40px;
+    text-align: center;
+    text-decoration: none;
+    color: #000;
+  }
+
+  a:first-child {
+    border-right: 1px solid #bbb;
+  }
 }
 </style>

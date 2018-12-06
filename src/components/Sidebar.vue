@@ -4,14 +4,14 @@
       <h2>Mesure de la rétention de phosphore.</h2>
       <p>Le service de rétention du phosphore permet d'améliorer la qualité de l'eau (superficielle et souterraine). Il est directement utile aux organismes de gestion de l'eau (syndicats et département d'assainissement), et donc aux habitants dont les impôts financent la maintenance des services d'assainissement.</p>
 
-      <Histogram :data="histData" />
+      <Histogram :data="currentHistogram" />
     </div>
 
     <div v-if="currentLayer == 'data/n_export.json'">
       <h2>Mesure de la rétention de l'azote.</h2>
       <p>Le service de rétention de l'azote permet d'améliorer la qualité de l'eau (superficielle et souterraine). Il est directement utile aux organismes de gestion de l'eau (syndicats et département d'assainissement), et donc aux habitants dont les impôts financent la maintenance des services d'assainissement.</p>
 
-      <Histogram :data="histData" />
+      <Histogram :data="currentHistogram" />
     </div>
   </section>
 </template>
@@ -20,7 +20,7 @@
 import Histogram from './Histogram.vue'
 
 export default {
-  props: ['currentLayer', 'histData'],
+  props: ['currentLayer', 'currentHistogram'],
   components: { Histogram }
 }
 </script>

@@ -36,6 +36,7 @@ export default {
   background: #fff;
   display: flex;
   flex-direction: column;
+  margin: 20px 0;
 }
 
 .layers h3, .layers a {

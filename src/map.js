@@ -1,3 +1,5 @@
+import Config from './config.json'
+
 var urlAzote = 'data/n_export.json'
 var urlPhosphore = 'data/p_export.json'
 
@@ -55,15 +57,72 @@ function getColour(d){
 }
 
 export default function (element, error, interComm_shape, voronoi_shape, onHistChange) {
-  var current_geoLat = 0.0;
-  var current_geoLong = 0.0;
-  var display_coord = 0; //Do not display the localisation marker
-  var geomarker;
+  var current_geoLat = null;
+  var current_geoLong = null;
 
-  // This needs to leave.
-  const default_tl = new L.LatLng(49.2485668,1.4403262)
-  const default_br = new L.LatLng(48.1108602,3.5496114)
+  const default_tl = new L.LatLng(
+    Config.viewport.topLatitude,
+    Config.viewport.leftLongitude
+  )
+  const default_br = new L.LatLng(
+    Config.viewport.bottomLatitude,
+    Config.viewport.rightLongitude
+  )
   const initialBounds = L.latLngBounds(default_tl, default_br)
+
+  /**
+   * Returns whether a given point is within the Paris region.
+   */
+  function isWithinParis(point) {
+    return interComm_shape.features.some(s => d3.geoContains(s, point))
+  }
+
+  /**
+   * Sets the position of the geolocation marker.
+   */
+  function setLocation(lat, lng) {
+    if (!lat || !lng || !isWithinParis([lng, lat])) {
+      lat = null
+      lng = null
+      map.fitBounds(initialBounds)
+    } else {
+      map.panTo(new L.LatLng(lat, lng))
+      map.setZoom(11)
+    }
+
+    current_geoLat = lat
+    current_geoLong = lng
+    updateMarker()
+  }
+
+  /**
+   * Updates the marker element on the map with the right coordinates.
+   */
+  function updateMarker() {
+    if (current_geoLat && current_geoLong) {
+      const point = map.latLngToLayerPoint([current_geoLat, current_geoLong])
+      const x = point.x - markerIcon.iconAnchor[0]
+      const y = point.y - markerIcon.iconAnchor[1]
+      markerElement.attr('visibility', 'visible')
+      markerElement.attr('transform', `translate(${x}, ${y})`)
+    } else {
+      markerElement.attr('visibility', 'hidden')
+    }
+  }
+
+  /**
+   * Sets the position of the geolocation marker to the current position
+   * of the user (computed using the Geolocation API).
+   */
+  function setLocationFromCurrent() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(pos => {
+        setLocation(pos.coords.latitude, pos.coords.longitude)
+      })
+    }
+  }
+
+  setLocationFromCurrent()
 
   const map = createMap(element, initialBounds) //TODO: if the window is small, the zoom is too far (> 14) and the map is grey, untill we zoom in
 
@@ -231,42 +290,19 @@ export default function (element, error, interComm_shape, voronoi_shape, onHistC
                 map.fitBounds(L.latLngBounds(neBound,swBound)) // zoom to department
             })
 
-    var greenIcon = {
-        iconUrl: 'assets/marker.png',
-        iconSize: [24, 24],
-        iconAnchor: [12, 24]
-    };
+    const markerIcon = {
+      iconUrl: 'assets/marker.png',
+      iconSize: [24, 24],
+      iconAnchor: [12, 24]
+    }
 
-    var marker_image = svg.append("g").selectAll("image").data([0])
+    let markerElement = svg.append("g").selectAll("image").data([0])
       .enter()
         .append("svg:image")
-        .attr("xlink:href", greenIcon.iconUrl)
-        .attr("width",greenIcon.iconSize[0])
-        .attr("height",greenIcon.iconSize[1])
+        .attr("xlink:href", markerIcon.iconUrl)
+        .attr("width", markerIcon.iconSize[0])
+        .attr("height", markerIcon.iconSize[1])
         .style("pointer-events", "none")
-
-    function getLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(showPosition) // call showPosition when finished
-
-        } else {
-            x.innerHTML = "Geolocation is not supported by this browser.";
-        }
-    }
-
-    function showPosition(position) {
-        //current_geoLat = position.coords.latitude;
-        //current_geoLong = position.coords.longitude;
-        current_geoLat = 48.864716;
-        current_geoLong = 2.349014;
-        for (var k=0; k<interComm_shape.features.length; ++k){
-            if (d3.geoContains(interComm_shape.features[k],[current_geoLong,current_geoLat])){
-                display_coord = 1;
-            }
-      }
-    }
-    showPosition(null)
-    //getLocation();
 
     var canvas = document.createElement("canvas")
     var context = canvas.getContext('2d');
@@ -306,45 +342,29 @@ export default function (element, error, interComm_shape, voronoi_shape, onHistC
     }
 
 
-	function update() { //add here everything that could potentially change
-		var tl = update_parameters.tl
-		var br = update_parameters.br
-		var current_geoLat = update_parameters.current_geoLat
-		var current_geoLong = update_parameters.current_geoLong
+  function update() { //add here everything that could potentially change
+    var tl = update_parameters.tl
+    var br = update_parameters.br
 
-      	console.log('UPDATING')
-        var width = (map.latLngToLayerPoint(br).x-map.latLngToLayerPoint(tl).x)
-        var height = (map.latLngToLayerPoint(br).y-map.latLngToLayerPoint(tl).y)
-        imgs.attr("transform",
-            function(d) {
-                var point = map.latLngToLayerPoint(tl)
-                return "translate("+
-                    point.x +","+
-                    point.y +")";
-            }
-        )
-        imgs.attr("width",
-            function(d) {
-                return width;
-            }
-        )
-        imgs.attr("height",
-            function(d) {
-                return height;
-            }
-        )
-        interComms.attr("d",path)
-        voronoi.attr("d",path)
-        update_clip()
+    console.log('UPDATING')
+    var width = (map.latLngToLayerPoint(br).x-map.latLngToLayerPoint(tl).x)
+    var height = (map.latLngToLayerPoint(br).y-map.latLngToLayerPoint(tl).y)
+    imgs.attr("transform",
+        function(d) {
+            var point = map.latLngToLayerPoint(tl)
+            return "translate("+
+                point.x +","+
+                point.y +")";
+        }
+    )
 
-       	marker_image.attr("transform",
-       		function(d) {
-       			var point = map.latLngToLayerPoint([current_geoLat,current_geoLong])
-                return "translate("+
-                    (point.x - greenIcon.iconAnchor[0]) +","+
-                    (point.y - greenIcon.iconAnchor[1]) +")";
-       		})
-    }
+    imgs.attr('width', () => width)
+    imgs.attr('height', () => height)
+    interComms.attr("d",path)
+    voronoi.attr("d",path)
+    update_clip()
+    updateMarker()
+  }
 
     var voronoiContainment = loadContainmentFile("data/voronoi_cont.json")
     var interCommContainment = loadContainmentFile("data/intercomm_cont.json")
@@ -533,7 +553,7 @@ export default function (element, error, interComm_shape, voronoi_shape, onHistC
       }
 
     }
-	map.on('viewreset', update)
+  map.on('viewreset', update)
 
-  return setLayer
+  return [setLayer, setLocation]
 }
