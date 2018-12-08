@@ -4,6 +4,7 @@
       <h2>{{ layers[currentLayer].title }}</h2>
       <div v-html="layers[currentLayer].content"></div>
       <Histogram :data="currentHistogram" />
+      <svg id="espacesVerts"></svg>
     </div>
 
     <div v-else class="split">
@@ -43,6 +44,13 @@ export default {
 </script>
 
 <style lang="scss" type="text/scss">
+
+#espacesVerts {
+  height: 300px;
+  width: 100%;
+  margin-top: 25px;
+  margin-bottom: 5px;
+}
 .sidebar {
   z-index: 500;
   width: 450px;

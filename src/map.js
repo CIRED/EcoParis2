@@ -5,7 +5,7 @@ var urlPhosphore = 'data/p_export.json'
 
 const MAP_TILES = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png'
 const MAP_ATTRIB = '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-
+//TODO: use geojsons to compute defautl viewport, will work better if changed in the future by NatCap
 /**
  * Creates a Leaflet map of the Paris area and returns it.
  */
@@ -176,6 +176,149 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
   var fullOpacity = 1
   var currentLayerPath = ""
 
+  var svg_EV = d3.select("body").append("svg")
+                  .attr("id","espacesVerts_")
+                  .attr("width",450)
+                  .attr("height",300)
+                  .attr("style","margin-left:200px;")
+
+  var imgs_EV = svg_EV.selectAll("image").data([0])
+    .enter()
+    .append("svg:image")
+    .attr('x', 0)
+    .attr('y', 0)
+    .attr("xlink:href", "")
+
+  var shape_EV = svg_EV.append("g")
+  shape_EV
+    .selectAll("path")
+    .data([interComm_shape.features[0]])
+    .enter().append('path')
+    .attr('vector-effect', 'non-scaling-stroke')
+    .style('stroke', "#000")
+    .style("fill-opacity", 0)
+    .style("stroke-opacity", 1)
+
+
+  function update_EV_preview(shape_feature){
+    console.log(shape_feature)
+    console.log(d3.geo.bounds(shape_feature))
+
+    var upper_lat = d3.max(shape_feature.geometry.coordinates[0], p => p[1])
+    var lower_lat = d3.min(shape_feature.geometry.coordinates[0], p => p[1])
+    var left_lng = d3.min(shape_feature.geometry.coordinates[0], p => p[0])
+    var right_lng = d3.max(shape_feature.geometry.coordinates[0], p => p[0])
+
+    var tl_lat = default_tl.lat
+    var tl_lng = default_tl.lng
+    var br_lat = default_br.lat
+    var br_lng = default_br.lng
+
+    var left_tx = (left_lng - tl_lng) / (br_lng - tl_lng)
+    var right_tx = (right_lng - tl_lng) / (br_lng - tl_lng)
+    var top_ty = (tl_lat - upper_lat) / (tl_lat - br_lat)
+    var bottom_ty = (tl_lat - lower_lat) / (tl_lat - br_lat)
+
+    var svg_width = parseInt(svg_EV.style("width").replace("px",""))
+    var svg_height = parseInt(svg_EV.style("height").replace("px",""))
+
+    var svg_ratio = svg_width/svg_height
+
+    var shape_tl_point = map.latLngToLayerPoint([upper_lat, left_lng])
+    var shape_br_point = map.latLngToLayerPoint([lower_lat, right_lng])
+
+    var shape_ratio = (shape_br_point.x - shape_tl_point.x)/(shape_br_point.y - shape_tl_point.y)
+    console.log(shape_ratio)
+
+    var EV_width = 0
+    var EV_height = 0
+
+    if (svg_ratio < shape_ratio){ // wider than svg ==> limiting factor = width
+      EV_width = svg_width
+      EV_height = svg_width / shape_ratio
+    }
+    else{ //else, higher than svg ==> limiting factor = height
+      EV_height = svg_height
+      EV_width = svg_height * shape_ratio
+    }
+
+    cachedLayers[currentLayerPath].tl_lng
+
+    var shape_in_image_left_tx = (left_lng - cachedLayers[currentLayerPath].tl_lng) / (cachedLayers[currentLayerPath].br_lng - cachedLayers[currentLayerPath].tl_lng)
+    var shape_in_image_right_tx = (right_lng - cachedLayers[currentLayerPath].tl_lng) / (cachedLayers[currentLayerPath].br_lng - cachedLayers[currentLayerPath].tl_lng)
+    var shape_in_image_top_ty = (cachedLayers[currentLayerPath].tl_lat - upper_lat) / (cachedLayers[currentLayerPath].tl_lat - cachedLayers[currentLayerPath].br_lat)
+    var shape_in_image_bottom_ty = (cachedLayers[currentLayerPath].tl_lat - lower_lat) / (cachedLayers[currentLayerPath].tl_lat - cachedLayers[currentLayerPath].br_lat)
+
+    var tl_pixel_x = shape_in_image_left_tx * cachedLayers[currentLayerPath].width //pixels in the image (from 0 to image_width-1) where the bounds of the shape is
+    var tl_pixel_y = shape_in_image_top_ty * cachedLayers[currentLayerPath].height
+    var br_pixel_x = shape_in_image_right_tx * cachedLayers[currentLayerPath].width
+    var br_pixel_y = shape_in_image_bottom_ty * cachedLayers[currentLayerPath].height
+
+    var shape_width_in_pixels = br_pixel_x - tl_pixel_x
+    var shape_height_in_pixels = br_pixel_y - tl_pixel_y
+
+    //console.log(cachedLayers[currentLayerPath].width/shape_width_in_pixels)
+    //console.log(cachedLayers[currentLayerPath].height/shape_height_in_pixels)
+
+    var zoom_factor = Math.min(cachedLayers[currentLayerPath].width/shape_width_in_pixels , cachedLayers[currentLayerPath].height/shape_height_in_pixels)
+
+    var real_image_width = cachedLayers[currentLayerPath].width * zoom_factor
+    var real_image_height = cachedLayers[currentLayerPath].height * zoom_factor
+
+    var real_zoom_factor = Math.min(EV_width / shape_width_in_pixels, EV_height / shape_height_in_pixels)
+
+    //console.log(real_zoom_factor)
+
+    real_image_width = cachedLayers[currentLayerPath].width * real_zoom_factor
+    real_image_height = cachedLayers[currentLayerPath].height * real_zoom_factor
+
+    var real_tl_pixel_x = shape_in_image_left_tx * real_image_width
+    var real_tl_pixel_y = shape_in_image_top_ty * real_image_height
+    var real_br_pixel_x = shape_in_image_right_tx * real_image_width
+    var real_br_pixel_y = shape_in_image_bottom_ty * real_image_height
+
+    imgs_EV.attr('width', real_image_width)
+    imgs_EV.attr('height', real_image_height)
+
+    imgs_EV.attr("transform",
+      function(d) {
+        return "translate(" +
+          (-real_tl_pixel_x + (svg_width - EV_width) / 2) + "," +
+          (-real_tl_pixel_y + (svg_height - EV_height) / 2) + ")";
+      }
+    )
+
+    function projectPoint(x, y) {
+      var in_image_tx = (x - cachedLayers[currentLayerPath].tl_lng) / (cachedLayers[currentLayerPath].br_lng - cachedLayers[currentLayerPath].tl_lng)
+      var in_image_ty = (cachedLayers[currentLayerPath].tl_lat - y) / (cachedLayers[currentLayerPath].tl_lat - cachedLayers[currentLayerPath].br_lat)
+
+      var in_image_x = in_image_tx * real_image_width
+      var in_image_y = in_image_ty * real_image_height
+      //console.log(in_image_x,in_image_y)
+
+      var point = L.point(in_image_x, in_image_y);
+      this.stream.point(point.x - real_tl_pixel_x + (svg_width - EV_width) / 2, point.y - real_tl_pixel_y + (svg_height - EV_height) / 2);
+    }
+    var transform = d3.geo.transform({
+      point: projectPoint
+    });
+    var path = d3.geo.path()
+      .projection(transform);
+
+    //console.log(shape_width_in_pixels,shape_height_in_pixels)
+    //console.log(EV_width,EV_height)
+
+
+
+    var shape_EV_data = shape_EV.selectAll("path").data([shape_feature])
+    shape_EV_data.attr("d",path)
+    shape_EV_data.enter().append("path")
+      .attr('vector-effect', 'non-scaling-stroke')
+      .style('stroke', "#000")
+      .style("fill-opacity", 0)
+      .style("stroke-opacity", 1)
+  }
+
   var voronoi = svg.append("g").selectAll("path")
     .data(voronoi_shape.features)
     .enter().append('path')
@@ -189,6 +332,7 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
       defs_path.datum(d.geometry)
       update_clip()
       update_chart(i, currentLayerPath, true)
+      update_EV_preview(d)
     })
     .on("mouseout", function(d, i) {
       if (highlightedInterComm != -1) {
@@ -242,7 +386,9 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
       } else {
         d3.select(this).style('fill-opacity', fadedOpacity);
       }
+      console.log(i)
       update_chart(i, currentLayerPath, false)
+      update_EV_preview(d)
     })
     .on("mouseout", function(d, i) {
       if (highlightedInterComm != -1) {
@@ -334,11 +480,13 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
       interComms.attr('visibility', 'hidden')
       voronoi.attr('visibility', 'hidden')
       imgs.attr('visibility', 'hidden')
+      imgs_EV.attr('visibility', 'hidden')
       return;
     } else {
       interComms.attr('visibility', 'visible')
       voronoi.attr('visibility', 'visible')
       imgs.attr('visibility', 'visible')
+      imgs_EV.attr('visibility', 'visible')
     }
 
     var tl = update_parameters.tl
@@ -356,8 +504,8 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
       }
     )
 
-    imgs.attr('width', () => width)
-    imgs.attr('height', () => height)
+    imgs.attr('width', width)
+    imgs.attr('height', height)
     interComms.attr("d", path)
     voronoi.attr("d", path)
     update_clip()
@@ -477,6 +625,7 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
 
             var value = canvas.toDataURL("png");
             imgs.attr("xlink:href", value)
+            imgs_EV.attr("xlink:href", value)
             cachedLayers[path] = {
               "url": value,
               "tl_lat": json.tl_lat,
@@ -571,6 +720,7 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
       update()
       currentLayerPath = path
       imgs.attr('xlink:href', layer.url)
+      imgs_EV.attr('xlink:href', layer.url)
     })
   }
 
