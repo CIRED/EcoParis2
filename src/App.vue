@@ -7,15 +7,19 @@
     <section class="menu">
       <LocationControl
         :onLocation="loc => this.currentLocation = loc" />
-      <Layers v-model="currentLayer" />
+      <Layers
+        :layers="layers"
+        v-model="currentLayer" />
       <ZoomControl />
     </section>
     <section class="container">
       <Map
+        :layers="layers"
         :currentLayer="currentLayer"
         :currentLocation="currentLocation"
-        :onHist="hist => this.currentHistogram = hist" />
+        :onHist="h => this.currentHistogram = h" />
       <Sidebar
+        :layers="layers"
         :currentLayer="currentLayer"
         :currentHistogram="currentHistogram" />
     </section>
@@ -23,6 +27,8 @@
 </template>
 
 <script>
+import Config from './config.json'
+
 import Intro from './components/Intro.vue'
 import ZoomControl from './components/ZoomControl.vue'
 import LocationControl from './components/LocationControl.vue'
@@ -32,16 +38,27 @@ import Sidebar from './components/Sidebar.vue'
 
 export default {
   data: () => ({
+    layers: Config.layers.reduce((m, layer) => {
+      m[layer.path] = layer
+      m[layer.path].loaded = false
+      return m
+    }, {}),
+
     // currentLayer: 'data/p_export.json',
     currentLayer: null,
     currentLocation: null,
     currentHistogram: null,
-    introVisible: false,
-    // introVisible: true,
+    introVisible: true,
     sidebarVisible: false,
   }),
 
-  components: { Intro, ZoomControl, LocationControl, Layers, Map, Sidebar }
+  components: { Intro, ZoomControl, LocationControl, Layers, Map, Sidebar },
+
+  methods: {
+    onLayerLoaded(layer) {
+      console.log(layer)
+    }
+  }
 }
 </script>
 
@@ -63,7 +80,7 @@ html, body {
 }
 
 h2 {
-  font-size: 1.4rem;
+  font-size: 1.2rem;
 }
 
 p {
@@ -85,6 +102,10 @@ p {
 
   &:hover {
     padding: 9px 16px;
+  }
+
+  &.accent {
+    background: rgba(#fff, .2);
   }
 }
 

@@ -3,11 +3,13 @@
 </template>
 
 <script>
+import Config from '../config.json'
 import displayMap from '../map'
 
 export default {
-  props: ['currentLayer', 'currentLocation', 'onHist'],
+  props: ['layers', 'currentLayer', 'currentLocation', 'onHist'],
   data: () => ({
+    loadLayer: () => {},
     setLayer: () => {},
     setLocation: () => {},
   }),
@@ -24,10 +26,13 @@ export default {
       .defer(d3.json, urlInterComm)
       .defer(d3.json, urlVoronoi)
       .await((e, d, v) => {
-        [this.setLayer, this.setLocation] = displayMap(
-          this.$refs.map, e, d, v,
-          (data, bins) => this.onHist(data)
-        )
+        [this.loadLayer, this.setLayer, this.setLocation] =
+          displayMap(this.$refs.map, e, d, v, (d, _) => this.onHist(d))
+
+        Config.layers.forEach(layer => this.loadLayer(
+          layer.path,
+          () => this.layers[layer.path].loaded = true
+        ))
 
         this.setLayer(this.currentLayer)
       })
@@ -45,7 +50,6 @@ export default {
      * Watches changes to the currentLocation prop, and updates the marker.
      */
     currentLocation([lat, lng]) {
-      console.log('SETTING LOC', lat, lng)
       this.setLocation(lat, lng)
     }
   }

@@ -3,25 +3,37 @@
 </template>
 
 <script>
+/**
+ * Updates the Plotly plot according to this.data.
+ */
+const updatePlot = (that) =>
+  Plotly.react(that.$refs.graph, [{
+    x: that.data,
+    type: 'histogram',
+  }], {
+    margin: {
+      l: 35,
+      r: 35,
+      t: 5,
+      b: 20,
+    },
+  }, {
+    displayModeBar: false,
+  })
+
 export default {
   props: ['data'],
 
   mounted() {
-    Plotly.newPlot(this.$refs.graph, [{
-      x: this.data,
-      type: 'histogram',
-    }])
+    updatePlot(this)
   },
 
   watch: {
     /**
      * Watches changes to the data prop, and updates the histogram.
      */
-    data(data) {
-      Plotly.react(this.$refs.graph, [{
-        x: this.data,
-        type: 'histogram',
-      }])
+    data() {
+      updatePlot(this)
     }
   }
 }

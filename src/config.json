@@ -3,13 +3,19 @@
 		{
 			"path": "data/p_export.json",
 			"name": "Phosph.",
-			"icon": "P"
+			"icon": "P",
+
+			"title": "Mesure de la rétention de phosphore.",
+			"content": "<p>Le service de rétention du phosphore permet d'améliorer la qualité de l'eau (superficielle et souterraine). Il est directement utile aux organismes de gestion de l'eau (syndicats et département d'assainissement), et donc aux habitants dont les impôts financent la maintenance des services d'assainissement.</p>"
 		},
 
 		{
 			"path": "data/n_export.json",
 			"name": "Nitrog.",
-			"icon": "N"
+			"icon": "N",
+
+			"title": "Mesure de la rétention d'azote.",
+			"content": "<p>Le service de rétention de l'azote permet d'améliorer la qualité de l'eau (superficielle et souterraine). Il est directement utile aux organismes de gestion de l'eau (syndicats et département d'assainissement), et donc aux habitants dont les impôts financent la maintenance des services d'assainissement.</p>"
 		}
 	],
 

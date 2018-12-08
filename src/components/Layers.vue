@@ -1,37 +1,37 @@
 <template>
   <section class="layers">
-    <h3>Layers</h3>
+    <h3>Couches</h3>
 
     <div class="buttons">
       <a v-for="layer in layers"
         :class="{ active: value == layer.path }"
         @click.prevent="select(layer)">
-        <span v-html="layer.icon"></span>
-        {{ layer.name }}
+        <span class="icon" v-html="layer.icon"></span>
+        <span>{{ layer.name }}</span>
+
+        <div v-if="!layer.loaded" class="loader-tile-grid">
+          <div class="loader-tile loader-tile1"></div>
+          <div class="loader-tile loader-tile2"></div>
+          <div class="loader-tile loader-tile3"></div>
+          <div class="loader-tile loader-tile4"></div>
+          <div class="loader-tile loader-tile5"></div>
+          <div class="loader-tile loader-tile6"></div>
+          <div class="loader-tile loader-tile7"></div>
+          <div class="loader-tile loader-tile8"></div>
+          <div class="loader-tile loader-tile9"></div>
+        </div>
       </a>
     </div>
   </section>
 </template>
 
 <script>
-import Config from '../config.json'
-
 export default {
-  props: ['value'],
-
-  data: () => ({
-    layers: Config.layers.map(layer => ({
-      'name': layer.name,
-      'path': layer.path,
-      'icon': layer.icon,
-      'loading': false,
-    }))
-  }),
+  props: ['layers', 'value'],
 
   methods: {
     select(layer) {
       if (!layer.loading) {
-      console.log(layer.path)
         this.$emit('input', layer.path)
       }
     }
@@ -60,7 +60,7 @@ export default {
   margin: 0;
   padding: 7px 0;
   color: #666;
-  font-size: 12pt;
+  font-size: 11pt;
   font-weight: normal;
   text-align: center;
 }
@@ -74,6 +74,7 @@ export default {
 
 .layers a {
   display: flex;
+  position: relative;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -87,18 +88,54 @@ export default {
   font-size: 10pt;
 
   &.active {
-    color: #fff;
-    background: #6b79ca;
-    box-shadow: inset 0 0 2px rgba(0, 0, 0, .2);
+    background: #f3f3f3;
+    box-shadow: inset 0 0 2px rgba(0, 0, 0, .1);
   }
 
   &:first-child {
     border-top: 1px solid #bbb;
   }
 
-  span {
+  .icon {
     font-size: 1rem;
     margin-bottom: 3px;
+  }
+}
+
+// Source: http://tobiasahlin.com/spinkit/
+.loader-tile-grid {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  cursor: not-allowed;
+}
+
+.loader-tile-grid .loader-tile {
+  width: 33%;
+  height: 33%;
+  background-color: #fff;
+  float: left;
+
+  animation: loader-tileGridScaleDelay 1.3s infinite ease-in-out;
+}
+
+.loader-tile-grid .loader-tile1 { animation-delay: 0.2s; }
+.loader-tile-grid .loader-tile2 { animation-delay: 0.3s; }
+.loader-tile-grid .loader-tile3 { animation-delay: 0.4s; }
+.loader-tile-grid .loader-tile4 { animation-delay: 0.1s; }
+.loader-tile-grid .loader-tile5 { animation-delay: 0.2s; }
+.loader-tile-grid .loader-tile6 { animation-delay: 0.3s; }
+.loader-tile-grid .loader-tile7 { animation-delay: 0s; }
+.loader-tile-grid .loader-tile8 { animation-delay: 0.1s; }
+.loader-tile-grid .loader-tile9 { animation-delay: 0.2s; }
+
+@keyframes loader-tileGridScaleDelay {
+  0%, 70%, 100% {
+    transform: scale3D(1, 1, 1);
+  } 35% {
+    transform: scale3D(0, 0, 1);
   }
 }
 </style>

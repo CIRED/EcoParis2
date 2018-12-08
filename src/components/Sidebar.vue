@@ -1,17 +1,34 @@
 <template>
   <section class="sidebar">
-    <div v-if="currentLayer == 'data/p_export.json'">
-      <h2>Mesure de la rétention de phosphore.</h2>
-      <p>Le service de rétention du phosphore permet d'améliorer la qualité de l'eau (superficielle et souterraine). Il est directement utile aux organismes de gestion de l'eau (syndicats et département d'assainissement), et donc aux habitants dont les impôts financent la maintenance des services d'assainissement.</p>
-
+    <div v-if="layers[currentLayer]">
+      <h2>{{ layers[currentLayer].title }}</h2>
+      <div v-html="layers[currentLayer].content"></div>
       <Histogram :data="currentHistogram" />
     </div>
 
-    <div v-if="currentLayer == 'data/n_export.json'">
-      <h2>Mesure de la rétention de l'azote.</h2>
-      <p>Le service de rétention de l'azote permet d'améliorer la qualité de l'eau (superficielle et souterraine). Il est directement utile aux organismes de gestion de l'eau (syndicats et département d'assainissement), et donc aux habitants dont les impôts financent la maintenance des services d'assainissement.</p>
+    <div v-else class="split">
+      <article>
+        <h2>Bienvenue sur EcoParis.</h2>
 
-      <Histogram :data="currentHistogram" />
+        <p>EcoParis est une visualisation interactive des données cartographiques des services écosystémiques en territoires urbains et péri-urbains en région Ile-de-France issues du projet <a href="https://idefese.wordpress.com/">IDEFESE</a>.</p>
+
+        <p>Pour commencer, vous pouvez sélectionner une couche à afficher parmi des mesures de rétention <a href="#">de phosphore</a> et <a href="#">d'azote</a>, des mesures de <a href="#">réduction de la température</a> due à la végétation ou encore de <a href="#">valeur économique</a> des régions.</p>
+
+        <p>Vous pouvez aussi choisir d'afficher l'évolution estimée de ces mesures à l'horizon 2025 dans un scénario de changement climatique.</p>
+      </article>
+
+      <article class="about">
+        <p>EcoParis a été conçu par des élèves du cours de <a href="https://edu.epfl.ch/coursebook/en/data-visualization-COM-480">Data Visualization</a> de l'EPFL, avec l'aide de Perrine Hamel du projet <a href="https://naturalcapitalproject.stanford.edu/">Natural Capital Project</a> de Stanford.</p>
+
+        <section class="slideshow">
+          <a href="https://www.epfl.ch/">
+            <img src="https://mediacom.epfl.ch/files/content/sites/mediacom/files/EPFL-Logo.jpg" alt="Logo EPFL">
+          </a>
+          <a href="https://naturalcapitalproject.stanford.edu/">
+            <img src="https://idefese.files.wordpress.com/2018/11/image5.jpg?w=172&h=171" alt="Logo NatCap">
+          </a>
+        </section>
+      </article>
     </div>
   </section>
 </template>
@@ -20,8 +37,8 @@
 import Histogram from './Histogram.vue'
 
 export default {
-  props: ['currentLayer', 'currentHistogram'],
-  components: { Histogram }
+  props: ['layers', 'currentLayer', 'currentHistogram'],
+  components: { Histogram },
 }
 </script>
 
@@ -39,7 +56,37 @@ export default {
   overflow: auto;
 }
 
+.sidebar .split {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sidebar p {
+  margin: 30px 0;
+}
+
 .sidebar h2 {
   margin-top: 0;
+}
+
+.sidebar .about {
+  font-style: italic;
+}
+
+.sidebar .slideshow {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin: 40px 0 20px;
+
+  a {
+    height: 90px;
+  }
+
+  img {
+    height: 100%;
+  }
 }
 </style>
