@@ -1,7 +1,7 @@
 {
 	"layers": [
 		{
-			"path": "data/p_export.json",
+			"path": "data/rasters/pollination_cc.json",
 			"name": "Phosph.",
 			"icon": "P",
 
@@ -16,6 +16,16 @@
 
 			"title": "Mesure de la rétention d'azote.",
 			"content": "<p>Le service de rétention de l'azote permet d'améliorer la qualité de l'eau (superficielle et souterraine). Il est directement utile aux organismes de gestion de l'eau (syndicats et département d'assainissement), et donc aux habitants dont les impôts financent la maintenance des services d'assainissement.</p>"
+		},
+
+		{
+			"path": "data/rasters/pollination_ref.json",
+			"name": "Espaces verts",
+			"icon": "E",
+
+			"title": "Mesure de la rétention d'azote.",
+			"content": "<p>Should not appear anyway, find something to fill here.</p>",
+			"hidden":"true"
 		}
 	],
 
@@ -24,5 +34,6 @@
 		"bottomLatitude": 48.12054154281846,
 		"leftLongitude": 1.44727950476602,
 		"rightLongitude": 3.555686958558566
-	}
+	},
+	"EV_path": "data/rasters/pollination_ref.json"
 }

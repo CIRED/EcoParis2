@@ -37,7 +37,7 @@ function loadContainmentFile(url) {
     })
 }
 
-export default function(element, error, interComm_shape, voronoi_shape, onHistChange) {
+export default function(element, error, interComm_shape, voronoi_shape, onHistChange, EV_path) {
   var current_geoLat = null;
   var current_geoLong = null;
 
@@ -201,23 +201,19 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
 
 
   function update_EV_preview(shape_feature){
-    console.log(shape_feature)
-    console.log(d3.geo.bounds(shape_feature))
+
+    var layer_path = EV_path
+    if (!cachedLayers[EV_path]){
+      layer_path = currentLayerPath //if not loaded yet, approximate it by the currently selected layer
+    }
+
+    //console.log(shape_feature)
+    //console.log(d3.geo.bounds(shape_feature))
 
     var upper_lat = d3.max(shape_feature.geometry.coordinates[0], p => p[1])
     var lower_lat = d3.min(shape_feature.geometry.coordinates[0], p => p[1])
     var left_lng = d3.min(shape_feature.geometry.coordinates[0], p => p[0])
     var right_lng = d3.max(shape_feature.geometry.coordinates[0], p => p[0])
-
-    var tl_lat = default_tl.lat
-    var tl_lng = default_tl.lng
-    var br_lat = default_br.lat
-    var br_lng = default_br.lng
-
-    var left_tx = (left_lng - tl_lng) / (br_lng - tl_lng)
-    var right_tx = (right_lng - tl_lng) / (br_lng - tl_lng)
-    var top_ty = (tl_lat - upper_lat) / (tl_lat - br_lat)
-    var bottom_ty = (tl_lat - lower_lat) / (tl_lat - br_lat)
 
     var svg_width = parseInt(svg_EV.style("width").replace("px",""))
     var svg_height = parseInt(svg_EV.style("height").replace("px",""))
@@ -228,7 +224,7 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
     var shape_br_point = map.latLngToLayerPoint([lower_lat, right_lng])
 
     var shape_ratio = (shape_br_point.x - shape_tl_point.x)/(shape_br_point.y - shape_tl_point.y)
-    console.log(shape_ratio)
+    //console.log(shape_ratio)
 
     var EV_width = 0
     var EV_height = 0
@@ -242,17 +238,18 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
       EV_width = svg_height * shape_ratio
     }
 
-    cachedLayers[currentLayerPath].tl_lng
+    //TODO: correct slight shift
+    //floating point imprecisions? ==> try computations in pixels rather than lat/lng
 
-    var shape_in_image_left_tx = (left_lng - cachedLayers[currentLayerPath].tl_lng) / (cachedLayers[currentLayerPath].br_lng - cachedLayers[currentLayerPath].tl_lng)
-    var shape_in_image_right_tx = (right_lng - cachedLayers[currentLayerPath].tl_lng) / (cachedLayers[currentLayerPath].br_lng - cachedLayers[currentLayerPath].tl_lng)
-    var shape_in_image_top_ty = (cachedLayers[currentLayerPath].tl_lat - upper_lat) / (cachedLayers[currentLayerPath].tl_lat - cachedLayers[currentLayerPath].br_lat)
-    var shape_in_image_bottom_ty = (cachedLayers[currentLayerPath].tl_lat - lower_lat) / (cachedLayers[currentLayerPath].tl_lat - cachedLayers[currentLayerPath].br_lat)
+    var shape_in_image_left_tx = (left_lng - cachedLayers[layer_path].tl_lng) / (cachedLayers[layer_path].br_lng - cachedLayers[layer_path].tl_lng)
+    var shape_in_image_right_tx = (right_lng - cachedLayers[layer_path].tl_lng) / (cachedLayers[layer_path].br_lng - cachedLayers[layer_path].tl_lng)
+    var shape_in_image_top_ty = (cachedLayers[layer_path].tl_lat - upper_lat) / (cachedLayers[layer_path].tl_lat - cachedLayers[layer_path].br_lat)
+    var shape_in_image_bottom_ty = (cachedLayers[layer_path].tl_lat - lower_lat) / (cachedLayers[layer_path].tl_lat - cachedLayers[layer_path].br_lat)
 
-    var tl_pixel_x = shape_in_image_left_tx * cachedLayers[currentLayerPath].width //pixels in the image (from 0 to image_width-1) where the bounds of the shape is
-    var tl_pixel_y = shape_in_image_top_ty * cachedLayers[currentLayerPath].height
-    var br_pixel_x = shape_in_image_right_tx * cachedLayers[currentLayerPath].width
-    var br_pixel_y = shape_in_image_bottom_ty * cachedLayers[currentLayerPath].height
+    var tl_pixel_x = shape_in_image_left_tx * cachedLayers[layer_path].width //pixels in the image (from 0 to image_width-1) where the bounds of the shape is
+    var tl_pixel_y = shape_in_image_top_ty * cachedLayers[layer_path].height
+    var br_pixel_x = shape_in_image_right_tx * cachedLayers[layer_path].width
+    var br_pixel_y = shape_in_image_bottom_ty * cachedLayers[layer_path].height
 
     var shape_width_in_pixels = br_pixel_x - tl_pixel_x
     var shape_height_in_pixels = br_pixel_y - tl_pixel_y
@@ -260,17 +257,12 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
     //console.log(cachedLayers[currentLayerPath].width/shape_width_in_pixels)
     //console.log(cachedLayers[currentLayerPath].height/shape_height_in_pixels)
 
-    var zoom_factor = Math.min(cachedLayers[currentLayerPath].width/shape_width_in_pixels , cachedLayers[currentLayerPath].height/shape_height_in_pixels)
-
-    var real_image_width = cachedLayers[currentLayerPath].width * zoom_factor
-    var real_image_height = cachedLayers[currentLayerPath].height * zoom_factor
-
     var real_zoom_factor = Math.min(EV_width / shape_width_in_pixels, EV_height / shape_height_in_pixels)
 
     //console.log(real_zoom_factor)
 
-    real_image_width = cachedLayers[currentLayerPath].width * real_zoom_factor
-    real_image_height = cachedLayers[currentLayerPath].height * real_zoom_factor
+    var real_image_width = cachedLayers[layer_path].width * real_zoom_factor
+    var real_image_height = cachedLayers[layer_path].height * real_zoom_factor
 
     var real_tl_pixel_x = shape_in_image_left_tx * real_image_width
     var real_tl_pixel_y = shape_in_image_top_ty * real_image_height
@@ -289,8 +281,8 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
     )
 
     function projectPoint(x, y) {
-      var in_image_tx = (x - cachedLayers[currentLayerPath].tl_lng) / (cachedLayers[currentLayerPath].br_lng - cachedLayers[currentLayerPath].tl_lng)
-      var in_image_ty = (cachedLayers[currentLayerPath].tl_lat - y) / (cachedLayers[currentLayerPath].tl_lat - cachedLayers[currentLayerPath].br_lat)
+      var in_image_tx = (x - cachedLayers[layer_path].tl_lng) / (cachedLayers[layer_path].br_lng - cachedLayers[layer_path].tl_lng)
+      var in_image_ty = (cachedLayers[layer_path].tl_lat - y) / (cachedLayers[layer_path].tl_lat - cachedLayers[layer_path].br_lat)
 
       var in_image_x = in_image_tx * real_image_width
       var in_image_y = in_image_ty * real_image_height
@@ -386,7 +378,7 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
       } else {
         d3.select(this).style('fill-opacity', fadedOpacity);
       }
-      console.log(i)
+      //console.log(i)
       update_chart(i, currentLayerPath, false)
       update_EV_preview(d)
     })
@@ -625,7 +617,7 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
 
             var value = canvas.toDataURL("png");
             imgs.attr("xlink:href", value)
-            imgs_EV.attr("xlink:href", value)
+            
             cachedLayers[path] = {
               "url": value,
               "tl_lat": json.tl_lat,
@@ -678,6 +670,10 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
     // TODO(liautaud): Return a Promise.
   }
 
+  function setEVLayer(path){
+    imgs_EV.attr("xlink:href", cachedLayers[EV_path].url)
+  }
+
   /**
    * Changes the current layer to the one with a given path.
    */
@@ -720,9 +716,8 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
       update()
       currentLayerPath = path
       imgs.attr('xlink:href', layer.url)
-      imgs_EV.attr('xlink:href', layer.url)
     })
   }
 
-  return [loadLayer, setLayer, setLocation]
+  return [loadLayer, setLayer, setLocation, setEVLayer]
 }

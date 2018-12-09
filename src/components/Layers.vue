@@ -3,7 +3,7 @@
     <h3>Couches</h3>
 
     <div class="buttons">
-      <a v-for="layer in layers"
+      <a v-for="layer in BrowsableLayers"
         :class="{ active: value == layer.path }"
         @click.prevent="select(layer)">
         <span class="icon" v-html="layer.icon"></span>
@@ -26,6 +26,8 @@
 </template>
 
 <script>
+import _ from 'lodash';
+
 export default {
   props: ['layers', 'value'],
 
@@ -35,6 +37,13 @@ export default {
         this.$emit('input', layer.path)
       }
     }
+  },
+  computed: {
+    BrowsableLayers: function() {
+      return _.pickBy(this.layers, function(u) {
+        return !u.hidden;
+      });
+    } //contains only layers that should be browsable (not "Espaces verts"!)
   }
 }
 </script>

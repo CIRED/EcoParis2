@@ -26,12 +26,18 @@ export default {
       .defer(d3.json, urlInterComm)
       .defer(d3.json, urlVoronoi)
       .await((e, d, v) => {
-        [this.loadLayer, this.setLayer, this.setLocation] =
-          displayMap(this.$refs.map, e, d, v, (d, _) => this.onHist(d))
+        [this.loadLayer, this.setLayer, this.setLocation, this.setEVLayer] =
+          displayMap(this.$refs.map, e, d, v, (d, _) => this.onHist(d),Config.EV_path)
 
         Config.layers.forEach(layer => this.loadLayer(
           layer.path,
-          () => this.layers[layer.path].loaded = true
+          () => {
+            this.layers[layer.path].loaded = true
+            if (layer.path == Config.EV_path){
+              console.log(layer.path)
+              this.setEVLayer(layer.path)
+            } 
+          }
         ))
 
         this.setLayer(this.currentLayer)
