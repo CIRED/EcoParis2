@@ -660,7 +660,10 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
                 tl_lat: json.tl_lat,
                 tl_lng: json.tl_lng,
                 br_lat: json.br_lat,
-                br_lng: json.br_lng
+                br_lng: json.br_lng,
+                percentiles: json.percentiles,
+                color_low : color_low,
+                color_hiegh : color_high
               });
             }
           })

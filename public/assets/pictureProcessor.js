@@ -1,13 +1,16 @@
-function getColour(d){
+
+
+var processColour = function(binaryData, l, width, height, pixels, shift, voronoiContainmentData, interCommContainmentData, 
+                              voronoi_means, voronoi_counts , voronoi_hist, interComm_means, interComm_counts, interComm_hist, firstVoronoiByInterComm, bounds,
+                              percentiles, color_low, color_high){
+
+  function getColour(d){
     return  d > 200 ? 'e31a1c':
             d > 150 ? 'fc4e2a':
             d > 100 ? 'fd8d3c':
             d > 50 ? 'feb24c':
                       'ffffcc';
-}
-
-var processColour = function(binaryData, l, width, height, pixels, shift, voronoiContainmentData, interCommContainmentData, voronoi_means, voronoi_counts , voronoi_hist, interComm_means, interComm_counts, interComm_hist, firstVoronoiByInterComm, bounds){
-
+  }
 
   const original_tl_lat = 49.2485668
   const original_tl_lng = 1.4403262
@@ -129,6 +132,9 @@ self.addEventListener('message', function(e) {
   var tl_lng = e.data.tl_lng
   var br_lat = e.data.br_lat
   var br_lng = e.data.br_lng
+  var percentiles = e.data.percentiles
+  var color_low = e.data.color_low
+  var color_high = e.data.color_high
 
   var l = e.data.length;
   var index = e.data.index;
@@ -164,7 +170,8 @@ self.addEventListener('message', function(e) {
                 {tl_lat:tl_lat,
                 tl_lng:tl_lng,
                 br_lat:br_lat,
-                br_lng:br_lng})
+                br_lng:br_lng,},
+                percentiles,color_low,color_high)
 
   self.postMessage({result: canvasData,
                     index: index,
