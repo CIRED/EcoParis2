@@ -21,8 +21,8 @@
 
 // ========= CHANGE PARAMETERS HERE =========
 
-var FileName = "pollination_cc_image.tif"
-var OutputFileName = "pollination_cc.json" //.json
+var FileName = "pollination_ref_image.tif"
+var OutputFileName = "pollination_ref.json" //.json
 
 var North = 49.248415209
 var South = 48.110677418
@@ -150,9 +150,7 @@ whenDocumentLoaded(() => {
 								"tl_lng":tl.lng,
 								"br_lat":br.lat,
 								"br_lng":br.lng,
-								"percentile_25":percentile_25,
-								"percentile_50":percentile_50,
-								"percentile_75":percentile_75,
+								"percentiles":JSON.stringify([percentile_25,percentile_50,percentile_75]),
 								"buckets":JSON.stringify(HistogramBins),
 								"data":JSON.stringify(myArray)}))
 
