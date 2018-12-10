@@ -31,12 +31,10 @@ export default {
 
         Config.layers.forEach(layer => this.loadLayer(
           layer.path,
-          layer.color_low,
-          layer.color_high,
+          layer.colors,
           () => {
             this.layers[layer.path].loaded = true
             if (layer.path == Config.EV_path){
-              console.log(layer.path)
               this.setEVLayer(layer.path)
             } 
           }
@@ -51,7 +49,7 @@ export default {
      * Watches changes to the currentLayer prop, and updates the map.
      */
     currentLayer(layer) {
-      this.setLayer(layer)
+      this.setLayer(layer.path,layer.colors)
     },
 
     /**

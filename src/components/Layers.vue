@@ -34,7 +34,7 @@ export default {
   methods: {
     select(layer) {
       if (!layer.loading) {
-        this.$emit('input', layer.path)
+        this.$emit('input', layer)
       }
     }
   },
