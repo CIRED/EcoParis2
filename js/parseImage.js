@@ -21,13 +21,13 @@
 
 // ========= CHANGE PARAMETERS HERE =========
 
-var FileName = "pollination_ref_image.tif"
-var OutputFileName = "pollination_ref.json" //.json
+var FileName = "ecoles_elementaires_image.tif"
+var OutputFileName = "ecoles_elementaires.json" //.json
 
-var North = 49.248415209
-var South = 48.110677418
-var West = 1.440530148
-var East = 3.565831209
+var North = 49.215485585
+var South = 48.127383524
+var West = 1.473787809
+var East = 3.472059898
 
 var HistogramBins = [80,160] //3 categories: 0-80, 81-160, 161-255
 
@@ -100,6 +100,7 @@ whenDocumentLoaded(() => {
 	        if(px >= 0 && px < image_width && py >= 0 && py < image_height){
 	            pos = (px + py * canvas.width)*4
 
+	            //console.log(px,py)
 	            var value = pixels[pos]
 
 	            //this part is actually not useful, but it is nice to see the result beforehand
@@ -129,10 +130,6 @@ whenDocumentLoaded(() => {
 	    var percentile_25 = sorted[Math.floor(sorted.length * 0.25)]
 	    var percentile_50 = sorted[Math.floor(sorted.length * 0.50)]
 	    var percentile_75 = sorted[Math.floor(sorted.length * 0.75)]
-	    console.log(sorted)
-	    console.log(percentile_25)
-	    console.log(percentile_50)
-	    console.log(percentile_75)
 	    //console.log(JSON.stringify(myArray))
 	    function download(text) {
 	      d3.select(".container").append("a").attr("id","a_image")
