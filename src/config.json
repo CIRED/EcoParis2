@@ -35,6 +35,20 @@
 			"title": "Mesure de la rétention d'azote.",
 			"content": "<p>Should not appear anyway, find something to fill here.</p>",
 			"hidden":"true"
+		},
+        
+        
+        {
+			"path": "data/rasters/ecoles_elementaires.json",
+			"name": "Ecoles elementaires",
+			"icon": "E",
+			"colors":["#ffffff","#339933"],
+			"color_low":"#ffffff",
+			"color_high":"#339933",
+
+			"title": "Nombre d'écoles élémentaires et maternelles",
+			"content": "<p>Should not appear anyway, find something to fill here.</p>",
+			"hidden":"true"
 		}
 	],
 
@@ -44,5 +58,6 @@
 		"leftLongitude": 1.44727950476602,
 		"rightLongitude": 3.555686958558566
 	},
-	"EV_path": "data/rasters/pollination_ref.json"
+	"EV_path": "data/rasters/pollination_ref.json",
+    "Ecole_path": "data/rasters/ecoles_elementaires.json"
 }

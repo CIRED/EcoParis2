@@ -604,17 +604,28 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
           finished++;
 
           if (finished == workersCount) {
-            for (var i = 0; i < voronoi_shape.features.length; ++i) {
-              if (voronoi_counts[i] != 0) {
-                voronoi_means[i] /= voronoi_counts[i]
-              }
-            }
-            for (var i = 0; i < interComm_shape.features.length; ++i) {
-              if (interComm_counts[i] != 0) {
-                interComm_means[i] /= interComm_counts[i]
-              }
-            }
-
+              if(path == Config.Ecole_path){
+                  // Here we count the number of schools
+                    for (var i = 0; i < voronoi_shape.features.length; ++i) {
+                        voronoi_means[i] /= 255
+                    }
+                    for (var i = 0; i < interComm_shape.features.length; ++i) {
+                        interComm_means[i] /= 255
+                    }
+                }
+              else{
+                    for (var i = 0; i < voronoi_shape.features.length; ++i) {
+                      if (voronoi_counts[i] != 0) {
+                        voronoi_means[i] /= voronoi_counts[i]
+                      }
+                    }
+                    for (var i = 0; i < interComm_shape.features.length; ++i) {
+                      if (interComm_counts[i] != 0) {
+                        interComm_means[i] /= interComm_counts[i]
+                      }
+                    }
+                }
+                
             var hist_buckets = [70, 140]; //TODO: change acodring to layer (hard-coded...)
 
             var value = canvas.toDataURL("png");
@@ -679,6 +690,10 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
     imgs_EV.attr("xlink:href", cachedLayers[EV_path].url)
   }
 
+  function setTextUrban(path){
+      // print sentence about schools cachedLayers[Ecole_path]
+  }
+  
   /**
    * Changes the current layer to the one with a given path.
    */
@@ -756,5 +771,5 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
     })
   }
 
-  return [loadLayer, setLayer, setLocation, setEVLayer]
+  return [loadLayer, setLayer, setLocation, setEVLayer, setTextUrban]
 }

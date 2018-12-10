@@ -26,17 +26,21 @@ export default {
       .defer(d3.json, urlInterComm)
       .defer(d3.json, urlVoronoi)
       .await((e, d, v) => {
-        [this.loadLayer, this.setLayer, this.setLocation, this.setEVLayer] =
-          displayMap(this.$refs.map, e, d, v, (d, _) => this.onHist(d),Config.EV_path)
+        [this.loadLayer, this.setLayer, this.setLocation, this.setEVLayer, this.setTextUrban] =
+          displayMap(this.$refs.map, e, d, v, (d, _) => this.onHist(d),Config.EV_path, Config.Ecole_path)
 
         Config.layers.forEach(layer => this.loadLayer(
           layer.path,
           layer.colors,
           () => {
             this.layers[layer.path].loaded = true
+            
             if (layer.path == Config.EV_path){
               this.setEVLayer(layer.path)
-            } 
+            }
+            if (layer.path == Config.Ecole_path){
+              this.setTextUrban(layer.path)
+            }            
           }
         ))
 
