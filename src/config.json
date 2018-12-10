@@ -59,5 +59,6 @@
 		"rightLongitude": 3.555686958558566
 	},
 	"EV_path": "data/rasters/pollination_ref.json",
-    "Ecole_path": "data/rasters/ecoles_elementaires.json"
+    "Ecole_path": "data/rasters/ecoles_elementaires.json".
+    "Urban_cooling": "data/rasters/T_air_ref.json"
 }

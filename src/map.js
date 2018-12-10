@@ -325,6 +325,7 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
       update_clip()
       update_chart(i, currentLayerPath, true)
       update_EV_preview(d)
+      update_text_school(i, currentLayerPath, true)
     })
     .on("mouseout", function(d, i) {
       if (highlightedInterComm != -1) {
@@ -381,6 +382,7 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
       //console.log(i)
       update_chart(i, currentLayerPath, false)
       update_EV_preview(d)
+      update_text_school(i, currentLayerPath, false)
     })
     .on("mouseout", function(d, i) {
       if (highlightedInterComm != -1) {
@@ -433,8 +435,8 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
     hide: true,
   };
 
-  function update_chart(i, layerURl, voro) {
-    var info = cachedLayers[layerURl]
+  function update_chart(i, layerURL, voro) {
+    var info = cachedLayers[layerURL]
     if (!info) {
       return;
     }
@@ -463,6 +465,22 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
     })
 
     onHistChange(data, buckets)
+  }
+  
+  function update_text_school(i, layerURL, voro){
+      if(layerURL==Config.Urban_cooling){
+          var info = cachedLayers[Config.Ecole_path]
+            if (!info) {
+                return;
+            }
+            if (voro == true) {
+              var data = info.voronoi_hist[i]
+            } else {
+              var data = info.interComm_hist[i]
+            }
+            // change texte according to data 
+      }
+      
   }
 
 
