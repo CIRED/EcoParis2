@@ -21,13 +21,13 @@
 
 // ========= CHANGE PARAMETERS HERE =========
 
-var FileName = "L_ref_image.tif"
-var OutputFileName = "L_ref.json" //.json
+var FileName = "pollination_cc_image.tif"
+var OutputFileName = "pollination_cc.json" //.json
 
-var North = 49.248416431
-var South = 48.110709699
-var West = 1.440326192
-var East = 3.549611427
+var North = 49.248415209
+var South = 48.110677418
+var West = 1.440530148
+var East = 3.565831209
 
 var HistogramBins = [80,160] //3 categories: 0-80, 81-160, 161-255
 
@@ -123,6 +123,16 @@ whenDocumentLoaded(() => {
 	        	myArray[i]=0;
 	        }
 	    }
+	    var sorted = myArray.slice()
+	    sorted.sort((x,y) => parseInt(x)>parseInt(y))
+
+	    var percentile_25 = sorted[Math.floor(sorted.length * 0.25)]
+	    var percentile_50 = sorted[Math.floor(sorted.length * 0.50)]
+	    var percentile_75 = sorted[Math.floor(sorted.length * 0.75)]
+	    console.log(sorted)
+	    console.log(percentile_25)
+	    console.log(percentile_50)
+	    console.log(percentile_75)
 	    //console.log(JSON.stringify(myArray))
 	    function download(text) {
 	      d3.select(".container").append("a").attr("id","a_image")
@@ -140,6 +150,9 @@ whenDocumentLoaded(() => {
 								"tl_lng":tl.lng,
 								"br_lat":br.lat,
 								"br_lng":br.lng,
+								"percentile_25":percentile_25,
+								"percentile_50":percentile_50,
+								"percentile_75":percentile_75,
 								"buckets":JSON.stringify(HistogramBins),
 								"data":JSON.stringify(myArray)}))
 
