@@ -31,6 +31,8 @@ export default {
 
         Config.layers.forEach(layer => this.loadLayer(
           layer.path,
+          layer.color_low,
+          layer.color_high,
           () => {
             this.layers[layer.path].loaded = true
             if (layer.path == Config.EV_path){

@@ -4,6 +4,8 @@
 			"path": "data/rasters/pollination_cc.json",
 			"name": "Phosph.",
 			"icon": "P",
+			"color_high":"#ffffcc",
+			"color_low":"#e31a1c",
 
 			"title": "Mesure de la rétention de phosphore.",
 			"content": "<p>Le service de rétention du phosphore permet d'améliorer la qualité de l'eau (superficielle et souterraine). Il est directement utile aux organismes de gestion de l'eau (syndicats et département d'assainissement), et donc aux habitants dont les impôts financent la maintenance des services d'assainissement.</p>"
@@ -13,6 +15,8 @@
 			"path": "data/n_export.json",
 			"name": "Nitrog.",
 			"icon": "N",
+			"color_high":"#ff3300",
+			"color_low":"#00ccff",
 
 			"title": "Mesure de la rétention d'azote.",
 			"content": "<p>Le service de rétention de l'azote permet d'améliorer la qualité de l'eau (superficielle et souterraine). Il est directement utile aux organismes de gestion de l'eau (syndicats et département d'assainissement), et donc aux habitants dont les impôts financent la maintenance des services d'assainissement.</p>"
@@ -22,6 +26,8 @@
 			"path": "data/rasters/pollination_ref.json",
 			"name": "Espaces verts",
 			"icon": "E",
+			"color_high":"#339933",
+			"color_low":"#ffffff",
 
 			"title": "Mesure de la rétention d'azote.",
 			"content": "<p>Should not appear anyway, find something to fill here.</p>",

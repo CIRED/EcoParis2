@@ -518,7 +518,7 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
    * - Preparing arrays for means, counts and histograms.
    * - Dispatching those computations to worker threads.
    */
-  function loadLayer(path, callback) {
+  function loadLayer(path, color_low, color_high, callback) {
     if (cachedLayers[path]) {
       callback();
       return;
