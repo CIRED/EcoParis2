@@ -698,24 +698,24 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
       const colorScale = d3.scale.linear()
         .range(colors)
 
-      console.log(cachedLayers[path].percentiles)
+      //console.log(cachedLayers[path].percentiles)
       var min = 0//Math.min(...layer.voronoi_means)
       var max = 255//Math.max(...layer.voronoi_means)
 
-      var domain = []
+      /*var domain = []
       var uniform_range = []
       for (var i=0; i<colors.length;++i){
         domain.push(i / (colors.length-1))
       }
-      const linearScale = colorScale.domain(uniform_range)
+      const linearScale = colorScale.domain(uniform_range)*/
 
-      var range = []
+      var domain = []
       for (var i=0; i<colors.length;++i){
         domain.push( i * max / (colors.length-1) + (colors.length-1 - i) * min / (colors.length-1))
-        range.push(linearScale(i/(colors.length-1)))
       }
       const voronoiScale = colorScale
         .domain(domain)
+
       voronoi.attr('fill', (_, i) =>
         voronoiScale(layer.voronoi_means[i]))
 
@@ -726,18 +726,18 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
       for (var i=0; i<colors.length;++i){
         domain.push( i * max / (colors.length-1) + (colors.length-1 - i) * min / (colors.length-1))
       }
-      console.log(domain)
-      console.log(Math.min(...layer.interComm_means),Math.max(...layer.interComm_means))
+      //console.log(domain)
+      //console.log(Math.min(...layer.interComm_means),Math.max(...layer.interComm_means))
       const intercommScale = colorScale
         .domain(domain)
       interComms.attr('fill', (_, i) =>{
         console.log(layer.interComm_means[i],intercommScale(layer.interComm_means[i]));
         return intercommScale(layer.interComm_means[i])})
 
-      console.log(domain)
+      /*console.log(domain)
       console.log(intercommScale(min))
       console.log(intercommScale(min/2 + max/2))
-      console.log(intercommScale(max))
+      console.log(intercommScale(max))*/
 
       // Reset the width and height of the canvas.
       canvas.width = layer.width
