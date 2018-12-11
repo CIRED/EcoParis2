@@ -34,9 +34,8 @@
 
 			"title": "Mesure de la rétention d'azote.",
 			"content": "<p>Should not appear anyway, find something to fill here.</p>",
-			"hidden":"true"
+			"hidden":true
 		},
-        
         
         {
 			"path": "data/rasters/ecoles_elementaires.json",
@@ -48,7 +47,7 @@
 
 			"title": "Nombre d'écoles élémentaires et maternelles",
 			"content": "<p>Should not appear anyway, find something to fill here.</p>",
-			"hidden":"true"
+			"hidden": true
 		}
 	],
 
@@ -59,6 +58,6 @@
 		"rightLongitude": 3.555686958558566
 	},
 	"EV_path": "data/rasters/pollination_ref.json",
-    "Ecole_path": "data/rasters/ecoles_elementaires.json".
+    "Ecole_path": "data/rasters/ecoles_elementaires.json",
     "Urban_cooling": "data/rasters/T_air_ref.json"
 }

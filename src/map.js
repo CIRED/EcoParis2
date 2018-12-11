@@ -37,7 +37,7 @@ function loadContainmentFile(url) {
     })
 }
 
-export default function(element, error, interComm_shape, voronoi_shape, onHistChange, EV_path) {
+export default function(element, error, interComm_shape, voronoi_shape, onHistChange, onSchools) {
   var current_geoLat = null;
   var current_geoLong = null;
 
@@ -202,8 +202,8 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
 
   function update_EV_preview(shape_feature){
 
-    var layer_path = EV_path
-    if (!cachedLayers[EV_path]){
+    var layer_path = Config.EV_path
+    if (!cachedLayers[Config.EV_path]){
       layer_path = currentLayerPath //if not loaded yet, approximate it by the currently selected layer
     }
 
@@ -478,7 +478,11 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
             } else {
               var data = info.interComm_hist[i]
             }
+            onSchools(data)
             // change texte according to data 
+      }
+      else{
+          onSchools(null)
       }
       
   }
@@ -705,11 +709,7 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
   }
 
   function setEVLayer(path){
-    imgs_EV.attr("xlink:href", cachedLayers[EV_path].url)
-  }
-
-  function setTextUrban(path){
-      // print sentence about schools cachedLayers[Ecole_path]
+    imgs_EV.attr("xlink:href", cachedLayers[Config.EV_path].url)
   }
   
   /**
@@ -789,5 +789,5 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
     })
   }
 
-  return [loadLayer, setLayer, setLocation, setEVLayer, setTextUrban]
+  return [loadLayer, setLayer, setLocation, setEVLayer]
 }
