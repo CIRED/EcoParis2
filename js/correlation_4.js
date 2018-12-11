@@ -83,7 +83,7 @@ function whenDocumentLoaded(action) {
 
 whenDocumentLoaded(() => {
     queue()
-	    .defer(d3.json, "pollination_ref.json") // Load Watershed Shape
+	    .defer(d3.json, "p_export.json") // Load Watershed Shape
 	    .defer(d3.json, "n_export.json") // Load Voronoi Shape
 	    .await(loadJSON); // When the GeoJsons are fully loaded, call the function loadGeom
 
@@ -111,6 +111,7 @@ whenDocumentLoaded(() => {
             tl_lngs[i] = metric[i].tl_lng
             br_lats[i] = metric[i].br_lat
             br_lngs[i] = metric[i].br_lng
+            metric[i].data = JSON.parse(metric[i].data)
             normalize(metric[i].data)
         }
         var North = Math.min(...tl_lats)
@@ -143,7 +144,7 @@ whenDocumentLoaded(() => {
                 "br_lat":metric[i].br_lat,
                 "br_lng":metric[i].br_lng,
             }
-            processData(output,output_p,JSON.parse(metric[i].data),input_p)
+            processData(output,output_p,metric[i].data,input_p)
         }
 
         var sorted = output.slice()
@@ -153,7 +154,11 @@ whenDocumentLoaded(() => {
         var percentile_50 = sorted[Math.floor(sorted.length * 0.50)]
         var percentile_75 = sorted[Math.floor(sorted.length * 0.75)]
 
-        console.log(output)
+        for(var i=0; i<output.length; i++){
+            output[i] /= metric.length
+            output[i] *= 255
+        }
+        //console.log(output)
         download(JSON.stringify({"width":output_width,
                                 "height":output_height,
                                 "tl_lat":tl.lat,
