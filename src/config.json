@@ -5,20 +5,16 @@
 			"name": "Phosph.",
 			"icon": "P",
 			"colors":["#ffffcc","#e31a1c"],
-			"color_low":"#ffffcc",
-			"color_high":"#e31a1c",
 
 			"title": "Mesure de la rétention de phosphore.",
 			"content": "<p>Le service de rétention du phosphore permet d'améliorer la qualité de l'eau (superficielle et souterraine). Il est directement utile aux organismes de gestion de l'eau (syndicats et département d'assainissement), et donc aux habitants dont les impôts financent la maintenance des services d'assainissement.</p>"
 		},
 
 		{
-			"path": "data/n_export.json",
+			"path": "data/rasters/T_air_ref.json",
 			"name": "Nitrog.",
 			"icon": "N",
 			"colors":["#ff3300","#ffffff","#00ccff"],
-			"color_low":"#ff3300",
-			"color_high":"#00ccff",
 
 			"title": "Mesure de la rétention d'azote.",
 			"content": "<p>Le service de rétention de l'azote permet d'améliorer la qualité de l'eau (superficielle et souterraine). Il est directement utile aux organismes de gestion de l'eau (syndicats et département d'assainissement), et donc aux habitants dont les impôts financent la maintenance des services d'assainissement.</p>"
@@ -29,8 +25,6 @@
 			"name": "Espaces verts",
 			"icon": "E",
 			"colors":["#ffffff","#339933"],
-			"color_low":"#ffffff",
-			"color_high":"#339933",
 
 			"title": "Mesure de la rétention d'azote.",
 			"content": "<p>Should not appear anyway, find something to fill here.</p>",

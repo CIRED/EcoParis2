@@ -530,6 +530,7 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
       .then(res => res.json())
       .then(json => {
         json.data = JSON.parse(json.data)
+        json.percentiles = JSON.parse(json.percentiles)
 
         var pixels = json.data;
 
@@ -643,10 +644,9 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
 
         // FIXME(liautaud): Nested callbacks is a code smell.
         // FIXME(liautaud): This should be done only once.
-        console.log(colors)
-        json.percentiles = [100,200]
-        json.colors = ["#ff3300","#ffffff","#00ccff"]
-        var domain_range = computeColorRange(json.percentiles,json.colors)
+
+        var domain_range = computeColorRange(json.percentiles,colors)
+        console.log(json.percentiles)
         var domain = domain_range[0]
         var range = domain_range[1]
         console.log(domain,range)
@@ -747,6 +747,7 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
           domain.push(domain_percentiles[whichBucket] * (1-portionInBucket) + domain_percentiles[whichBucket + 1] * portionInBucket)
         }
       }*/
+      console.log(layer.percentiles)
       var domain_range =computeColorRange(layer.percentiles,colors)
       var domain = domain_range[0]
       var range = domain_range[1]
