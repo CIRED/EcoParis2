@@ -615,7 +615,7 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
               }
             }
 
-            var hist_buckets = [70, 140]; //TODO: change acodring to layer (hard-coded...)
+            var hist_buckets = [70, 140]; //TODO: change acording to layer (hard-coded...)
 
             var value = canvas.toDataURL("png");
             imgs.attr("xlink:href", value)
@@ -633,6 +633,7 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
               "voronoi_hist": voronoi_hist,
               "interComm_hist": interComm_hist,
               "hist_buckets": hist_buckets,
+              "percentiles" : json.percentiles,
               "layerUrl": path
             }
 
@@ -642,6 +643,13 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
 
         // FIXME(liautaud): Nested callbacks is a code smell.
         // FIXME(liautaud): This should be done only once.
+        console.log(colors)
+        json.percentiles = [100,200]
+        json.colors = ["#ff3300","#ffffff","#00ccff"]
+        var domain_range = computeColorRange(json.percentiles,json.colors)
+        var domain = domain_range[0]
+        var range = domain_range[1]
+        console.log(domain,range)
         loadContainmentFile("data/voronoi_cont.json").then(voronoiContainment => {
           loadContainmentFile("data/intercomm_cont.json").then(interCommContainment => {
             for (var index = 0; index < workersCount; index++) {
@@ -663,9 +671,8 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
                 tl_lng: json.tl_lng,
                 br_lat: json.br_lat,
                 br_lng: json.br_lng,
-                percentiles: json.percentiles,
-                color_low : color_low,
-                color_hiegh : color_high
+                colorDomain: domain,
+                colorRange: range
               });
             }
           })
@@ -677,6 +684,30 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
 
   function setEVLayer(path){
     imgs_EV.attr("xlink:href", cachedLayers[EV_path].url)
+  }
+
+  function computeColorRange(percentiles,colors){
+    var domain_percentiles = percentiles.slice()
+    domain_percentiles.unshift(0)
+    domain_percentiles.push(255)
+
+    var domainLength = domain_percentiles.length
+    var rangeLength  = colors.length
+
+    var intermediateDomain = []
+    for (var i=0; i<rangeLength; ++i){
+      intermediateDomain[i] = i/(rangeLength-1)
+    }
+    var intermediateScale = d3.scale.linear().domain(intermediateDomain).range(colors)
+
+    var range_out = []
+    for (var i=0; i<domainLength; ++i){
+      var t = i/(domainLength-1)
+      range_out.push(intermediateScale(t))
+    }
+    console.log(domain_percentiles)
+    console.log(percentiles)
+    return [domain_percentiles,range_out]
   }
 
   /**
@@ -692,16 +723,38 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
     loadLayer(path,colors,() => {
       // Once the layer is loaded, we can get it from the cache.
       const layer = cachedLayers[path]
+      //console.log(layer)
 
-      console.log(colors)
+      //console.log(colors)
       // Use d3 color scales to map values to fill colors.
-      const colorScale = d3.scale.linear()
-        .range(colors)
 
       //console.log(cachedLayers[path].percentiles)
       var min = 0//Math.min(...layer.voronoi_means)
       var max = 255//Math.max(...layer.voronoi_means)
 
+
+      /*var domain = []
+      for (var i=0; i<num_separators; ++i){
+        var t = i/(num_separators-1)
+        var whichBucket = Math.floor(t * (num_percentiles - 1))
+        var portionInBucket = t * (num_percentiles - 1) - whichBucket 
+
+        console.log(i,whichBucket,portionInBucket)
+        if (portionInBucket == 0){
+          domain.push(domain_percentiles[whichBucket])
+        }
+        else{
+          domain.push(domain_percentiles[whichBucket] * (1-portionInBucket) + domain_percentiles[whichBucket + 1] * portionInBucket)
+        }
+      }*/
+      var domain_range =computeColorRange(layer.percentiles,colors)
+      var domain = domain_range[0]
+      var range = domain_range[1]
+
+      //console.log(domain)
+      //console.log(range)
+      const colorScale = d3.scale.linear()
+        .range(range).domain(domain)
       /*var domain = []
       var uniform_range = []
       for (var i=0; i<colors.length;++i){
@@ -709,30 +762,25 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
       }
       const linearScale = colorScale.domain(uniform_range)*/
 
-      var domain = []
+      /*var domain = []
       for (var i=0; i<colors.length;++i){
         domain.push( i * max / (colors.length-1) + (colors.length-1 - i) * min / (colors.length-1))
-      }
-      const voronoiScale = colorScale
-        .domain(domain)
-
+      }*/
       voronoi.attr('fill', (_, i) =>
-        voronoiScale(layer.voronoi_means[i]))
+        colorScale(layer.voronoi_means[i]))
 
       min = 0//Math.min(...layer.interComm_means)
       max = 255//Math.max(...layer.interComm_means)
 
-      domain = []
+      /*domain = []
       for (var i=0; i<colors.length;++i){
         domain.push( i * max / (colors.length-1) + (colors.length-1 - i) * min / (colors.length-1))
-      }
+      }*/
       //console.log(domain)
       //console.log(Math.min(...layer.interComm_means),Math.max(...layer.interComm_means))
-      const intercommScale = colorScale
-        .domain(domain)
       interComms.attr('fill', (_, i) =>{
-        console.log(layer.interComm_means[i],intercommScale(layer.interComm_means[i]));
-        return intercommScale(layer.interComm_means[i])})
+        //console.log(layer.interComm_means[i],colorScale(layer.interComm_means[i]))
+        return colorScale(layer.interComm_means[i])})
 
       /*console.log(domain)
       console.log(intercommScale(min))

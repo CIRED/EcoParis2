@@ -2,14 +2,28 @@
 
 var processColour = function(binaryData, l, width, height, pixels, shift, voronoiContainmentData, interCommContainmentData, 
                               voronoi_means, voronoi_counts , voronoi_hist, interComm_means, interComm_counts, interComm_hist, firstVoronoiByInterComm, bounds,
-                              percentiles, color_low, color_high){
+                              percentiles, colors){
+
+  //var num_percentiles = percentiles.length + 2
+  //var num_colors = colors.length
+
+  console.log(colors,percentiles)
 
   function getColour(d){
-    return  d > 200 ? 'e31a1c':
+    var min_dist = 255
+    var min_index = 0
+    for (var i=0; i<percentiles.length; ++i){
+      if (Math.abs(percentiles[i] - d) < min_dist){
+        min_dist = Math.abs(percentiles[i] - d)
+        min_index = i
+      }
+    }
+    return colors[min_index].substr(1)
+    /*return  d > 200 ? 'e31a1c':
             d > 150 ? 'fc4e2a':
             d > 100 ? 'fd8d3c':
             d > 50 ? 'feb24c':
-                      'ffffcc';
+                      'ffffcc';*/
   }
 
   const original_tl_lat = 49.2485668
@@ -132,9 +146,10 @@ self.addEventListener('message', function(e) {
   var tl_lng = e.data.tl_lng
   var br_lat = e.data.br_lat
   var br_lng = e.data.br_lng
-  var percentiles = e.data.percentiles
-  var color_low = e.data.color_low
-  var color_high = e.data.color_high
+  var percentiles = e.data.colorDomain
+  var colors = e.data.colorRange
+
+  console.log(colors,percentiles)
 
   var l = e.data.length;
   var index = e.data.index;
@@ -171,7 +186,7 @@ self.addEventListener('message', function(e) {
                 tl_lng:tl_lng,
                 br_lat:br_lat,
                 br_lng:br_lng,},
-                percentiles,color_low,color_high)
+                percentiles,colors)
 
   self.postMessage({result: canvasData,
                     index: index,
