@@ -723,70 +723,26 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
     loadLayer(path,colors,() => {
       // Once the layer is loaded, we can get it from the cache.
       const layer = cachedLayers[path]
-      //console.log(layer)
 
-      //console.log(colors)
-      // Use d3 color scales to map values to fill colors.
+      var min = 0
+      var max = 255
 
-      //console.log(cachedLayers[path].percentiles)
-      var min = 0//Math.min(...layer.voronoi_means)
-      var max = 255//Math.max(...layer.voronoi_means)
-
-
-      /*var domain = []
-      for (var i=0; i<num_separators; ++i){
-        var t = i/(num_separators-1)
-        var whichBucket = Math.floor(t * (num_percentiles - 1))
-        var portionInBucket = t * (num_percentiles - 1) - whichBucket 
-
-        console.log(i,whichBucket,portionInBucket)
-        if (portionInBucket == 0){
-          domain.push(domain_percentiles[whichBucket])
-        }
-        else{
-          domain.push(domain_percentiles[whichBucket] * (1-portionInBucket) + domain_percentiles[whichBucket + 1] * portionInBucket)
-        }
-      }*/
-      console.log(layer.percentiles)
       var domain_range =computeColorRange(layer.percentiles,colors)
       var domain = domain_range[0]
       var range = domain_range[1]
 
-      //console.log(domain)
-      //console.log(range)
       const colorScale = d3.scale.linear()
         .range(range).domain(domain)
-      /*var domain = []
-      var uniform_range = []
-      for (var i=0; i<colors.length;++i){
-        domain.push(i / (colors.length-1))
-      }
-      const linearScale = colorScale.domain(uniform_range)*/
-
-      /*var domain = []
-      for (var i=0; i<colors.length;++i){
-        domain.push( i * max / (colors.length-1) + (colors.length-1 - i) * min / (colors.length-1))
-      }*/
       voronoi.attr('fill', (_, i) =>
         colorScale(layer.voronoi_means[i]))
 
       min = 0//Math.min(...layer.interComm_means)
       max = 255//Math.max(...layer.interComm_means)
 
-      /*domain = []
-      for (var i=0; i<colors.length;++i){
-        domain.push( i * max / (colors.length-1) + (colors.length-1 - i) * min / (colors.length-1))
-      }*/
-      //console.log(domain)
-      //console.log(Math.min(...layer.interComm_means),Math.max(...layer.interComm_means))
       interComms.attr('fill', (_, i) =>{
         //console.log(layer.interComm_means[i],colorScale(layer.interComm_means[i]))
         return colorScale(layer.interComm_means[i])})
 
-      /*console.log(domain)
-      console.log(intercommScale(min))
-      console.log(intercommScale(min/2 + max/2))
-      console.log(intercommScale(max))*/
 
       // Reset the width and height of the canvas.
       canvas.width = layer.width

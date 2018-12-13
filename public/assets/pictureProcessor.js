@@ -7,8 +7,6 @@ var processColour = function(binaryData, l, width, height, pixels, shift, vorono
   //var num_percentiles = percentiles.length + 2
   //var num_colors = colors.length
 
-  console.log(colors,percentiles)
-
   function getColour(d){
     var min_dist = 255
     var min_index = 0
@@ -19,11 +17,6 @@ var processColour = function(binaryData, l, width, height, pixels, shift, vorono
       }
     }
     return colors[min_index].substr(1)
-    /*return  d > 200 ? 'e31a1c':
-            d > 150 ? 'fc4e2a':
-            d > 100 ? 'fd8d3c':
-            d > 50 ? 'feb24c':
-                      'ffffcc';*/
   }
 
   const original_tl_lat = 49.2485668
@@ -117,7 +110,6 @@ var processColour = function(binaryData, l, width, height, pixels, shift, vorono
       }
   }
 
-  console.log(voronoiInInterCommCount)
   voronoiInInterCommCount.forEach((p,i) => {
     var index = 100000
     p.forEach((d,j) => { //first index where greater than a given value
