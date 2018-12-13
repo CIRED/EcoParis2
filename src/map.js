@@ -147,7 +147,7 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
     .attr('x', 0)
     .attr('y', 0)
     .attr("xlink:href", "")
-    .attr("clip-path", "url(#clip)")
+    .attr("clip-path", "")
 
   function update_clip() {
 
@@ -214,109 +214,6 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
       //layer_path = currentLayerPath //if not loaded yet, approximate it by the currently selected layer
     }
 
-    //console.log(shape_feature)
-    //console.log(d3.geo.bounds(shape_feature))
-
-    /*var upper_lat = d3.max(shape_feature.geometry.coordinates[0], p => p[1])
-    var lower_lat = d3.min(shape_feature.geometry.coordinates[0], p => p[1])
-    var left_lng = d3.min(shape_feature.geometry.coordinates[0], p => p[0])
-    var right_lng = d3.max(shape_feature.geometry.coordinates[0], p => p[0])
-
-    var svg_width = parseInt(svg_EV.style("width").replace("px",""))
-    var svg_height = parseInt(svg_EV.style("height").replace("px",""))
-
-    var svg_ratio = svg_width/svg_height
-
-    var shape_tl_point = map.latLngToLayerPoint([upper_lat, left_lng])
-    var shape_br_point = map.latLngToLayerPoint([lower_lat, right_lng])
-
-    var shape_ratio = (shape_br_point.x - shape_tl_point.x)/(shape_br_point.y - shape_tl_point.y)
-    //console.log(shape_ratio)
-
-    var EV_width = 0
-    var EV_height = 0
-
-    if (svg_ratio < shape_ratio){ // wider than svg ==> limiting factor = width
-      EV_width = svg_width
-      EV_height = svg_width / shape_ratio
-    }
-    else{ //else, higher than svg ==> limiting factor = height
-      EV_height = svg_height
-      EV_width = svg_height * shape_ratio
-    }
-
-    //TODO: correct slight shift
-    //floating point imprecisions? ==> try computations in pixels rather than lat/lng
-
-    var shape_in_image_left_tx = (left_lng - cachedLayers[layer_path].tl_lng) / (cachedLayers[layer_path].br_lng - cachedLayers[layer_path].tl_lng)
-    var shape_in_image_right_tx = (right_lng - cachedLayers[layer_path].tl_lng) / (cachedLayers[layer_path].br_lng - cachedLayers[layer_path].tl_lng)
-    var shape_in_image_top_ty = (cachedLayers[layer_path].tl_lat - upper_lat) / (cachedLayers[layer_path].tl_lat - cachedLayers[layer_path].br_lat)
-    var shape_in_image_bottom_ty = (cachedLayers[layer_path].tl_lat - lower_lat) / (cachedLayers[layer_path].tl_lat - cachedLayers[layer_path].br_lat)
-
-    var tl_pixel_x = shape_in_image_left_tx * cachedLayers[layer_path].width //pixels in the image (from 0 to image_width-1) where the bounds of the shape is
-    var tl_pixel_y = shape_in_image_top_ty * cachedLayers[layer_path].height
-    var br_pixel_x = shape_in_image_right_tx * cachedLayers[layer_path].width
-    var br_pixel_y = shape_in_image_bottom_ty * cachedLayers[layer_path].height
-
-    var shape_width_in_pixels = br_pixel_x - tl_pixel_x
-    var shape_height_in_pixels = br_pixel_y - tl_pixel_y
-
-    //console.log(cachedLayers[currentLayerPath].width/shape_width_in_pixels)
-    //console.log(cachedLayers[currentLayerPath].height/shape_height_in_pixels)
-
-    var real_zoom_factor = Math.min(EV_width / shape_width_in_pixels, EV_height / shape_height_in_pixels)
-
-    //console.log(real_zoom_factor)
-
-    var real_image_width = cachedLayers[layer_path].width * real_zoom_factor
-    var real_image_height = cachedLayers[layer_path].height * real_zoom_factor
-
-    var real_tl_pixel_x = shape_in_image_left_tx * real_image_width
-    var real_tl_pixel_y = shape_in_image_top_ty * real_image_height
-    var real_br_pixel_x = shape_in_image_right_tx * real_image_width
-    var real_br_pixel_y = shape_in_image_bottom_ty * real_image_height
-
-    imgs_EV.attr('width', real_image_width)
-    imgs_EV.attr('height', real_image_height)
-
-    imgs_EV.attr("transform",
-      function(d) {
-        return "translate(" +
-          (-real_tl_pixel_x + (svg_width - EV_width) / 2) + "," +
-          (-real_tl_pixel_y + (svg_height - EV_height) / 2) + ")";
-      }
-    )
-
-    function projectPoint(x, y) {
-      var in_image_tx = (x - cachedLayers[layer_path].tl_lng) / (cachedLayers[layer_path].br_lng - cachedLayers[layer_path].tl_lng)
-      var in_image_ty = (cachedLayers[layer_path].tl_lat - y) / (cachedLayers[layer_path].tl_lat - cachedLayers[layer_path].br_lat)
-
-      var in_image_x = in_image_tx * real_image_width
-      var in_image_y = in_image_ty * real_image_height
-      //console.log(in_image_x,in_image_y)
-
-      var point = L.point(in_image_x, in_image_y);
-      this.stream.point(point.x - real_tl_pixel_x + (svg_width - EV_width) / 2, point.y - real_tl_pixel_y + (svg_height - EV_height) / 2);
-    }
-    var transform = d3.geo.transform({
-      point: projectPoint
-    });
-    var path = d3.geo.path()
-      .projection(transform);
-
-    //console.log(shape_width_in_pixels,shape_height_in_pixels)
-    //console.log(EV_width,EV_height)
-
-
-
-    var shape_EV_data = shape_EV.selectAll("path").data([shape_feature])
-    shape_EV_data.attr("d",path)
-    shape_EV_data.enter().append("path")
-      .attr('vector-effect', 'non-scaling-stroke')
-      .style('stroke', "#000")
-      .style("fill-opacity", 0)
-      .style("stroke-opacity", 1)*/
-
     var svg_width = parseInt(svg_EV.style("width").replace("px",""))
     var svg_height = parseInt(svg_EV.style("height").replace("px",""))
 
@@ -326,11 +223,6 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
     var tl_pixels = map.latLngToContainerPoint(tl)
     var br_pixels = map.latLngToContainerPoint(br)
 
-    //console.log(map.containerPointToLatLng([mouseX,mouseY]))
-    //console.log(mouseX,mouseY)
-    //console.log(tl_pixels)
-
-    //console.log('UPDATING')
     var image_width = (map.latLngToLayerPoint(br).x - map.latLngToLayerPoint(tl).x)
     var image_height = (map.latLngToLayerPoint(br).y - map.latLngToLayerPoint(tl).y)
 
@@ -787,6 +679,12 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
     }
 
     loadLayer(path,colors,() => {
+      if (path == Config.EV_path){ //TODO: add parameter "AlwaysShowLayer" in config?
+        imgs.attr("clip-path", "")
+      }
+      else{
+        imgs.attr("clip-path", "url(#clip)")
+      }
       // Once the layer is loaded, we can get it from the cache.
       const layer = cachedLayers[path]
 
@@ -801,6 +699,9 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
         .range(range).domain(domain)
       voronoi.attr('fill', (_, i) =>{
         //console.log(layer.voronoi_means[i],colorScale(layer.voronoi_means[i]))
+        if (path == Config.EV_path){
+          return "#00000022" //transparent
+        }
         return colorScale(layer.voronoi_means[i])})
 
       min = 0//Math.min(...layer.interComm_means)
@@ -808,6 +709,9 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
 
       interComms.attr('fill', (_, i) =>{
         //console.log(layer.interComm_means[i],colorScale(layer.interComm_means[i]))
+        if (path == Config.EV_path){
+          return "#00000022" //transparent
+        }
         return colorScale(layer.interComm_means[i])})
 
 

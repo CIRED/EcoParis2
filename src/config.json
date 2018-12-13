@@ -2,14 +2,13 @@
 	"layers": [
 
 		{
-			"path": "data/rasters/pollination_ref.json",
+			"path": "data/rasters/espaces_verts.json",
 			"name": "Esp. verts",
 			"icon": "E",
-			"colors":["#ffffff","#339933"],
+			"colors":["#00ff00","#0000ff","#008800"],
 
 			"title": "Mesure de la rétention d'azote.",
-			"content": "<p>Should not appear anyway, find something to fill here.</p>",
-			"hidden":false
+			"content": "<p>Should not appear anyway, find something to fill here.</p>"
 		},
 		{
 			"path": "data/rasters/pollination_cc.json",
@@ -47,7 +46,7 @@
 		"leftLongitude": 1.44727950476602,
 		"rightLongitude": 3.555686958558566
 	},
-	"EV_path": "data/rasters/pollination_ref.json",
+	"EV_path": "data/rasters/espaces_verts.json",
     "Ecole_path": "data/rasters/ecoles_elementaires.json",
     "Urban_cooling": "data/rasters/T_air_ref.json"
 }
