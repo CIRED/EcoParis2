@@ -1,4 +1,5 @@
 import Config from './config.json'
+import _ from 'lodash'
 
 var urlAzote = 'data/n_export.json'
 var urlPhosphore = 'data/p_export.json'
@@ -325,6 +326,7 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
       update_clip()
       update_chart(i, currentLayerPath, true)
       update_EV_preview(d)
+      console.log(cachedLayers[currentLayerPath].voronoi_means[i])
     })
     .on("mouseout", function(d, i) {
       if (highlightedInterComm != -1) {
@@ -532,6 +534,14 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
         json.data = JSON.parse(json.data)
         json.percentiles = JSON.parse(json.percentiles)
 
+        while (json.percentiles[0] == 0){
+          json.percentiles.shift()
+        }
+        while (json.percentiles[json.percentiles.length-1] == 255){
+          json.percentiles.pop()
+        }
+        json.percentiles = _.uniq(json.percentiles)
+
         var pixels = json.data;
 
         canvas.width = json.width
@@ -733,8 +743,9 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
 
       const colorScale = d3.scale.linear()
         .range(range).domain(domain)
-      voronoi.attr('fill', (_, i) =>
-        colorScale(layer.voronoi_means[i]))
+      voronoi.attr('fill', (_, i) =>{
+        //console.log(layer.voronoi_means[i],colorScale(layer.voronoi_means[i]))
+        return colorScale(layer.voronoi_means[i])})
 
       min = 0//Math.min(...layer.interComm_means)
       max = 255//Math.max(...layer.interComm_means)

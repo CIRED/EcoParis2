@@ -68,19 +68,20 @@ var processColour = function(binaryData, l, width, height, pixels, shift, vorono
             interComm_id = interCommContainmentData[shift + containment_index]
           }// else, this image is bigger, this pixel is outside! so in no voronoi or interComm..
       
-      
+          if (value != null){
+            if (voronoi_id != 0){
+              voronoi_counts[voronoi_id-1] += 1
+              voronoi_means[voronoi_id-1] += value
+              voronoi_hist[voronoi_id-1].push(value)
+            }
 
-          if (voronoi_id != 0){
-            voronoi_counts[voronoi_id-1] += 1
-            voronoi_means[voronoi_id-1] += value
-            voronoi_hist[voronoi_id-1].push(value)
+            if (interComm_id != 0){
+              interComm_counts[interComm_id-1] += 1
+              interComm_means[interComm_id-1] += value
+              interComm_hist[interComm_id-1].push(value)
+            }
           }
-
-          if (interComm_id != 0){
-            interComm_counts[interComm_id-1] += 1
-            interComm_means[interComm_id-1] += value
-            interComm_hist[interComm_id-1].push(value)
-          }
+          
 
           if (voronoi_id != 0 && interComm_id != 0){ //voronoi inside an interComm, is it the first one?
 
@@ -101,14 +102,16 @@ var processColour = function(binaryData, l, width, height, pixels, shift, vorono
           binaryData[pos+2]   = parseInt(getColour(value),16) & 255
           binaryData[pos+1]   = (parseInt(getColour(value),16) >> 8) & 255
           binaryData[pos]   = (parseInt(getColour(value),16) >> 16) & 255
-          if (pixels[shift + i]==0){
+          if (value == null){
               binaryData[pos+3]=0; // alpha (transparency)
           }
           else{
               binaryData[pos+3]=220;
           }
+          
       }
   }
+  console.log(voronoi_means)
 
   voronoiInInterCommCount.forEach((p,i) => {
     var index = 100000
