@@ -15,21 +15,24 @@
  *		- Go back to SCR = EPSG-102110-RGF_1993_Lambert_93 (or whatever it was, actually)
  *		- Save
  *		- Choose bin thresholds for the categories of the histograms on the right (values go from 0 to 255, choose an array of separators)
+ *		- Write down there whether the values are discrete or not (typically true for the "espaces_verts" raster file, only three categories there)
  *		- Run the server locally (npm won't work here, "python -m http.server" will do)
  *		- At the bottom of the page, download you file.
  */
 
 // ========= CHANGE PARAMETERS HERE =========
 
-var FileName = "T_reduction_image.tif"
-var OutputFileName = "T_reduction.json" //.json
+var FileName = "espaces_verts_image.tif"
+var OutputFileName = "espaces_verts.json" //.json
 
-var North = 49.248402684
-var South = 48.110679214
-var West = 1.440530526
-var East = 3.565831072
+var North = 49.235386374 // espaces verts
+var South = 48.111114327
+var West = 1.458223266
+var East = 3.565682555
 
 var HistogramBins = [80,160] //3 categories: 0-80, 81-160, 161-255
+
+var AreValuesDiscrete = true //typically true when a pixel color is a category
 
 
 function whenDocumentLoaded(action) {
@@ -150,6 +153,22 @@ whenDocumentLoaded(() => {
 	    		break
 	    	}
 	    }
+
+	    if (AreValuesDiscrete){
+	    	percentiles = []
+	    	while (sorted.length > 0){
+	    		var percentile = sorted[0]
+	    		percentiles.push(percentile)
+	    		sorted = sorted.filter(x => x != percentile)
+	    	}
+	    	if (percentiles[0] == 0){
+		    	percentiles.shift()
+		    }
+		    if (percentiles[percentiles.length-1] == 255){
+		    	percentiles.pop()
+		    }
+	    }
+
 	    console.log(percentiles)
 	    //console.log(JSON.stringify(myArray))
 	    function download(text) {
