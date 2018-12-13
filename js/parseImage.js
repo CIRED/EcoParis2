@@ -21,13 +21,13 @@
 
 // ========= CHANGE PARAMETERS HERE =========
 
-var FileName = "ecoles_elementaires_image.tif"
-var OutputFileName = "ecoles_elementaires.json" //.json
+var FileName = "n_ret_ref_image.tif"
+var OutputFileName = "n_ret_ref.json" //.json
 
-var North = 49.215485585
-var South = 48.127383524
-var West = 1.473787809
-var East = 3.472059898
+var North = 49.248402684
+var South = 48.110679214
+var West = 1.440530526
+var East = 3.565831072
 
 var HistogramBins = [80,160] //3 categories: 0-80, 81-160, 161-255
 
@@ -108,8 +108,9 @@ whenDocumentLoaded(() => {
 	            data[reference_size_pos]   = parseInt(getColour(value),16) & 255 //r
 	            data[reference_size_pos+1]   = (parseInt(getColour(value),16) >> 8) & 255 //g
 	            data[reference_size_pos+2]   = (parseInt(getColour(value),16) >> 16) & 255 //b
-	            if (pixels[pos]==0){
+	            if (pixels[pos+3]==0){
 	                data[reference_size_pos+3]=0; // alpha (transparency)
+	                value = NaN //transparent pixel ==> no data
 	            }
 	            else{
 	                data[reference_size_pos+3]=180;
@@ -124,7 +125,7 @@ whenDocumentLoaded(() => {
 	        	myArray[i]=0;
 	        }
 	    }
-	    var sorted = myArray.slice()
+	    var sorted = myArray.slice().filter(x => x == x) //remove NaNs
 	    sorted.sort((x,y) => parseInt(x)>parseInt(y))
 
 	    var percentile_25 = sorted[Math.floor(sorted.length * 0.25)]
