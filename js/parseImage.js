@@ -21,8 +21,8 @@
 
 // ========= CHANGE PARAMETERS HERE =========
 
-var FileName = "n_ret_ref_image.tif"
-var OutputFileName = "n_ret_ref.json" //.json
+var FileName = "T_reduction_image.tif"
+var OutputFileName = "T_reduction.json" //.json
 
 var North = 49.248402684
 var South = 48.110679214
@@ -128,9 +128,29 @@ whenDocumentLoaded(() => {
 	    var sorted = myArray.slice().filter(x => x == x) //remove NaNs
 	    sorted.sort((x,y) => parseInt(x)>parseInt(y))
 
-	    var percentile_25 = sorted[Math.floor(sorted.length * 0.25)]
-	    var percentile_50 = sorted[Math.floor(sorted.length * 0.50)]
-	    var percentile_75 = sorted[Math.floor(sorted.length * 0.75)]
+	    var percentiles = []
+
+	    for (var i=4; i>0; --i){
+	    	percentiles = []
+	    	for (var j=1; j<i; ++j){
+	    		percentiles[j-1] = sorted[Math.floor(sorted.length * j/i)]
+	    	}
+	    	if (percentiles[0] == 0 || percentiles[percentiles.length-1] == 255){
+	    		continue;
+	    	}
+	    	var previous =-1;
+	    	var stop = true
+	    	for (var j=0; j<percentiles.length; ++j){
+	    		if (previous == percentiles[j]){
+	    			stop = false
+	    		}
+	    		previous = percentiles[j]
+	    	}
+	    	if (stop){
+	    		break
+	    	}
+	    }
+	    console.log(percentiles)
 	    //console.log(JSON.stringify(myArray))
 	    function download(text) {
 	      d3.select(".container").append("a").attr("id","a_image")
@@ -148,7 +168,7 @@ whenDocumentLoaded(() => {
 								"tl_lng":tl.lng,
 								"br_lat":br.lat,
 								"br_lng":br.lng,
-								"percentiles":JSON.stringify([percentile_25,percentile_50,percentile_75]),
+								"percentiles":JSON.stringify(percentiles),
 								"buckets":JSON.stringify(HistogramBins),
 								"data":JSON.stringify(myArray)}))
 
