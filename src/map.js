@@ -117,6 +117,12 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
     style: blankStyle
   }).addTo(map); //needed! otherwise a svg isn't generated, we use this one for practical purposes
 
+  d3.select(element).on("mousemove",function(){
+    if (d3.event && d3.event.clientX && d3.event.clientY){
+      //console.log(d3.event)
+      update_EV_preview(d3.event.layerX,d3.event.layerY)
+    }
+  })
   var svg = d3.select(element).select("svg")
 
   function projectPoint(x, y) {
@@ -200,17 +206,18 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
     .style("stroke-opacity", 1)
 
 
-  function update_EV_preview(shape_feature){
+  function update_EV_preview(mouseX,mouseY){
 
     var layer_path = Config.EV_path
     if (!cachedLayers[Config.EV_path]){
-      layer_path = currentLayerPath //if not loaded yet, approximate it by the currently selected layer
+      return
+      //layer_path = currentLayerPath //if not loaded yet, approximate it by the currently selected layer
     }
 
     //console.log(shape_feature)
     //console.log(d3.geo.bounds(shape_feature))
 
-    var upper_lat = d3.max(shape_feature.geometry.coordinates[0], p => p[1])
+    /*var upper_lat = d3.max(shape_feature.geometry.coordinates[0], p => p[1])
     var lower_lat = d3.min(shape_feature.geometry.coordinates[0], p => p[1])
     var left_lng = d3.min(shape_feature.geometry.coordinates[0], p => p[0])
     var right_lng = d3.max(shape_feature.geometry.coordinates[0], p => p[0])
@@ -308,7 +315,37 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
       .attr('vector-effect', 'non-scaling-stroke')
       .style('stroke', "#000")
       .style("fill-opacity", 0)
-      .style("stroke-opacity", 1)
+      .style("stroke-opacity", 1)*/
+
+    var svg_width = parseInt(svg_EV.style("width").replace("px",""))
+    var svg_height = parseInt(svg_EV.style("height").replace("px",""))
+
+    var tl = L.latLng(cachedLayers[layer_path].tl_lat,cachedLayers[layer_path].tl_lng)
+    var br = L.latLng(cachedLayers[layer_path].br_lat,cachedLayers[layer_path].br_lng)
+
+    var tl_pixels = map.latLngToContainerPoint(tl)
+    var br_pixels = map.latLngToContainerPoint(br)
+
+    //console.log(map.containerPointToLatLng([mouseX,mouseY]))
+    //console.log(mouseX,mouseY)
+    //console.log(tl_pixels)
+
+    //console.log('UPDATING')
+    var image_width = (map.latLngToLayerPoint(br).x - map.latLngToLayerPoint(tl).x)
+    var image_height = (map.latLngToLayerPoint(br).y - map.latLngToLayerPoint(tl).y)
+
+    imgs_EV.attr('width', image_width)
+    imgs_EV.attr('height', image_height)
+
+    //console.log(image_width,image_height)
+
+    imgs_EV.attr("transform",
+      function(d) {
+        return "translate(" +
+          (+ tl_pixels.x - mouseX + svg_width/2) + "," +
+          (+ tl_pixels.y - mouseY + svg_height/2) + ")";
+      }
+    )
   }
 
   var voronoi = svg.append("g").selectAll("path")
@@ -478,11 +515,11 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
             } else {
               var data = info.interComm_hist[i]
             }
-            onSchools(data)
+            //onSchools(data)
             // change texte according to data 
       }
       else{
-          onSchools(null)
+          //onSchools(null)
       }
       
   }
