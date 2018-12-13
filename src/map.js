@@ -37,7 +37,7 @@ function loadContainmentFile(url) {
     })
 }
 
-export default function(element, error, interComm_shape, voronoi_shape, onHistChange, EV_path) {
+export default function(element, error, interComm_shape, voronoi_shape, onHistChange, onSchools) {
   var current_geoLat = null;
   var current_geoLong = null;
 
@@ -202,8 +202,8 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
 
   function update_EV_preview(shape_feature){
 
-    var layer_path = EV_path
-    if (!cachedLayers[EV_path]){
+    var layer_path = Config.EV_path
+    if (!cachedLayers[Config.EV_path]){
       layer_path = currentLayerPath //if not loaded yet, approximate it by the currently selected layer
     }
 
@@ -325,6 +325,7 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
       update_clip()
       update_chart(i, currentLayerPath, true)
       update_EV_preview(d)
+      update_text_school(i, currentLayerPath, true)
     })
     .on("mouseout", function(d, i) {
       if (highlightedInterComm != -1) {
@@ -381,6 +382,7 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
       //console.log(i)
       update_chart(i, currentLayerPath, false)
       update_EV_preview(d)
+      update_text_school(i, currentLayerPath, false)
     })
     .on("mouseout", function(d, i) {
       if (highlightedInterComm != -1) {
@@ -433,8 +435,8 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
     hide: true,
   };
 
-  function update_chart(i, layerURl, voro) {
-    var info = cachedLayers[layerURl]
+  function update_chart(i, layerURL, voro) {
+    var info = cachedLayers[layerURL]
     if (!info) {
       return;
     }
@@ -463,6 +465,26 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
     })
 
     onHistChange(data, buckets)
+  }
+  
+  function update_text_school(i, layerURL, voro){
+      if(layerURL==Config.Urban_cooling){
+          var info = cachedLayers[Config.Ecole_path]
+            if (!info) {
+                return;
+            }
+            if (voro == true) {
+              var data = info.voronoi_hist[i]
+            } else {
+              var data = info.interComm_hist[i]
+            }
+            onSchools(data)
+            // change texte according to data 
+      }
+      else{
+          onSchools(null)
+      }
+      
   }
 
 
@@ -605,18 +627,29 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
           finished++;
 
           if (finished == workersCount) {
-            for (var i = 0; i < voronoi_shape.features.length; ++i) {
-              if (voronoi_counts[i] != 0) {
-                voronoi_means[i] /= voronoi_counts[i]
-              }
-            }
-            for (var i = 0; i < interComm_shape.features.length; ++i) {
-              if (interComm_counts[i] != 0) {
-                interComm_means[i] /= interComm_counts[i]
-              }
-            }
-
-            var hist_buckets = [70, 140]; //TODO: change acording to layer (hard-coded...)
+              if(path == Config.Ecole_path){
+                  // Here we count the number of schools
+                    for (var i = 0; i < voronoi_shape.features.length; ++i) {
+                        voronoi_means[i] /= 255
+                    }
+                    for (var i = 0; i < interComm_shape.features.length; ++i) {
+                        interComm_means[i] /= 255
+                    }
+                }
+              else{
+                    for (var i = 0; i < voronoi_shape.features.length; ++i) {
+                      if (voronoi_counts[i] != 0) {
+                        voronoi_means[i] /= voronoi_counts[i]
+                      }
+                    }
+                    for (var i = 0; i < interComm_shape.features.length; ++i) {
+                      if (interComm_counts[i] != 0) {
+                        interComm_means[i] /= interComm_counts[i]
+                      }
+                    }
+                }
+                
+            var hist_buckets = [70, 140]; //TODO: change acodring to layer (hard-coded...)
 
             var value = canvas.toDataURL("png");
             imgs.attr("xlink:href", value)
@@ -681,7 +714,7 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
   }
 
   function setEVLayer(path){
-    imgs_EV.attr("xlink:href", cachedLayers[EV_path].url)
+    imgs_EV.attr("xlink:href", cachedLayers[Config.EV_path].url)
   }
 
   function computeColorRange(percentiles,colors){

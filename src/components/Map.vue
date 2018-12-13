@@ -7,7 +7,7 @@ import Config from '../config.json'
 import displayMap from '../map'
 
 export default {
-  props: ['layers', 'currentLayer', 'currentLocation', 'onHist'],
+  props: ['layers', 'currentLayer', 'currentLocation', 'onHist','onSchools'],
   data: () => ({
     loadLayer: () => {},
     setLayer: () => {},
@@ -26,17 +26,18 @@ export default {
       .defer(d3.json, urlInterComm)
       .defer(d3.json, urlVoronoi)
       .await((e, d, v) => {
-        [this.loadLayer, this.setLayer, this.setLocation, this.setEVLayer] =
-          displayMap(this.$refs.map, e, d, v, (d, _) => this.onHist(d),Config.EV_path)
+        [this.loadLayer, this.setLayer, this.setLocation, this.setEVLayer, this.setTextUrban] =
+          displayMap(this.$refs.map, e, d, v, (d, _) => this.onHist(d), this.onSchools)
 
         Config.layers.forEach(layer => this.loadLayer(
           layer.path,
           layer.colors,
           () => {
             this.layers[layer.path].loaded = true
+            
             if (layer.path == Config.EV_path){
               this.setEVLayer(layer.path)
-            } 
+            }          
           }
         ))
 

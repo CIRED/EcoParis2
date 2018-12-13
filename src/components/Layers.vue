@@ -3,7 +3,8 @@
     <h3>Couches</h3>
 
     <div class="buttons">
-      <a v-for="layer in BrowsableLayers"
+      <a v-for="layer in layers"
+        v-if="!layer.hidden"
         :class="{ active: value == layer.path }"
         @click.prevent="select(layer)">
         <span class="icon" v-html="layer.icon"></span>
@@ -38,13 +39,6 @@ export default {
       }
     }
   },
-  computed: {
-    BrowsableLayers: function() {
-      return _.pickBy(this.layers, function(u) {
-        return !u.hidden;
-      });
-    } //contains only layers that should be browsable (not "Espaces verts"!)
-  }
 }
 </script>
 
