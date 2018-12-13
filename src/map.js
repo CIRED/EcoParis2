@@ -1,5 +1,4 @@
 import Config from './config.json'
-import _ from 'lodash'
 
 var urlAzote = 'data/n_export.json'
 var urlPhosphore = 'data/p_export.json'
@@ -326,7 +325,6 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
       update_clip()
       update_chart(i, currentLayerPath, true)
       update_EV_preview(d)
-      console.log(cachedLayers[currentLayerPath].voronoi_means[i])
     })
     .on("mouseout", function(d, i) {
       if (highlightedInterComm != -1) {
@@ -534,14 +532,6 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
         json.data = JSON.parse(json.data)
         json.percentiles = JSON.parse(json.percentiles)
 
-        while (json.percentiles[0] == 0){
-          json.percentiles.shift()
-        }
-        while (json.percentiles[json.percentiles.length-1] == 255){
-          json.percentiles.pop()
-        }
-        json.percentiles = _.uniq(json.percentiles)
-
         var pixels = json.data;
 
         canvas.width = json.width
@@ -656,10 +646,8 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
         // FIXME(liautaud): This should be done only once.
 
         var domain_range = computeColorRange(json.percentiles,colors)
-        console.log(json.percentiles)
         var domain = domain_range[0]
         var range = domain_range[1]
-        console.log(domain,range)
         loadContainmentFile("data/voronoi_cont.json").then(voronoiContainment => {
           loadContainmentFile("data/intercomm_cont.json").then(interCommContainment => {
             for (var index = 0; index < workersCount; index++) {
@@ -715,8 +703,6 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
       var t = i/(domainLength-1)
       range_out.push(intermediateScale(t))
     }
-    console.log(domain_percentiles)
-    console.log(percentiles)
     return [domain_percentiles,range_out]
   }
 

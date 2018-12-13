@@ -21,7 +21,7 @@
 			"content": "<p>Le service de rétention du phosphore permet d'améliorer la qualité de l'eau (superficielle et souterraine). Il est directement utile aux organismes de gestion de l'eau (syndicats et département d'assainissement), et donc aux habitants dont les impôts financent la maintenance des services d'assainissement.</p>"
 		},
 		{
-			"path": "data/rasters/T_air_ref.json",
+			"path": "data/rasters/T_reduction.json",
 			"name": "Nitrog.",
 			"icon": "N",
 			"colors":["#ff3300","#ffffff","#00ccff"],

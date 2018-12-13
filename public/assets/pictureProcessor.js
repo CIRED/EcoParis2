@@ -29,7 +29,7 @@ var processColour = function(binaryData, l, width, height, pixels, shift, vorono
   const original_height = 1590
 
   //console.log(voronoi_hist)
-  console.log(bounds)
+  //console.log(bounds)
   var  voronoiInInterCommCount = []
   for (var i=0; i<l; i++) {
 
@@ -111,7 +111,7 @@ var processColour = function(binaryData, l, width, height, pixels, shift, vorono
           
       }
   }
-  console.log(voronoi_means)
+  //console.log(voronoi_means)
 
   voronoiInInterCommCount.forEach((p,i) => {
     var index = 100000
@@ -144,7 +144,7 @@ self.addEventListener('message', function(e) {
   var percentiles = e.data.colorDomain
   var colors = e.data.colorRange
 
-  console.log(colors,percentiles)
+  //console.log(colors,percentiles)
 
   var l = e.data.length;
   var index = e.data.index;
