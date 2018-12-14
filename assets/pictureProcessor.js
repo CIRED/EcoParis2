@@ -1,13 +1,23 @@
-function getColour(d){
-    return  d > 200 ? 'e31a1c':
-            d > 150 ? 'fc4e2a':
-            d > 100 ? 'fd8d3c':
-            d > 50 ? 'feb24c':
-                      'ffffcc';
-}
 
-var processColour = function(binaryData, l, width, height, pixels, shift, voronoiContainmentData, interCommContainmentData, voronoi_means, voronoi_counts , voronoi_hist, interComm_means, interComm_counts, interComm_hist, firstVoronoiByInterComm, bounds){
 
+var processColour = function(binaryData, l, width, height, pixels, shift, voronoiContainmentData, interCommContainmentData, 
+                              voronoi_means, voronoi_counts , voronoi_hist, interComm_means, interComm_counts, interComm_hist, firstVoronoiByInterComm, bounds,
+                              percentiles, colors){
+
+  //var num_percentiles = percentiles.length + 2
+  //var num_colors = colors.length
+
+  function getColour(d){
+    var min_dist = 255
+    var min_index = 0
+    for (var i=0; i<percentiles.length; ++i){
+      if (Math.abs(percentiles[i] - d) < min_dist){
+        min_dist = Math.abs(percentiles[i] - d)
+        min_index = i
+      }
+    }
+    return colors[min_index].substr(1)
+  }
 
   const original_tl_lat = 49.2485668
   const original_tl_lng = 1.4403262
@@ -19,7 +29,7 @@ var processColour = function(binaryData, l, width, height, pixels, shift, vorono
   const original_height = 1590
 
   //console.log(voronoi_hist)
-  console.log(bounds)
+  //console.log(bounds)
   var  voronoiInInterCommCount = []
   for (var i=0; i<l; i++) {
 
@@ -58,19 +68,20 @@ var processColour = function(binaryData, l, width, height, pixels, shift, vorono
             interComm_id = interCommContainmentData[shift + containment_index]
           }// else, this image is bigger, this pixel is outside! so in no voronoi or interComm..
       
-      
+          if (value != null){
+            if (voronoi_id != 0){
+              voronoi_counts[voronoi_id-1] += 1
+              voronoi_means[voronoi_id-1] += value
+              voronoi_hist[voronoi_id-1][value] += 1
+            }
 
-          if (voronoi_id != 0){
-            voronoi_counts[voronoi_id-1] += 1
-            voronoi_means[voronoi_id-1] += value
-            voronoi_hist[voronoi_id-1].push(value)
+            if (interComm_id != 0){
+              interComm_counts[interComm_id-1] += 1
+              interComm_means[interComm_id-1] += value
+              interComm_hist[interComm_id-1][value] += 1
+            }
           }
-
-          if (interComm_id != 0){
-            interComm_counts[interComm_id-1] += 1
-            interComm_means[interComm_id-1] += value
-            interComm_hist[interComm_id-1].push(value)
-          }
+          
 
           if (voronoi_id != 0 && interComm_id != 0){ //voronoi inside an interComm, is it the first one?
 
@@ -91,16 +102,17 @@ var processColour = function(binaryData, l, width, height, pixels, shift, vorono
           binaryData[pos+2]   = parseInt(getColour(value),16) & 255
           binaryData[pos+1]   = (parseInt(getColour(value),16) >> 8) & 255
           binaryData[pos]   = (parseInt(getColour(value),16) >> 16) & 255
-          if (pixels[shift + i]==0){
+          if (value == null){
               binaryData[pos+3]=0; // alpha (transparency)
           }
           else{
               binaryData[pos+3]=220;
           }
+          
       }
   }
+  //console.log(voronoi_means)
 
-  console.log(voronoiInInterCommCount)
   voronoiInInterCommCount.forEach((p,i) => {
     var index = 100000
     p.forEach((d,j) => { //first index where greater than a given value
@@ -129,6 +141,10 @@ self.addEventListener('message', function(e) {
   var tl_lng = e.data.tl_lng
   var br_lat = e.data.br_lat
   var br_lng = e.data.br_lng
+  var percentiles = e.data.colorDomain
+  var colors = e.data.colorRange
+
+  //console.log(colors,percentiles)
 
   var l = e.data.length;
   var index = e.data.index;
@@ -142,6 +158,9 @@ self.addEventListener('message', function(e) {
     voronoi_counts[i] = 0
     voronoi_means[i] = 0
     voronoi_hist[i] = []
+    for (var j=0; j<256; ++j){
+      voronoi_hist[i][j]=0
+    }
   }
 
   var interComm_means = []
@@ -152,6 +171,9 @@ self.addEventListener('message', function(e) {
     interComm_counts[i] = 0
     interComm_means[i] = 0
     interComm_hist[i] = []
+    for (var j=0; j<256; ++j){
+      interComm_hist[i][j]=0
+    }
   }
 
   var firstVoronoiByInterComm = []
@@ -164,7 +186,8 @@ self.addEventListener('message', function(e) {
                 {tl_lat:tl_lat,
                 tl_lng:tl_lng,
                 br_lat:br_lat,
-                br_lng:br_lng})
+                br_lng:br_lng,},
+                percentiles,colors)
 
   self.postMessage({result: canvasData,
                     index: index,
