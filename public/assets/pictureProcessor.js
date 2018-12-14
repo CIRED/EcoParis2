@@ -72,13 +72,13 @@ var processColour = function(binaryData, l, width, height, pixels, shift, vorono
             if (voronoi_id != 0){
               voronoi_counts[voronoi_id-1] += 1
               voronoi_means[voronoi_id-1] += value
-              voronoi_hist[voronoi_id-1].push(value)
+              voronoi_hist[voronoi_id-1][value] += 1
             }
 
             if (interComm_id != 0){
               interComm_counts[interComm_id-1] += 1
               interComm_means[interComm_id-1] += value
-              interComm_hist[interComm_id-1].push(value)
+              interComm_hist[interComm_id-1][value] += 1
             }
           }
           
@@ -158,6 +158,9 @@ self.addEventListener('message', function(e) {
     voronoi_counts[i] = 0
     voronoi_means[i] = 0
     voronoi_hist[i] = []
+    for (var j=0; j<256; ++j){
+      voronoi_hist[i][j]=0
+    }
   }
 
   var interComm_means = []
@@ -168,6 +171,9 @@ self.addEventListener('message', function(e) {
     interComm_counts[i] = 0
     interComm_means[i] = 0
     interComm_hist[i] = []
+    for (var j=0; j<256; ++j){
+      interComm_hist[i][j]=0
+    }
   }
 
   var firstVoronoiByInterComm = []

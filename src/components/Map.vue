@@ -1,5 +1,6 @@
 <template>
-  <section ref="map" class="map"></section>
+  <section ref="map" class="map">
+  </section>
 </template>
 
 <script>
@@ -7,7 +8,7 @@ import Config from '../config.json'
 import displayMap from '../map'
 
 export default {
-  props: ['layers', 'currentLayer', 'currentLocation', 'onHist','onSchools'],
+  props: ['layers', 'currentLayer', 'currentLocation', 'onHist', 'appRefs', 'onSchools'],
   data: () => ({
     loadLayer: () => {},
     setLayer: () => {},
@@ -27,7 +28,7 @@ export default {
       .defer(d3.json, urlVoronoi)
       .await((e, d, v) => {
         [this.loadLayer, this.setLayer, this.setLocation, this.setEVLayer, this.setTextUrban] =
-          displayMap(this.$refs.map, e, d, v, (d, _) => this.onHist(d), this.onSchools)
+          displayMap(this.$refs.map,this.appRefs.svg, e, d, v, (x, y) => this.onHist(x,y), this.onSchools)
 
         Config.layers.forEach(layer => this.loadLayer(
           layer.path,

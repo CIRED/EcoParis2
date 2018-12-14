@@ -6,10 +6,17 @@
 /**
  * Updates the Plotly plot according to this.data.
  */
-const updatePlot = (that) =>
+const updatePlot = (that) =>{
   Plotly.react(that.$refs.graph, [{
-    x: that.data,
+    x: that.x,
+    y: that.y,
     type: 'histogram',
+    histfunc: "sum",
+    xbins: {
+      end: 256, 
+      size: 1, 
+      start: 0
+    }
   }], {
     margin: {
       l: 35,
@@ -20,9 +27,10 @@ const updatePlot = (that) =>
   }, {
     displayModeBar: false,
   })
+}
 
 export default {
-  props: ['data'],
+  props: ['x','y'],
 
   mounted() {
     updatePlot(this)
@@ -32,7 +40,7 @@ export default {
     /**
      * Watches changes to the data prop, and updates the histogram.
      */
-    data() {
+    x() {
       updatePlot(this)
     }
   }

@@ -5,7 +5,7 @@
     <div class="buttons">
       <a v-for="layer in layers"
         v-if="!layer.hidden"
-        :class="{ active: value == layer.path }"
+        :class="{ active: value == layer }"
         @click.prevent="select(layer)">
         <span class="icon" v-html="layer.icon"></span>
         <span>{{ layer.name }}</span>
@@ -27,7 +27,6 @@
 </template>
 
 <script>
-import _ from 'lodash';
 
 export default {
   props: ['layers', 'value'],

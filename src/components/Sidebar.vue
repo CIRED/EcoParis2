@@ -1,9 +1,10 @@
 <template>
   <section class="sidebar">
-    <div v-if="layers[currentLayer]">
-      <h2>{{ layers[currentLayer].title }}</h2>
-      <div v-html="layers[currentLayer].content"></div>
-      <Histogram :data="currentHistogram" />
+    <div v-if="currentLayer && layers[currentLayer.path].loaded">
+      <h2>{{ layers[currentLayer.path].title }}</h2>
+      <div v-html="layers[currentLayer.path].content"></div>
+      <Histogram :x="currentHistogramX"
+                 :y="currentHistogramY"/>
     </div>
 
     <div v-else class="split">
@@ -37,7 +38,7 @@
 import Histogram from './Histogram.vue'
 
 export default {
-  props: ['layers', 'currentLayer', 'currentHistogram'],
+  props: ['layers', 'currentLayer', 'currentHistogramX', 'currentHistogramY'],
   components: { Histogram },
 }
 </script>

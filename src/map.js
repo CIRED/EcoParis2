@@ -37,10 +37,11 @@ function loadContainmentFile(url) {
     })
 }
 
-export default function(element, error, interComm_shape, voronoi_shape, onHistChange, onSchools) {
+export default function(element, EV_svg_element, error, interComm_shape, voronoi_shape, onHistChange, onSchools) {
   var current_geoLat = null;
   var current_geoLong = null;
 
+  console.log(element)
   const default_tl = new L.LatLng(
     Config.viewport.topLatitude,
     Config.viewport.leftLongitude
@@ -123,7 +124,7 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
       update_EV_preview(d3.event.layerX,d3.event.layerY)
     }
   })
-  var svg = d3.select(element).select("svg")
+  var svg = d3.select(element).select(".leaflet-zoom-animated")
 
   function projectPoint(x, y) {
     var point = map.latLngToLayerPoint(new L.LatLng(y, x));
@@ -182,11 +183,8 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
   var fullOpacity = 1
   var currentLayerPath = ""
 
-  var svg_EV = d3.select("body").append("svg")
-                  .attr("id","espacesVerts_")
-                  .attr("width",450)
-                  .attr("height",300)
-                  .attr("style","margin-left:200px;")
+  var svg_EV = d3.select(EV_svg_element)
+  //var svg_EV = d3.select("body").append("svg")
 
   var imgs_EV = svg_EV.selectAll("image").data([0])
     .enter()
@@ -211,11 +209,13 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
     var layer_path = Config.EV_path
     if (!cachedLayers[Config.EV_path]){
       return
-      //layer_path = currentLayerPath //if not loaded yet, approximate it by the currently selected layer
     }
 
     var svg_width = parseInt(svg_EV.style("width").replace("px",""))
     var svg_height = parseInt(svg_EV.style("height").replace("px",""))
+
+    svg_EV.attr("style","top:"+(mouseY - svg_height - 30)+"; left:"+(mouseX - svg_width/2)+";")
+
 
     var tl = L.latLng(cachedLayers[layer_path].tl_lat,cachedLayers[layer_path].tl_lng)
     var br = L.latLng(cachedLayers[layer_path].br_lat,cachedLayers[layer_path].br_lng)
@@ -228,8 +228,6 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
 
     imgs_EV.attr('width', image_width)
     imgs_EV.attr('height', image_height)
-
-    //console.log(image_width,image_height)
 
     imgs_EV.attr("transform",
       function(d) {
@@ -375,25 +373,10 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
       var data = info.interComm_hist[i]
     }
 
-    var buckets = []
-    for (var j = 0; j < info.hist_buckets.length + 1; ++j) {
-      buckets[j] = 0
-    }
-
-    data.forEach((d, j) => {
-      for (var j = 0; j < info.hist_buckets.length; ++j) {
-        if (d <= info.hist_buckets[j]) {
-          // FIXME(liautaud): Does it make sense to plot 0 values on the histograms?
-          if (d > 0) {
-            buckets[j]++;
-          }
-          return;
-        }
-      }
-      buckets[info.hist_buckets.length]++ //larger than any separation ==> in the last bucket!
-    })
-
-    onHistChange(data, buckets)
+    data[0]=0 // ignore 0 values
+    onHistChange([...Array(256).keys()],data)
+    
+    // [...Array(255).keys()] == [0,1,2,...,255]
   }
   
   function update_text_school(i, layerURL, voro){
@@ -506,6 +489,9 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
           voronoi_counts[i] = 0
           voronoi_means[i] = 0
           voronoi_hist[i] = []
+          for (var j=0; j<256; ++j){
+            voronoi_hist[i][j]=0
+          }
         }
 
         var interComm_means = []
@@ -516,6 +502,9 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
           interComm_counts[i] = 0
           interComm_means[i] = 0
           interComm_hist[i] = []
+          for (var j=0; j<256; ++j){
+            interComm_hist[i][j]=0
+          }
         }
 
         firstVoronoiByInterComm = []
@@ -539,13 +528,20 @@ export default function(element, error, interComm_shape, voronoi_shape, onHistCh
           for (var i = 0; i < voronoi_shape.features.length; ++i) {
             voronoi_counts[i] += voronoi_counts_portion[i]
             voronoi_means[i] += voronoi_means_portion[i]
-            voronoi_hist[i] = voronoi_hist[i].concat(voronoi_hist_portion[i])
+
+            for (var j=0; j<256; ++j){
+              voronoi_hist[i][j] += voronoi_hist_portion[i][j]
+            }
           }
 
           for (var i = 0; i < interComm_shape.features.length; ++i) {
             interComm_counts[i] += interComm_counts_portion[i]
             interComm_means[i] += interComm_means_portion[i]
-            interComm_hist[i] = interComm_hist[i].concat(interComm_hist_portion[i])
+
+            for (var j=0; j<256; ++j){
+              interComm_hist[i][j] += interComm_hist_portion[i][j]
+            }
+            
 
             if (firstVoronoiByInterComm[i] > firstVoronoiByInterCommPortion[i]) {
               firstVoronoiByInterComm[i] = firstVoronoiByInterCommPortion[i]

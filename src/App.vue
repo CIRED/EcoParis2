@@ -17,11 +17,14 @@
         :layers="layers"
         :currentLayer="currentLayer"
         :currentLocation="currentLocation"
-        :onHist="h => this.currentHistogram = h" />
+        :onHist="(x,y) => {this.currentHistogramX = x; this.currentHistogramY = y;}" 
+        :appRefs="this.$refs"/>
+      <svg ref="svg" class="EV-svg"></svg> 
       <Sidebar
         :layers="layers"
         :currentLayer="currentLayer"
-        :currentHistogram="currentHistogram" />
+        :currentHistogramX="currentHistogramX"
+        :currentHistogramY="currentHistogramY" />
     </section>
   </div>
 </template>
@@ -47,7 +50,8 @@ export default {
     // currentLayer: 'data/p_export.json',
     currentLayer: null,
     currentLocation: null,
-    currentHistogram: null,
+    currentHistogramX: null,
+    currentHistogramY: null,
     introVisible: true,
     sidebarVisible: false,
   }),
@@ -152,5 +156,16 @@ p {
   a:first-child {
     border-right: 1px solid #bbb;
   }
+}
+
+.EV-svg {
+  border-radius:50%;
+  width:120px;
+  height:120px;
+  border: 1px solid #000;
+  position:absolute;
+  background-color: #fff;
+  display: flex;
+  pointer-events: none;
 }
 </style>
