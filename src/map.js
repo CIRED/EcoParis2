@@ -274,6 +274,7 @@ export default function(element, EV_svg_element, error, interComm_shape, voronoi
 
       defs_path.datum([])
       update_clip()
+      svg_EV.attr("style","display:none;")
     })
     .on("mousemove",function(){
       if (d3.event && d3.event.clientX && d3.event.clientY){
@@ -346,6 +347,7 @@ export default function(element, EV_svg_element, error, interComm_shape, voronoi
       var neBound = map.layerPointToLatLng(L.point(BBox.x, BBox.y))
       var swBound = map.layerPointToLatLng(L.point(BBox.x + BBox.width, BBox.y + BBox.height))
       map.fitBounds(L.latLngBounds(neBound, swBound)) // zoom to department
+      svg_EV.attr("style","display:none;")
     })
     .on("mousemove",function(){
       if (d3.event && d3.event.clientX && d3.event.clientY){
@@ -450,6 +452,7 @@ export default function(element, EV_svg_element, error, interComm_shape, voronoi
     voronoi.attr("d", path)
     update_clip()
     updateMarker()
+    svg_EV.attr("style","display:none;")
   }
 
   map.on('viewreset', update)
