@@ -216,6 +216,7 @@ export default function(element, EV_svg_element, EV_circle_svg_element, error, i
     var svg_width = parseInt(svg_EV.style("width").replace("px",""))
     var svg_height = parseInt(svg_EV.style("height").replace("px",""))
 
+    console.log(mouseX,mouseY)
     svg_EV.attr("style","top:"+(mouseY - svg_height - 30)+"; left:"+(mouseX - svg_width/2)+"; display:'';")
     svg_circle_EV.attr("style","top:"+(mouseY - svg_height/2)+"; left:"+(mouseX - svg_width/2)+"; display:'';")
 
@@ -254,7 +255,6 @@ export default function(element, EV_svg_element, EV_circle_svg_element, error, i
       defs_path.datum(d.geometry)
       update_clip()
       update_chart(i, currentLayerPath, true)
-      update_EV_preview(d)
       update_text_school(i, currentLayerPath, true)
     })
     .on("mouseout", function(d, i) {
@@ -283,8 +283,11 @@ export default function(element, EV_svg_element, EV_circle_svg_element, error, i
     })
     .on("mousemove",function(){
       if (d3.event && d3.event.clientX && d3.event.clientY){
-        //console.log(d3.event)
         update_EV_preview(d3.event.layerX,d3.event.layerY)
+      }
+      else{
+        svg_EV.attr("style","display:none;")
+        svg_circle_EV.attr("style","display:none;")
       }
     })
 
@@ -321,7 +324,6 @@ export default function(element, EV_svg_element, EV_circle_svg_element, error, i
       }
       //console.log(i)
       update_chart(i, currentLayerPath, false)
-      update_EV_preview(d)
       update_text_school(i, currentLayerPath, false)
     })
     .on("mouseout", function(d, i) {
@@ -360,6 +362,10 @@ export default function(element, EV_svg_element, EV_circle_svg_element, error, i
       if (d3.event && d3.event.clientX && d3.event.clientY){
         //console.log(d3.event)
         update_EV_preview(d3.event.layerX,d3.event.layerY)
+      }
+      else{
+        svg_EV.attr("style","display:none;")
+        svg_circle_EV.attr("style","display:none;")
       }
     })
 
@@ -602,7 +608,7 @@ export default function(element, EV_svg_element, EV_circle_svg_element, error, i
             var hist_buckets = [70, 140]; //TODO: change acodring to layer (hard-coded...)
 
             var value = canvas.toDataURL("png");
-            imgs.attr("xlink:href", value)
+            //imgs.attr("xlink:href", value)
             
             cachedLayers[path] = {
               "url": value,
