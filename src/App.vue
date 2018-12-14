@@ -19,6 +19,7 @@
         :currentLocation="currentLocation"
         :onHist="(x,y) => {this.currentHistogramX = x; this.currentHistogramY = y;}" 
         :appRefs="this.$refs"/>
+      <svg ref="circle_svg" class="EV-circle-svg"></svg> 
       <svg ref="svg" class="EV-svg"></svg> 
       <Sidebar
         :layers="layers"
@@ -39,6 +40,13 @@ import Layers from './components/Layers.vue'
 import Map from './components/Map.vue'
 import Sidebar from './components/Sidebar.vue'
 
+var defaultLayer = null
+
+for (var i=0; i<Config.layers.length; ++i){
+  if (Config.layers[i].path == Config.EV_path){
+    defaultLayer = Config.layers[i]
+  }
+}
 export default {
   data: () => ({
     layers: Config.layers.reduce((m, layer) => {
@@ -48,7 +56,7 @@ export default {
     }, {}),
 
     // currentLayer: 'data/p_export.json',
-    currentLayer: null,
+    currentLayer: defaultLayer,
     currentLocation: null,
     currentHistogramX: null,
     currentHistogramY: null,
@@ -56,13 +64,7 @@ export default {
     sidebarVisible: false,
   }),
 
-  components: { Intro, ZoomControl, LocationControl, Layers, Map, Sidebar },
-
-  methods: {
-    onLayerLoaded(layer) {
-      console.log(layer)
-    }
-  }
+  components: { Intro, ZoomControl, LocationControl, Layers, Map, Sidebar }
 }
 </script>
 
@@ -165,6 +167,17 @@ p {
   border: 1px solid #000;
   position:absolute;
   background-color: #fff;
+  display: flex;
+  pointer-events: none;
+}
+
+.EV-circle-svg {
+  border-radius:50%;
+  width:120px;
+  height:120px;
+  border: 1px solid #000;
+  position:absolute;
+  background-color: #fff0;
   display: flex;
   pointer-events: none;
 }

@@ -28,7 +28,7 @@ export default {
       .defer(d3.json, urlVoronoi)
       .await((e, d, v) => {
         [this.loadLayer, this.setLayer, this.setLocation, this.setEVLayer, this.setTextUrban] =
-          displayMap(this.$refs.map,this.appRefs.svg, e, d, v, (x, y) => this.onHist(x,y), this.onSchools)
+          displayMap(this.$refs.map,this.appRefs.svg,this.appRefs.circle_svg, e, d, v, (x, y) => this.onHist(x,y), this.onSchools)
 
         Config.layers.forEach(layer => this.loadLayer(
           layer.path,
@@ -42,7 +42,7 @@ export default {
           }
         ))
 
-        this.setLayer(this.currentLayer)
+        this.setLayer(this.currentLayer.path,this.currentLayer.colors)
       })
   },
 

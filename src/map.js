@@ -37,7 +37,7 @@ function loadContainmentFile(url) {
     })
 }
 
-export default function(element, EV_svg_element, error, interComm_shape, voronoi_shape, onHistChange, onSchools) {
+export default function(element, EV_svg_element, EV_circle_svg_element, error, interComm_shape, voronoi_shape, onHistChange, onSchools) {
   var current_geoLat = null;
   var current_geoLong = null;
 
@@ -185,6 +185,8 @@ export default function(element, EV_svg_element, error, interComm_shape, voronoi
 
   var svg_EV = d3.select(EV_svg_element)
     .attr("style","display:none;")
+  var svg_circle_EV = d3.select(EV_circle_svg_element)
+    .attr("style","display:none;")
 
   var imgs_EV = svg_EV.selectAll("image").data([0])
     .enter()
@@ -215,6 +217,7 @@ export default function(element, EV_svg_element, error, interComm_shape, voronoi
     var svg_height = parseInt(svg_EV.style("height").replace("px",""))
 
     svg_EV.attr("style","top:"+(mouseY - svg_height - 30)+"; left:"+(mouseX - svg_width/2)+"; display:'';")
+    svg_circle_EV.attr("style","top:"+(mouseY - svg_height/2)+"; left:"+(mouseX - svg_width/2)+"; display:'';")
 
 
     var tl = L.latLng(cachedLayers[layer_path].tl_lat,cachedLayers[layer_path].tl_lng)
@@ -263,6 +266,7 @@ export default function(element, EV_svg_element, error, interComm_shape, voronoi
       defs_path.datum([])
       update_clip()
       svg_EV.attr("style","display:none;")
+      svg_circle_EV.attr("style","display:none;")
     })
     .on("click", function(d, i) {
       interComms.style("pointer-events", "all")
@@ -275,6 +279,7 @@ export default function(element, EV_svg_element, error, interComm_shape, voronoi
       defs_path.datum([])
       update_clip()
       svg_EV.attr("style","display:none;")
+      svg_circle_EV.attr("style","display:none;")
     })
     .on("mousemove",function(){
       if (d3.event && d3.event.clientX && d3.event.clientY){
@@ -330,6 +335,7 @@ export default function(element, EV_svg_element, error, interComm_shape, voronoi
         d3.select(this).style('fill-opacity', fullOpacity);
       }
       svg_EV.attr("style","display:none;")
+      svg_circle_EV.attr("style","display:none;")
     })
     .on("click", function(d, i) {
       interComms.style("pointer-events", "all") // now we can click/hover on every department
@@ -348,6 +354,7 @@ export default function(element, EV_svg_element, error, interComm_shape, voronoi
       var swBound = map.layerPointToLatLng(L.point(BBox.x + BBox.width, BBox.y + BBox.height))
       map.fitBounds(L.latLngBounds(neBound, swBound)) // zoom to department
       svg_EV.attr("style","display:none;")
+      svg_circle_EV.attr("style","display:none;")
     })
     .on("mousemove",function(){
       if (d3.event && d3.event.clientX && d3.event.clientY){
@@ -453,6 +460,7 @@ export default function(element, EV_svg_element, error, interComm_shape, voronoi
     update_clip()
     updateMarker()
     svg_EV.attr("style","display:none;")
+    svg_circle_EV.attr("style","display:none;")
   }
 
   map.on('viewreset', update)
