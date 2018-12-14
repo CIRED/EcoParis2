@@ -118,12 +118,12 @@ export default function(element, EV_svg_element, error, interComm_shape, voronoi
     style: blankStyle
   }).addTo(map); //needed! otherwise a svg isn't generated, we use this one for practical purposes
 
-  d3.select(element).on("mousemove",function(){
+  /*d3.select(element).on("mousemove",function(){
     if (d3.event && d3.event.clientX && d3.event.clientY){
       //console.log(d3.event)
       update_EV_preview(d3.event.layerX,d3.event.layerY)
     }
-  })
+  })*/
   var svg = d3.select(element).select(".leaflet-zoom-animated")
 
   function projectPoint(x, y) {
@@ -184,7 +184,7 @@ export default function(element, EV_svg_element, error, interComm_shape, voronoi
   var currentLayerPath = ""
 
   var svg_EV = d3.select(EV_svg_element)
-  //var svg_EV = d3.select("body").append("svg")
+    .attr("style","display:none;")
 
   var imgs_EV = svg_EV.selectAll("image").data([0])
     .enter()
@@ -214,7 +214,7 @@ export default function(element, EV_svg_element, error, interComm_shape, voronoi
     var svg_width = parseInt(svg_EV.style("width").replace("px",""))
     var svg_height = parseInt(svg_EV.style("height").replace("px",""))
 
-    svg_EV.attr("style","top:"+(mouseY - svg_height - 30)+"; left:"+(mouseX - svg_width/2)+";")
+    svg_EV.attr("style","top:"+(mouseY - svg_height - 30)+"; left:"+(mouseX - svg_width/2)+"; display:'';")
 
 
     var tl = L.latLng(cachedLayers[layer_path].tl_lat,cachedLayers[layer_path].tl_lng)
@@ -262,6 +262,7 @@ export default function(element, EV_svg_element, error, interComm_shape, voronoi
 
       defs_path.datum([])
       update_clip()
+      svg_EV.attr("style","display:none;")
     })
     .on("click", function(d, i) {
       interComms.style("pointer-events", "all")
@@ -273,6 +274,12 @@ export default function(element, EV_svg_element, error, interComm_shape, voronoi
 
       defs_path.datum([])
       update_clip()
+    })
+    .on("mousemove",function(){
+      if (d3.event && d3.event.clientX && d3.event.clientY){
+        //console.log(d3.event)
+        update_EV_preview(d3.event.layerX,d3.event.layerY)
+      }
     })
 
   var highlightedInterComm = -1
@@ -321,6 +328,7 @@ export default function(element, EV_svg_element, error, interComm_shape, voronoi
       } else {
         d3.select(this).style('fill-opacity', fullOpacity);
       }
+      svg_EV.attr("style","display:none;")
     })
     .on("click", function(d, i) {
       interComms.style("pointer-events", "all") // now we can click/hover on every department
@@ -338,6 +346,12 @@ export default function(element, EV_svg_element, error, interComm_shape, voronoi
       var neBound = map.layerPointToLatLng(L.point(BBox.x, BBox.y))
       var swBound = map.layerPointToLatLng(L.point(BBox.x + BBox.width, BBox.y + BBox.height))
       map.fitBounds(L.latLngBounds(neBound, swBound)) // zoom to department
+    })
+    .on("mousemove",function(){
+      if (d3.event && d3.event.clientX && d3.event.clientY){
+        //console.log(d3.event)
+        update_EV_preview(d3.event.layerX,d3.event.layerY)
+      }
     })
 
   const markerIcon = {
@@ -375,7 +389,7 @@ export default function(element, EV_svg_element, error, interComm_shape, voronoi
 
     data[0]=0 // ignore 0 values
     onHistChange([...Array(256).keys()],data)
-    
+
     // [...Array(255).keys()] == [0,1,2,...,255]
   }
   
