@@ -1,128 +1,12 @@
 import Config from './config.json'
 
-var urlAzote = 'data/n_export.json'
-var urlPhosphore = 'data/p_export.json'
-
-const MAP_TILES = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png'
-const MAP_ATTRIB = '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-//TODO: use geojsons to compute default viewport, will work better if changed in the future by NatCap
-/**
- * Creates a Leaflet map of the Paris area and returns it.
- */
-function createMap(element, initialBounds) {
-  const map = L.map(element, {
-    zoomControl: false
-  })
-  map.fitBounds(initialBounds)
-
-  const base = L.tileLayer(MAP_TILES, {
-    minZoom: 9,
-    maxZoom: 14, // Toner Light won't zoom further than 14.
-    attribution: MAP_ATTRIB
-  })
-
-  base.addTo(map)
-  return map
-}
-
-/**
- * Loads a JSON containment file and parses it.
- */
-function loadContainmentFile(url) {
-  return fetch(url)
-    .then(res => res.json())
-    .then(json => {
-      json.data = JSON.parse(json.data)
-      return json
-    })
-}
-
-const colorSchemeDict = {
-  0:d3.interpolateRdYlBu,
-  1:d3.interpolateBuGn,
-  2:d3.interpolateCool
-}
-
-function getColorsFromScheme(colorSchemeId){
-  var currentScheme = colorSchemeDict[colorSchemeId]
-  var range = []
-  for (var i=0; i<256; ++i){
-    range.push(currentScheme(i/255))
-  }
-  return range
-}
-
-
-// create continuous color legend
-function fillScale(scale_canvas, scale_svg, colorScale) {
-  var legendheight = 200,
-      legendwidth = 80,
-      margin = {top: 10, right: 40, bottom: 10, left: 2};
-
-  var canvas = scale_canvas
-    .attr("height", legendheight - margin.top - margin.bottom)
-    .attr("width", 1)
-    .style("height", (legendheight - margin.top - margin.bottom) + "px")
-    .style("width", (legendwidth - margin.left - margin.right) + "px")
-    .style("border", "1px solid #000")
-    .style("position", "absolute")
-    .style("top", (margin.top) + "px")
-    .style("left", (margin.left) + "px")
-    .node();
-
-  var ctx = canvas.getContext("2d");
-
-  //console.log(d3.schemeRdYlBu[3])
-  /*var legendScale = d3.scaleLinear()
-    .domain([1, (legendheight - margin.top - margin.bottom)/2 ,legendheight - margin.top - margin.bottom])
-    .range(d3.schemeRdYlBu[3]);*/
-
-  var legendscale = function(height) {
-    //console.log((1 - (height/(legendheight - margin.top - margin.bottom))) * 255)
-    //console.log(colorscale((1 - (height/(legendheight - margin.top - margin.bottom))) * 255))
-    //console.log((legendheight - margin.top - margin.bottom) - height)
-    //console.log(legendScale((legendheight - margin.top - margin.bottom) - height))
-    //console.log(d3.interpolateRdYlBu(((legendheight - margin.top - margin.bottom) - height)/ (legendheight - margin.top - margin.bottom)))
-    //console.log(colorSchemeDict[colorSchemeId])
-    return colorScale(((legendheight - margin.top - margin.bottom) - height)/ (legendheight - margin.top - margin.bottom) * 255)
-   //return colorSchemeDict[colorSchemeId](((legendheight - margin.top - margin.bottom) - height)/ (legendheight - margin.top - margin.bottom))
-  }
-
-  // image data hackery based on http://bl.ocks.org/mbostock/048d21cf747371b11884f75ad896e5a5
-  var image = ctx.createImageData(1, (legendheight - margin.top - margin.bottom));
-  d3.range((legendheight - margin.top - margin.bottom)).forEach(function(i) {
-    var c = d3.rgb(legendscale(i));
-    image.data[4*i] = c.r;
-    image.data[4*i + 1] = c.g;
-    image.data[4*i + 2] = c.b;
-    image.data[4*i + 3] = 255;
-  });
-  ctx.putImageData(image, 0, 0);
-
-  var legendaxis = d3.axisRight()
-    .scale(d3.scaleLinear().domain([255,0]).range([1,legendheight - margin.bottom - margin.top]))
-    .tickSize(6)
-    .ticks(8);
-
-  var svg = scale_svg
-    .attr("height", (legendheight) + "px")
-    .attr("width", (legendwidth) + "px")
-    .style("position", "absolute")
-    .style("left", "0px")
-    .style("top", "0px")
-
-  svg
-    .select("g")
-    .attr("class", "axis")
-    .attr("transform", "translate(" + (legendwidth - margin.left - margin.right + 3) + "," + (margin.top) + ")")
-    .call(legendaxis);
-}
+var helpers_f = require("./helpers.js")
+var update_f = require("./update.js")
 
 export default function(element, EV_svg_element, EV_circle_svg_element, legend_element, error, interComm_shape, voronoi_shape, onHistChange, onSchools) {
   var current_geoLat = null;
   var current_geoLong = null;
 
-  console.log(element)
   const default_tl = new L.LatLng(
     Config.viewport.topLatitude,
     Config.viewport.leftLongitude
@@ -194,24 +78,12 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
 
   setLocationFromCurrent()
 
-  const map = createMap(element, initialBounds) //TODO: if the window is small, the zoom is too far (> 14) and the map is grey, untill we zoom in
+  const map = helpers_f.createMap(element, initialBounds) //TODO: if the window is small, the zoom is too far (> 14) and the map is grey, untill we zoom in
 
-  function blankStyle(feature) {
-    return {
-      opacity: 0,
-      fillOpacity: 0
-    };
-  }
   L.geoJson(interComm_shape, {
-    style: blankStyle
+    style: helpers_f.blankStyle
   }).addTo(map); //needed! otherwise a svg isn't generated, we use this one for practical purposes
 
-  /*d3.select(element).on("mousemove",function(){
-    if (d3.event && d3.event.clientX && d3.event.clientY){
-      //console.log(d3.event)
-      update_EV_preview(d3.event.layerX,d3.event.layerY)
-    }
-  })*/
   var svg = d3.select(element).select(".leaflet-zoom-animated")
 
   function projectPoint(x, y) {
@@ -238,31 +110,7 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
     .attr("xlink:href", "")
     .attr("clip-path", "")
 
-  function update_clip() {
-
-    function clip_projectPoint(x, y) {
-
-      var default_tl_point = map.latLngToLayerPoint([cachedLayers[currentLayerPath].tl_lat, cachedLayers[currentLayerPath].tl_lng])
-      var default_br_point = map.latLngToLayerPoint([cachedLayers[currentLayerPath].br_lat, cachedLayers[currentLayerPath].br_lng])
-
-      var width = (default_br_point.x - default_tl_point.x)
-      var height = (default_br_point.y - default_tl_point.y)
-
-      var point = map.latLngToLayerPoint(L.latLng(y, x))
-
-      var tx = (point.x - default_tl_point.x) / (default_br_point.x - default_tl_point.x) * (width - 1)
-      var ty = (point.y - default_tl_point.y) / (default_br_point.y - default_tl_point.y) * (height - 1)
-
-      this.stream.point(tx, ty);
-    }
-
-    var clip_transform = d3.geo.transform({
-      point: clip_projectPoint
-    });
-    var clip_path = d3.geo.path()
-      .projection(clip_transform);
-    defs_path.attr("d", clip_path)
-  }
+  update_f.update_clip(map,cachedLayers,currentLayerPath,defs_path)
 
 
   var emptyOpacity = 0
@@ -294,42 +142,6 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
     .style("stroke-opacity", 1)
 
 
-  function update_EV_preview(mouseX,mouseY){
-
-    var layer_path = Config.EV_path
-    if (!cachedLayers[Config.EV_path]){
-      return
-    }
-
-    var svg_width = parseInt(svg_EV.style("width").replace("px",""))
-    var svg_height = parseInt(svg_EV.style("height").replace("px",""))
-
-    //console.log(mouseX,mouseY)
-    svg_EV.attr("style","top:"+(mouseY - svg_height - 30)+"; left:"+(mouseX - svg_width/2)+"; display:'';")
-    svg_circle_EV.attr("style","top:"+(mouseY - svg_height/2)+"; left:"+(mouseX - svg_width/2)+"; display:'';")
-
-
-    var tl = L.latLng(cachedLayers[layer_path].tl_lat,cachedLayers[layer_path].tl_lng)
-    var br = L.latLng(cachedLayers[layer_path].br_lat,cachedLayers[layer_path].br_lng)
-
-    var tl_pixels = map.latLngToContainerPoint(tl)
-    var br_pixels = map.latLngToContainerPoint(br)
-
-    var image_width = (map.latLngToLayerPoint(br).x - map.latLngToLayerPoint(tl).x)
-    var image_height = (map.latLngToLayerPoint(br).y - map.latLngToLayerPoint(tl).y)
-
-    imgs_EV.attr('width', image_width)
-    imgs_EV.attr('height', image_height)
-
-    imgs_EV.attr("transform",
-      function(d) {
-        return "translate(" +
-          (+ tl_pixels.x - mouseX + svg_width/2) + "," +
-          (+ tl_pixels.y - mouseY + svg_height/2) + ")";
-      }
-    )
-  }
-
   var voronoi = svg.append("g").selectAll("path")
     .data(voronoi_shape.features)
     .enter().append('path')
@@ -341,9 +153,9 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
     .on("mouseover", function(d, i) {
       d3.select(this).style('fill-opacity', emptyOpacity);
       defs_path.datum(d.geometry)
-      update_clip()
-      update_chart(i, currentLayerPath, true)
-      update_text_school(i, currentLayerPath, true)
+      update_f.update_clip(map,cachedLayers,currentLayerPath,defs_path)
+      update_f.update_chart(i, currentLayerPath, true, cachedLayers, onHistChange)
+      update_f.update_text_school(i, currentLayerPath, false, cachedLayers, onSchools)
     })
     .on("mouseout", function(d, i) {
       if (highlightedInterComm != -1) {
@@ -352,7 +164,7 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
       }
 
       defs_path.datum([])
-      update_clip()
+      update_f.update_clip(map,cachedLayers,currentLayerPath,defs_path)
       svg_EV.attr("style","display:none;")
       svg_circle_EV.attr("style","display:none;")
     })
@@ -365,13 +177,13 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
       voronoi.style("stroke-opacity", emptyOpacity)
 
       defs_path.datum([])
-      update_clip()
+      update_f.update_clip(map,cachedLayers,currentLayerPath,defs_path)
       svg_EV.attr("style","display:none;")
       svg_circle_EV.attr("style","display:none;")
     })
     .on("mousemove",function(){
       if (d3.event && d3.event.clientX && d3.event.clientY && currentLayerPath != Config.EV_path){
-        update_EV_preview(d3.event.layerX,d3.event.layerY)
+        update_f.update_EV_preview(d3.event.layerX,d3.event.layerY,cachedLayers,svg_EV,svg_circle_EV,map,imgs_EV)
       }
       else{
         svg_EV.attr("style","display:none;")
@@ -411,8 +223,8 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
         d3.select(this).style('fill-opacity', fadedOpacity);
       }
       //console.log(i)
-      update_chart(i, currentLayerPath, false)
-      update_text_school(i, currentLayerPath, false)
+      update_f.update_chart(i, currentLayerPath, true, cachedLayers, onHistChange)
+      update_f.update_text_school(i, currentLayerPath, false, cachedLayers, onSchools)
     })
     .on("mouseout", function(d, i) {
       if (highlightedInterComm != -1) {
@@ -449,7 +261,7 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
     .on("mousemove",function(){
       if (d3.event && d3.event.clientX && d3.event.clientY && currentLayerPath != Config.EV_path){
         //console.log(d3.event)
-        update_EV_preview(d3.event.layerX,d3.event.layerY)
+        update_f.update_EV_preview(d3.event.layerX,d3.event.layerY,cachedLayers,svg_EV,svg_circle_EV,map,imgs_EV)
       }
       else{
         svg_EV.attr("style","display:none;")
@@ -479,42 +291,7 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
     hide: true,
   };
 
-  function update_chart(i, layerURL, voro) {
-    var info = cachedLayers[layerURL]
-    if (!info) {
-      return;
-    }
-    if (voro == true) {
-      var data = info.voronoi_hist[i]
-    } else {
-      var data = info.interComm_hist[i]
-    }
-
-    data[0]=0 // ignore 0 values
-    onHistChange([...Array(256).keys()],data)
-
-    // [...Array(255).keys()] == [0,1,2,...,255]
-  }
   
-  function update_text_school(i, layerURL, voro){
-      if(layerURL==Config.Urban_cooling){
-          var info = cachedLayers[Config.Ecole_path]
-            if (!info) {
-                return;
-            }
-            if (voro == true) {
-              var data = info.voronoi_hist[i]
-            } else {
-              var data = info.interComm_hist[i]
-            }
-            //onSchools(data)
-            // change texte according to data 
-      }
-      else{
-          //onSchools(null)
-      }
-      
-  }
 
 
   function update() {//add here everything that could potentially change
@@ -551,7 +328,7 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
     imgs.attr('height', height)
     interComms.attr("d", path)
     voronoi.attr("d", path)
-    update_clip()
+    update_f.update_clip(map,cachedLayers,currentLayerPath,defs_path)
     updateMarker()
     svg_EV.attr("style","display:none;")
     svg_circle_EV.attr("style","display:none;")
@@ -723,10 +500,10 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
         var domain = [...Array(256).keys()]
         var range = []
         if (Config.layers[path].useColorScheme){
-          range = getColorsFromScheme(Config.layers[path].colorScheme)
+          range = helpers_f.getColorsFromScheme(Config.layers[path].colorScheme)
         }
         else{
-          var domain_range = computeColorRange(json.percentiles,Config.layers[path].colors)
+          var domain_range = helpers_f.computeColorRange(json.percentiles,Config.layers[path].colors)
           var domain_continuous = domain_range[0]
           var range_continuous = domain_range[1]
           const colorScale = d3.scale.linear()
@@ -737,11 +514,9 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
             range.push("rgb("+color.r+","+color.g+","+color.b+")")
           }
         }
-        console.log(domain)
-        console.log(range)
 
-        loadContainmentFile("data/voronoi_cont.json").then(voronoiContainment => {
-          loadContainmentFile("data/intercomm_cont.json").then(interCommContainment => {
+        helpers_f.loadContainmentFile("data/voronoi_cont.json").then(voronoiContainment => {
+          helpers_f.loadContainmentFile("data/intercomm_cont.json").then(interCommContainment => {
             for (var index = 0; index < workersCount; index++) {
               var worker = new Worker("assets/pictureProcessor.js");
               worker.onmessage = onWorkEnded;
@@ -776,28 +551,6 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
     imgs_EV.attr("xlink:href", cachedLayers[Config.EV_path].url)
   }
 
-  function computeColorRange(percentiles,colors){
-    var domain_percentiles = percentiles.slice()
-    domain_percentiles.unshift(0)
-    domain_percentiles.push(255)
-
-    var domainLength = domain_percentiles.length
-    var rangeLength  = colors.length
-
-    var intermediateDomain = []
-    for (var i=0; i<rangeLength; ++i){
-      intermediateDomain[i] = i/(rangeLength-1)
-    }
-    var intermediateScale = d3.scale.linear().domain(intermediateDomain).range(colors)
-
-    var range_out = []
-    for (var i=0; i<domainLength; ++i){
-      var t = i/(domainLength-1)
-      range_out.push(intermediateScale(t))
-    }
-    return [domain_percentiles,range_out]
-  }
-
   /**
    * Changes the current layer to the one with a given path.
    */
@@ -827,10 +580,10 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
       var range = []
       if (Config.layers[path].useColorScheme){
         domain = [...Array(256).keys()]
-        range = getColorsFromScheme(Config.layers[path].colorScheme)
+        range = helpers_f.getColorsFromScheme(Config.layers[path].colorScheme)
       }
       else{
-        var domain_range =computeColorRange(layer.percentiles,Config.layers[path].colors)
+        var domain_range =helpers_f.computeColorRange(layer.percentiles,Config.layers[path].colors)
         domain = domain_range[0]
         range = domain_range[1]
       }
@@ -843,7 +596,7 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
       voronoi.attr('fill', (_, i) =>{
         //console.log(layer.voronoi_means[i],colorScale(layer.voronoi_means[i]))
         if (path == Config.EV_path){
-          return "#00000022" //transparent
+          return "#00000011" //transparent
         }
         return colorScale(layer.voronoi_means[i])})
 
@@ -853,7 +606,7 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
       interComms.attr('fill', (_, i) =>{
         //console.log(layer.interComm_means[i],colorScale(layer.interComm_means[i]))
         if (path == Config.EV_path){
-          return "#00000022" //transparent
+          return "#00000011" //transparent
         }
         return colorScale(layer.interComm_means[i])})
 
@@ -879,7 +632,7 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
           .style("border", "1px solid #0000")
       }
       else{
-        fillScale(color_legend_canvas,color_legend_svg,colorScale)
+        helpers_f.fillScale(color_legend_canvas,color_legend_svg,colorScale,Config.layers[path].min_value,Config.layers[path].max_value)
         d3.select(legend_element).style("background-color","#fff")
         d3.select(legend_element).style("display","")
           .style("border", "1px solid #000")

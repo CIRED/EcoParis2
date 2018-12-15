@@ -8,7 +8,7 @@ import Config from '../config.json'
 import displayMap from '../map'
 
 export default {
-  props: ['layers', 'currentLayerPath', 'currentLocation', 'onHist', 'appRefs', 'onSchools'],
+  props: ['layers', 'currentLayerPath', 'currentLocation', 'onHist', 'onSchools', 'appRefs', 'onSchools'],
   data: () => ({
     loadLayer: () => {},
     setLayer: () => {},
@@ -28,7 +28,7 @@ export default {
       .defer(d3.json, urlVoronoi)
       .await((e, d, v) => {
         [this.loadLayer, this.setLayer, this.setLocation, this.setEVLayer, this.setTextUrban] =
-          displayMap(this.$refs.map,this.appRefs.svg,this.appRefs.circle_svg,this.appRefs.legend, e, d, v, (x, y) => this.onHist(x,y), this.onSchools)
+          displayMap(this.$refs.map,this.appRefs.svg,this.appRefs.circle_svg,this.appRefs.legend, e, d, v, this.onHist, this.onSchools)
 
         Object.keys(Config.layers).forEach(layerPath => {
 

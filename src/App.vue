@@ -18,6 +18,7 @@
         :currentLayerPath="currentLayerPath"
         :currentLocation="currentLocation"
         :onHist="(x,y) => {this.currentHistogramX = x; this.currentHistogramY = y;}" 
+        :onSchools="(n) => {}"
         :appRefs="this.$refs"/>
       <svg ref="circle_svg" class="EV-circle-svg"></svg> 
       <svg ref="svg" class="EV-svg"></svg> 
