@@ -9,13 +9,13 @@
         :onLocation="loc => this.currentLocation = loc" />
       <Layers
         :layers="layers"
-        v-model="currentLayer" />
+        v-model="currentLayerPath" />
       <ZoomControl />
     </section>
     <section class="container">
       <Map
         :layers="layers"
-        :currentLayer="currentLayer"
+        :currentLayerPath="currentLayerPath"
         :currentLocation="currentLocation"
         :onHist="(x,y) => {this.currentHistogramX = x; this.currentHistogramY = y;}" 
         :appRefs="this.$refs"/>
@@ -24,7 +24,7 @@
       <div ref="legend" class="color_legend"></div>
       <Sidebar
         :layers="layers"
-        :currentLayer="currentLayer"
+        :currentLayerPath="currentLayerPath"
         :EV_path="EV_path"
         :currentHistogramX="currentHistogramX"
         :currentHistogramY="currentHistogramY" />
@@ -42,23 +42,19 @@ import Layers from './components/Layers.vue'
 import Map from './components/Map.vue'
 import Sidebar from './components/Sidebar.vue'
 
-var defaultLayer = null
+var defaultLayer = Config.EV_path
 
-for (var i=0; i<Config.layers.length; ++i){
-  if (Config.layers[i].path == Config.EV_path){
-    defaultLayer = Config.layers[i]
-  }
-}
 export default {
   data: () => ({
-    layers: Config.layers.reduce((m, layer) => {
-      m[layer.path] = layer
-      m[layer.path].loaded = false
+    layers: Object.keys(Config.layers).reduce((m, layerPath) => {
+      m[layerPath] = Config.layers[layerPath]
+      m[layerPath].loaded = false
+      m[layerPath].path=layerPath
       return m
     }, {}),
 
     // currentLayer: 'data/p_export.json',
-    currentLayer: defaultLayer,
+    currentLayerPath: defaultLayer,
     currentLocation: null,
     currentHistogramX: null,
     currentHistogramY: null,

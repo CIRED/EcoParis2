@@ -5,7 +5,7 @@
     <div class="buttons">
       <a v-for="layer in layers"
         v-if="!layer.hidden"
-        :class="{ active: value == layer }"
+        :class="{ active: value == layer.path }"
         @click.prevent="select(layer)">
         <span class="icon" v-html="layer.icon"></span>
         <span>{{ layer.name }}</span>
@@ -34,7 +34,7 @@ export default {
   methods: {
     select(layer) {
       if (!layer.loading) {
-        this.$emit('input', layer)
+        this.$emit('input', layer.path)
       }
     }
   },

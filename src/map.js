@@ -100,7 +100,7 @@ function fillScale(scale_canvas, scale_svg, colorScale) {
   ctx.putImageData(image, 0, 0);
 
   var legendaxis = d3.axisRight()
-    .scale(d3.scaleLinear().domain([0,255]).range([1,legendheight - margin.bottom - margin.top]))
+    .scale(d3.scaleLinear().domain([255,0]).range([1,legendheight - margin.bottom - margin.top]))
     .tickSize(6)
     .ticks(8);
 
@@ -571,13 +571,11 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
    * - Preparing arrays for means, counts and histograms.
    * - Dispatching those computations to worker threads.
    */
-  function loadLayer(path, colors, colorScheme, useColorScheme, callback) {
+  function loadLayer(path, callback) {
     if (cachedLayers[path]) {
       callback();
       return;
     }
-    var color_low = colors[0]
-    var color_high = colors[1]
 
     fetch(path)
       .then(res => res.json())
@@ -724,11 +722,11 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
 
         var domain = [...Array(256).keys()]
         var range = []
-        if (useColorScheme){
-          range = getColorsFromScheme(colorScheme)
+        if (Config.layers[path].useColorScheme){
+          range = getColorsFromScheme(Config.layers[path].colorScheme)
         }
         else{
-          var domain_range = computeColorRange(json.percentiles,colors)
+          var domain_range = computeColorRange(json.percentiles,Config.layers[path].colors)
           var domain_continuous = domain_range[0]
           var range_continuous = domain_range[1]
           const colorScale = d3.scale.linear()
@@ -803,14 +801,14 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
   /**
    * Changes the current layer to the one with a given path.
    */
-  function setLayer(path, colors, colorScheme, useColorScheme) {
+  function setLayer(path) {
     if (!path) {
       update_parameters.hide = true
       update()
       return;
     }
 
-    loadLayer(path,colors,colorScheme,useColorScheme,() => {
+    loadLayer(path,() => {
       if (path == Config.EV_path){ //TODO: add parameter "AlwaysShowLayer" in config?
         imgs.attr("clip-path", "")
       }
@@ -827,12 +825,12 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
 
       var domain = []
       var range = []
-      if (useColorScheme){
+      if (Config.layers[path].useColorScheme){
         domain = [...Array(256).keys()]
-        range = getColorsFromScheme(colorScheme)
+        range = getColorsFromScheme(Config.layers[path].colorScheme)
       }
       else{
-        var domain_range =computeColorRange(layer.percentiles,colors)
+        var domain_range =computeColorRange(layer.percentiles,Config.layers[path].colors)
         domain = domain_range[0]
         range = domain_range[1]
       }

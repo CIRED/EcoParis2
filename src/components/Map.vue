@@ -8,7 +8,7 @@ import Config from '../config.json'
 import displayMap from '../map'
 
 export default {
-  props: ['layers', 'currentLayer', 'currentLocation', 'onHist', 'appRefs', 'onSchools'],
+  props: ['layers', 'currentLayerPath', 'currentLocation', 'onHist', 'appRefs', 'onSchools'],
   data: () => ({
     loadLayer: () => {},
     setLayer: () => {},
@@ -30,30 +30,30 @@ export default {
         [this.loadLayer, this.setLayer, this.setLocation, this.setEVLayer, this.setTextUrban] =
           displayMap(this.$refs.map,this.appRefs.svg,this.appRefs.circle_svg,this.appRefs.legend, e, d, v, (x, y) => this.onHist(x,y), this.onSchools)
 
-        Config.layers.forEach(layer => this.loadLayer(
-          layer.path,
-          layer.colors,
-          layer.colorScheme,
-          layer.useColorScheme,
+        Object.keys(Config.layers).forEach(layerPath => {
+
+        this.layers[layerPath].path=layerPath;
+        this.loadLayer(
+          layerPath,
           () => {
-            this.layers[layer.path].loaded = true
+            this.layers[layerPath].loaded = true
             
-            if (layer.path == Config.EV_path){
-              this.setEVLayer(layer.path)
+            if (layerPath == Config.EV_path){
+              this.setEVLayer(layerPath)
             }          
           }
-        ))
+        )})
 
-        this.setLayer(this.currentLayer.path,this.currentLayer.colors,this.currentLayer.colorScheme,this.currentLayer.useColorScheme)
+        this.setLayer(this.currentLayerPath)
       })
   },
 
   watch: {
     /**
-     * Watches changes to the currentLayer prop, and updates the map.
+     * Watches changes to the currentLayerPath prop, and updates the map.
      */
-    currentLayer(layer) {
-      this.setLayer(layer.path,layer.colors,layer.colorScheme,layer.useColorScheme)
+    currentLayerPath(layerPath) {
+      this.setLayer(layerPath)
     },
 
     /**
