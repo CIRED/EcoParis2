@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <transition name="fade">
-      <Intro v-if="introVisible" :onDismiss="() => introVisible = false" />
+      <Intro v-if="introVisible" :onDismiss="() => {introVisible = false; this.currentLayerPath = this.defaultLayer}" />
     </transition>
 
     <section class="menu">
@@ -54,12 +54,13 @@ export default {
     }, {}),
 
     // currentLayer: 'data/p_export.json',
-    currentLayerPath: defaultLayer,
+    currentLayerPath: null,
     currentLocation: null,
     currentHistogramX: null,
     currentHistogramY: null,
     introVisible: true,
     sidebarVisible: false,
+    defaultLayer: defaultLayer,
     EV_path: Config.EV_path,
   }),
 
@@ -168,6 +169,7 @@ p {
   background-color: #fff;
   display: flex;
   pointer-events: none;
+  top: -120px;
 }
 
 .EV-circle-svg {
@@ -179,6 +181,7 @@ p {
   background-color: #fff0;
   display: flex;
   pointer-events: none;
+  top: -120px;
 }
 
 .color_legend {

@@ -10,13 +10,12 @@
 			"min_value":0,
 			"max_value":0,
 
-			"title": "Mesure de la rétention d'azote.",
-			"content": "<p>Should not appear anyway, find something to fill here.</p>"
+			"title": "Espaces verts.",
+			"content": "<p>[texte espaces verts]</p>"
 		},
 		"data/rasters/pollination_cc.json":{
 			"name": "Phosph.",
 			"icon": "P",
-			"colors":["#ffffcc","#e31a1c"],
 			"colorScheme":1,
 			"useColorScheme":true,
 			"min_value":0.0,
@@ -28,7 +27,6 @@
 		"data/rasters/T_reduction.json":{
 			"name": "Nitrog.",
 			"icon": "N",
-			"colors":["#ff3300","#ffffff","#00ccff"],
 			"colorScheme":0,
 			"useColorScheme":true,
 			"min_value":-5.0,
@@ -40,7 +38,6 @@
         "data/rasters/ecoles_elementaires.json":{
 			"name": "Ecoles elementaires",
 			"icon": "E",
-			"colors":["#ffffff","#339933"],
 			"colorScheme":0,
 			"useColorScheme":true,
 			"min_value":0,
