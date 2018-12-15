@@ -8,17 +8,24 @@ var processColour = function(binaryData, l, width, height, pixels, shift, vorono
   //var num_colors = colors.length
 
   function getColour(d){
-    var min_dist = 255
+    /*var min_dist = 255
     var min_index = 0
     for (var i=0; i<percentiles.length; ++i){
       if (Math.abs(percentiles[i] - d) < min_dist){
         min_dist = Math.abs(percentiles[i] - d)
         min_index = i
       }
+    }*/
+    //console.log(colors[d])
+    if (d > 255){
+      console.log("oops!")
     }
-    return colors[min_index].substr(1)
+    var string = ""+colors[d]
+    //console.log(string)
+    return string.substring(4, string.length-1)
+         .replace(/ /g, '')
+         .split(',');
   }
-
   const original_tl_lat = 49.2485668
   const original_tl_lng = 1.4403262
 
@@ -99,9 +106,10 @@ var processColour = function(binaryData, l, width, height, pixels, shift, vorono
             }*/
           }
 
-          binaryData[pos+2]   = parseInt(getColour(value),16) & 255
-          binaryData[pos+1]   = (parseInt(getColour(value),16) >> 8) & 255
-          binaryData[pos]   = (parseInt(getColour(value),16) >> 16) & 255
+          var color = getColour(value)
+          binaryData[pos+2]   = color[2]
+          binaryData[pos+1]   = color[1]
+          binaryData[pos]   = color[0]
           if (value == null){
               binaryData[pos+3]=0; // alpha (transparency)
           }

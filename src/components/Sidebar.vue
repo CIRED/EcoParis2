@@ -3,7 +3,7 @@
     <div v-if="currentLayer && layers[currentLayer.path].loaded">
       <h2>{{ layers[currentLayer.path].title }}</h2>
       <div v-html="layers[currentLayer.path].content"></div>
-      <Histogram :x="currentHistogramX"
+      <Histogram v-if="currentLayer.path != EV_path" :x="currentHistogramX"
                  :y="currentHistogramY"/>
     </div>
 
@@ -38,7 +38,7 @@
 import Histogram from './Histogram.vue'
 
 export default {
-  props: ['layers', 'currentLayer', 'currentHistogramX', 'currentHistogramY'],
+  props: ['layers', 'currentLayer', 'EV_path', 'currentHistogramX', 'currentHistogramY'],
   components: { Histogram },
 }
 </script>

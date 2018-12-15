@@ -28,11 +28,13 @@ export default {
       .defer(d3.json, urlVoronoi)
       .await((e, d, v) => {
         [this.loadLayer, this.setLayer, this.setLocation, this.setEVLayer, this.setTextUrban] =
-          displayMap(this.$refs.map,this.appRefs.svg,this.appRefs.circle_svg, e, d, v, (x, y) => this.onHist(x,y), this.onSchools)
+          displayMap(this.$refs.map,this.appRefs.svg,this.appRefs.circle_svg,this.appRefs.legend, e, d, v, (x, y) => this.onHist(x,y), this.onSchools)
 
         Config.layers.forEach(layer => this.loadLayer(
           layer.path,
           layer.colors,
+          layer.colorScheme,
+          layer.useColorScheme,
           () => {
             this.layers[layer.path].loaded = true
             
@@ -42,7 +44,7 @@ export default {
           }
         ))
 
-        this.setLayer(this.currentLayer.path,this.currentLayer.colors)
+        this.setLayer(this.currentLayer.path,this.currentLayer.colors,this.currentLayer.colorScheme,this.currentLayer.useColorScheme)
       })
   },
 
@@ -51,7 +53,7 @@ export default {
      * Watches changes to the currentLayer prop, and updates the map.
      */
     currentLayer(layer) {
-      this.setLayer(layer.path,layer.colors)
+      this.setLayer(layer.path,layer.colors,layer.colorScheme,layer.useColorScheme)
     },
 
     /**

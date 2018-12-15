@@ -5,7 +5,7 @@ var urlPhosphore = 'data/p_export.json'
 
 const MAP_TILES = 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png'
 const MAP_ATTRIB = '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-//TODO: use geojsons to compute defautl viewport, will work better if changed in the future by NatCap
+//TODO: use geojsons to compute default viewport, will work better if changed in the future by NatCap
 /**
  * Creates a Leaflet map of the Paris area and returns it.
  */
@@ -37,7 +37,88 @@ function loadContainmentFile(url) {
     })
 }
 
-export default function(element, EV_svg_element, EV_circle_svg_element, error, interComm_shape, voronoi_shape, onHistChange, onSchools) {
+const colorSchemeDict = {
+  0:d3.interpolateRdYlBu,
+  1:d3.interpolateBuGn,
+  2:d3.interpolateCool
+}
+
+function getColorsFromScheme(colorSchemeId){
+  var currentScheme = colorSchemeDict[colorSchemeId]
+  var range = []
+  for (var i=0; i<256; ++i){
+    range.push(currentScheme(i/255))
+  }
+  return range
+}
+
+
+// create continuous color legend
+function fillScale(scale_canvas, scale_svg, colorScale) {
+  var legendheight = 200,
+      legendwidth = 80,
+      margin = {top: 10, right: 40, bottom: 10, left: 2};
+
+  var canvas = scale_canvas
+    .attr("height", legendheight - margin.top - margin.bottom)
+    .attr("width", 1)
+    .style("height", (legendheight - margin.top - margin.bottom) + "px")
+    .style("width", (legendwidth - margin.left - margin.right) + "px")
+    .style("border", "1px solid #000")
+    .style("position", "absolute")
+    .style("top", (margin.top) + "px")
+    .style("left", (margin.left) + "px")
+    .node();
+
+  var ctx = canvas.getContext("2d");
+
+  //console.log(d3.schemeRdYlBu[3])
+  /*var legendScale = d3.scaleLinear()
+    .domain([1, (legendheight - margin.top - margin.bottom)/2 ,legendheight - margin.top - margin.bottom])
+    .range(d3.schemeRdYlBu[3]);*/
+
+  var legendscale = function(height) {
+    //console.log((1 - (height/(legendheight - margin.top - margin.bottom))) * 255)
+    //console.log(colorscale((1 - (height/(legendheight - margin.top - margin.bottom))) * 255))
+    //console.log((legendheight - margin.top - margin.bottom) - height)
+    //console.log(legendScale((legendheight - margin.top - margin.bottom) - height))
+    //console.log(d3.interpolateRdYlBu(((legendheight - margin.top - margin.bottom) - height)/ (legendheight - margin.top - margin.bottom)))
+    //console.log(colorSchemeDict[colorSchemeId])
+    return colorScale(((legendheight - margin.top - margin.bottom) - height)/ (legendheight - margin.top - margin.bottom) * 255)
+   //return colorSchemeDict[colorSchemeId](((legendheight - margin.top - margin.bottom) - height)/ (legendheight - margin.top - margin.bottom))
+  }
+
+  // image data hackery based on http://bl.ocks.org/mbostock/048d21cf747371b11884f75ad896e5a5
+  var image = ctx.createImageData(1, (legendheight - margin.top - margin.bottom));
+  d3.range((legendheight - margin.top - margin.bottom)).forEach(function(i) {
+    var c = d3.rgb(legendscale(i));
+    image.data[4*i] = c.r;
+    image.data[4*i + 1] = c.g;
+    image.data[4*i + 2] = c.b;
+    image.data[4*i + 3] = 255;
+  });
+  ctx.putImageData(image, 0, 0);
+
+  var legendaxis = d3.axisRight()
+    .scale(d3.scaleLinear().domain([0,255]).range([1,legendheight - margin.bottom - margin.top]))
+    .tickSize(6)
+    .ticks(8);
+
+  var svg = scale_svg
+    .attr("height", (legendheight) + "px")
+    .attr("width", (legendwidth) + "px")
+    .style("position", "absolute")
+    .style("left", "0px")
+    .style("top", "0px")
+
+  svg
+    .select("g")
+    .attr("class", "axis")
+    .attr("transform", "translate(" + (legendwidth - margin.left - margin.right + 3) + "," + (margin.top) + ")")
+    .call(legendaxis);
+}
+
+export default function(element, EV_svg_element, EV_circle_svg_element, legend_element, error, interComm_shape, voronoi_shape, onHistChange, onSchools) {
   var current_geoLat = null;
   var current_geoLong = null;
 
@@ -51,6 +132,13 @@ export default function(element, EV_svg_element, EV_circle_svg_element, error, i
     Config.viewport.rightLongitude
   )
   const initialBounds = L.latLngBounds(default_tl, default_br)
+
+  var color_legend_canvas = d3.select(legend_element)
+    .append("canvas")
+
+  var color_legend_svg = d3.select(legend_element)
+    .append("svg")
+  color_legend_svg.append("g")
 
   /**
    * Returns whether a given point is within the Paris region.
@@ -216,7 +304,7 @@ export default function(element, EV_svg_element, EV_circle_svg_element, error, i
     var svg_width = parseInt(svg_EV.style("width").replace("px",""))
     var svg_height = parseInt(svg_EV.style("height").replace("px",""))
 
-    console.log(mouseX,mouseY)
+    //console.log(mouseX,mouseY)
     svg_EV.attr("style","top:"+(mouseY - svg_height - 30)+"; left:"+(mouseX - svg_width/2)+"; display:'';")
     svg_circle_EV.attr("style","top:"+(mouseY - svg_height/2)+"; left:"+(mouseX - svg_width/2)+"; display:'';")
 
@@ -282,7 +370,7 @@ export default function(element, EV_svg_element, EV_circle_svg_element, error, i
       svg_circle_EV.attr("style","display:none;")
     })
     .on("mousemove",function(){
-      if (d3.event && d3.event.clientX && d3.event.clientY){
+      if (d3.event && d3.event.clientX && d3.event.clientY && currentLayerPath != Config.EV_path){
         update_EV_preview(d3.event.layerX,d3.event.layerY)
       }
       else{
@@ -359,7 +447,7 @@ export default function(element, EV_svg_element, EV_circle_svg_element, error, i
       svg_circle_EV.attr("style","display:none;")
     })
     .on("mousemove",function(){
-      if (d3.event && d3.event.clientX && d3.event.clientY){
+      if (d3.event && d3.event.clientX && d3.event.clientY && currentLayerPath != Config.EV_path){
         //console.log(d3.event)
         update_EV_preview(d3.event.layerX,d3.event.layerY)
       }
@@ -483,7 +571,7 @@ export default function(element, EV_svg_element, EV_circle_svg_element, error, i
    * - Preparing arrays for means, counts and histograms.
    * - Dispatching those computations to worker threads.
    */
-  function loadLayer(path, colors, callback) {
+  function loadLayer(path, colors, colorScheme, useColorScheme, callback) {
     if (cachedLayers[path]) {
       callback();
       return;
@@ -634,9 +722,26 @@ export default function(element, EV_svg_element, EV_circle_svg_element, error, i
         // FIXME(liautaud): Nested callbacks is a code smell.
         // FIXME(liautaud): This should be done only once.
 
-        var domain_range = computeColorRange(json.percentiles,colors)
-        var domain = domain_range[0]
-        var range = domain_range[1]
+        var domain = [...Array(256).keys()]
+        var range = []
+        if (useColorScheme){
+          range = getColorsFromScheme(colorScheme)
+        }
+        else{
+          var domain_range = computeColorRange(json.percentiles,colors)
+          var domain_continuous = domain_range[0]
+          var range_continuous = domain_range[1]
+          const colorScale = d3.scale.linear()
+            .range(range_continuous).domain(domain_continuous)
+
+          for (var i=0; i<256; ++i){
+            var color = d3.rgb(colorScale(i))
+            range.push("rgb("+color.r+","+color.g+","+color.b+")")
+          }
+        }
+        console.log(domain)
+        console.log(range)
+
         loadContainmentFile("data/voronoi_cont.json").then(voronoiContainment => {
           loadContainmentFile("data/intercomm_cont.json").then(interCommContainment => {
             for (var index = 0; index < workersCount; index++) {
@@ -698,14 +803,14 @@ export default function(element, EV_svg_element, EV_circle_svg_element, error, i
   /**
    * Changes the current layer to the one with a given path.
    */
-  function setLayer(path, colors) {
+  function setLayer(path, colors, colorScheme, useColorScheme) {
     if (!path) {
       update_parameters.hide = true
       update()
       return;
     }
 
-    loadLayer(path,colors,() => {
+    loadLayer(path,colors,colorScheme,useColorScheme,() => {
       if (path == Config.EV_path){ //TODO: add parameter "AlwaysShowLayer" in config?
         imgs.attr("clip-path", "")
       }
@@ -718,9 +823,22 @@ export default function(element, EV_svg_element, EV_circle_svg_element, error, i
       var min = 0
       var max = 255
 
-      var domain_range =computeColorRange(layer.percentiles,colors)
-      var domain = domain_range[0]
-      var range = domain_range[1]
+      
+
+      var domain = []
+      var range = []
+      if (useColorScheme){
+        domain = [...Array(256).keys()]
+        range = getColorsFromScheme(colorScheme)
+      }
+      else{
+        var domain_range =computeColorRange(layer.percentiles,colors)
+        domain = domain_range[0]
+        range = domain_range[1]
+      }
+
+
+      
 
       const colorScale = d3.scale.linear()
         .range(range).domain(domain)
@@ -756,6 +874,19 @@ export default function(element, EV_svg_element, EV_circle_svg_element, error, i
       update()
       currentLayerPath = path
       imgs.attr('xlink:href', layer.url)
+
+      if (path == Config.EV_path){
+        //TODO: show color legend, but discrete!
+        d3.select(legend_element).style("display","none")
+          .style("border", "1px solid #0000")
+      }
+      else{
+        fillScale(color_legend_canvas,color_legend_svg,colorScale)
+        d3.select(legend_element).style("background-color","#fff")
+        d3.select(legend_element).style("display","")
+          .style("border", "1px solid #000")
+      }
+      
     })
   }
 

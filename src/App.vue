@@ -21,9 +21,11 @@
         :appRefs="this.$refs"/>
       <svg ref="circle_svg" class="EV-circle-svg"></svg> 
       <svg ref="svg" class="EV-svg"></svg> 
+      <div ref="legend" class="color_legend"></div>
       <Sidebar
         :layers="layers"
         :currentLayer="currentLayer"
+        :EV_path="EV_path"
         :currentHistogramX="currentHistogramX"
         :currentHistogramY="currentHistogramY" />
     </section>
@@ -62,6 +64,7 @@ export default {
     currentHistogramY: null,
     introVisible: true,
     sidebarVisible: false,
+    EV_path: Config.EV_path,
   }),
 
   components: { Intro, ZoomControl, LocationControl, Layers, Map, Sidebar }
@@ -180,5 +183,16 @@ p {
   background-color: #fff0;
   display: flex;
   pointer-events: none;
+}
+
+.color_legend {
+  width:80px;
+  height:200px;
+  position:absolute;
+  background-color: #fff0;
+  display: inline-block;
+  pointer-events: none;
+  top: 50px;
+  right: 30%;
 }
 </style>
