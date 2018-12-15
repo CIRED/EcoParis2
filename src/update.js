@@ -97,3 +97,58 @@ exports.update_text_school = function(i,layerURL,voro,cachedLayers,onSchools){
     onSchools(null)
   }
 }
+
+/**
+ * Updates the marker element on the map with the right coordinates.
+ */
+exports.updateMarker = function(current_geoLat,current_geoLong,map,markerElement) {
+  if (current_geoLat && current_geoLong) {
+    const point = map.latLngToLayerPoint([current_geoLat, current_geoLong])
+    const x = point.x - markerIcon.iconAnchor[0]
+    const y = point.y - markerIcon.iconAnchor[1]
+    markerElement.attr('visibility', 'visible')
+    markerElement.attr('transform', `translate(${x}, ${y})`)
+  } else {
+    markerElement.attr('visibility', 'hidden')
+  }
+}
+
+exports.updateMap = function(update_parameters,interComms,voronoi,imgs,imgs_EV,map,svg_EV,svg_circle_EV,current_geoLat,current_geoLong,markerElement,path,cachedLayers,currentLayerPath,defs_path) {//add here everything that could potentially change
+  if (update_parameters.hide) {
+    console.log('hidden!')
+    interComms.attr('visibility', 'hidden')
+    voronoi.attr('visibility', 'hidden')
+    imgs.attr('visibility', 'hidden')
+    imgs_EV.attr('visibility', 'hidden')
+    return;
+  } else {
+    interComms.attr('visibility', 'visible')
+    voronoi.attr('visibility', 'visible')
+    imgs.attr('visibility', 'visible')
+    imgs_EV.attr('visibility', 'visible')
+  }
+
+  var tl = update_parameters.tl
+  var br = update_parameters.br
+
+  console.log('UPDATING')
+  var width = (map.latLngToLayerPoint(br).x - map.latLngToLayerPoint(tl).x)
+  var height = (map.latLngToLayerPoint(br).y - map.latLngToLayerPoint(tl).y)
+  imgs.attr("transform",
+    function(d) {
+      var point = map.latLngToLayerPoint(tl)
+      return "translate(" +
+        point.x + "," +
+        point.y + ")";
+    }
+  )
+
+  imgs.attr('width', width)
+  imgs.attr('height', height)
+  interComms.attr("d", path)
+  voronoi.attr("d", path)
+  exports.update_clip(map,cachedLayers,currentLayerPath,defs_path)
+  exports.updateMarker(current_geoLat,current_geoLong,map,markerElement)
+  svg_EV.attr("style","display:none;")
+  svg_circle_EV.attr("style","display:none;")
+}

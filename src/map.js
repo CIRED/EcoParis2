@@ -46,23 +46,9 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
 
     current_geoLat = lat
     current_geoLong = lng
-    updateMarker()
+    update_f.updateMarker(current_geoLat,current_geoLong,map,markerElement)
   }
 
-  /**
-   * Updates the marker element on the map with the right coordinates.
-   */
-  function updateMarker() {
-    if (current_geoLat && current_geoLong) {
-      const point = map.latLngToLayerPoint([current_geoLat, current_geoLong])
-      const x = point.x - markerIcon.iconAnchor[0]
-      const y = point.y - markerIcon.iconAnchor[1]
-      markerElement.attr('visibility', 'visible')
-      markerElement.attr('transform', `translate(${x}, ${y})`)
-    } else {
-      markerElement.attr('visibility', 'hidden')
-    }
-  }
 
   /**
    * Sets the position of the geolocation marker to the current position
@@ -291,50 +277,8 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
     hide: true,
   };
 
-  
 
-
-  function update() {//add here everything that could potentially change
-    if (update_parameters.hide) {
-      console.log('hidden!')
-      interComms.attr('visibility', 'hidden')
-      voronoi.attr('visibility', 'hidden')
-      imgs.attr('visibility', 'hidden')
-      imgs_EV.attr('visibility', 'hidden')
-      return;
-    } else {
-      interComms.attr('visibility', 'visible')
-      voronoi.attr('visibility', 'visible')
-      imgs.attr('visibility', 'visible')
-      imgs_EV.attr('visibility', 'visible')
-    }
-
-    var tl = update_parameters.tl
-    var br = update_parameters.br
-
-    console.log('UPDATING')
-    var width = (map.latLngToLayerPoint(br).x - map.latLngToLayerPoint(tl).x)
-    var height = (map.latLngToLayerPoint(br).y - map.latLngToLayerPoint(tl).y)
-    imgs.attr("transform",
-      function(d) {
-        var point = map.latLngToLayerPoint(tl)
-        return "translate(" +
-          point.x + "," +
-          point.y + ")";
-      }
-    )
-
-    imgs.attr('width', width)
-    imgs.attr('height', height)
-    interComms.attr("d", path)
-    voronoi.attr("d", path)
-    update_f.update_clip(map,cachedLayers,currentLayerPath,defs_path)
-    updateMarker()
-    svg_EV.attr("style","display:none;")
-    svg_circle_EV.attr("style","display:none;")
-  }
-
-  map.on('viewreset', update)
+  map.on('viewreset', function(){update_f.updateMap(update_parameters,interComms,voronoi,imgs,imgs_EV,map,svg_EV,svg_circle_EV,current_geoLat,current_geoLong,markerElement,path,cachedLayers,currentLayerPath,defs_path)})
 
   var firstVoronoiByInterComm = []
 
@@ -554,22 +498,22 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
   /**
    * Changes the current layer to the one with a given path.
    */
-  function setLayer(path) {
-    if (!path) {
+  function setLayer(layerPath) {
+    if (!layerPath) {
       update_parameters.hide = true
-      update()
+      update_f.updateMap(update_parameters,interComms,voronoi,imgs,imgs_EV,map,svg_EV,svg_circle_EV,current_geoLat,current_geoLong,markerElement,path,cachedLayers,currentLayerPath,defs_path)
       return;
     }
 
-    loadLayer(path,() => {
-      if (path == Config.EV_path){ //TODO: add parameter "AlwaysShowLayer" in config?
+    loadLayer(layerPath,() => {
+      if (layerPath == Config.EV_path){ //TODO: add parameter "AlwaysShowLayer" in config?
         imgs.attr("clip-path", "")
       }
       else{
         imgs.attr("clip-path", "url(#clip)")
       }
       // Once the layer is loaded, we can get it from the cache.
-      const layer = cachedLayers[path]
+      const layer = cachedLayers[layerPath]
 
       var min = 0
       var max = 255
@@ -578,12 +522,12 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
 
       var domain = []
       var range = []
-      if (Config.layers[path].useColorScheme){
+      if (Config.layers[layerPath].useColorScheme){
         domain = [...Array(256).keys()]
-        range = helpers_f.getColorsFromScheme(Config.layers[path].colorScheme)
+        range = helpers_f.getColorsFromScheme(Config.layers[layerPath].colorScheme)
       }
       else{
-        var domain_range =helpers_f.computeColorRange(layer.percentiles,Config.layers[path].colors)
+        var domain_range =helpers_f.computeColorRange(layer.percentiles,Config.layers[layerPath].colors)
         domain = domain_range[0]
         range = domain_range[1]
       }
@@ -595,7 +539,7 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
         .range(range).domain(domain)
       voronoi.attr('fill', (_, i) =>{
         //console.log(layer.voronoi_means[i],colorScale(layer.voronoi_means[i]))
-        if (path == Config.EV_path){
+        if (layerPath == Config.EV_path){
           return "#00000011" //transparent
         }
         return colorScale(layer.voronoi_means[i])})
@@ -605,7 +549,7 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
 
       interComms.attr('fill', (_, i) =>{
         //console.log(layer.interComm_means[i],colorScale(layer.interComm_means[i]))
-        if (path == Config.EV_path){
+        if (layerPath == Config.EV_path){
           return "#00000011" //transparent
         }
         return colorScale(layer.interComm_means[i])})
@@ -622,17 +566,17 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
       update_parameters.current_geoLat = current_geoLat
       update_parameters.current_geoLong = current_geoLong
 
-      update()
-      currentLayerPath = path
+      update_f.updateMap(update_parameters,interComms,voronoi,imgs,imgs_EV,map,svg_EV,svg_circle_EV,current_geoLat,current_geoLong,markerElement,path,cachedLayers,currentLayerPath,defs_path)
+      currentLayerPath = layerPath
       imgs.attr('xlink:href', layer.url)
 
-      if (path == Config.EV_path){
+      if (layerPath == Config.EV_path){
         //TODO: show color legend, but discrete!
         d3.select(legend_element).style("display","none")
           .style("border", "1px solid #0000")
       }
       else{
-        helpers_f.fillScale(color_legend_canvas,color_legend_svg,colorScale,Config.layers[path].min_value,Config.layers[path].max_value)
+        helpers_f.fillScale(color_legend_canvas,color_legend_svg,colorScale,Config.layers[layerPath].min_value,Config.layers[layerPath].max_value)
         d3.select(legend_element).style("background-color","#fff")
         d3.select(legend_element).style("display","")
           .style("border", "1px solid #000")
