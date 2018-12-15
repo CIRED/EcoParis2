@@ -1,11 +1,10 @@
-
-
 const colorSchemeDict = {
   0:d3.interpolateRdYlBu,
   1:d3.interpolateBuGn,
   2:d3.interpolateCool
 }
 
+var shared =  require('./shared.js')
 
 /**
  * Loads a JSON containment file and parses it.
@@ -25,9 +24,10 @@ const MAP_ATTRIB = '&copy; <a href="http://www.openstreetmap.org/copyright">Open
  * Creates a Leaflet map of the Paris area and returns it.
  */
 exports.createMap = function(element, initialBounds) {
-  const map = L.map(element, {
+  shared.map = L.map(element, {
     zoomControl: false
   })
+  var map = shared.map
   map.fitBounds(initialBounds)
 
   const base = L.tileLayer(MAP_TILES, {
@@ -37,7 +37,6 @@ exports.createMap = function(element, initialBounds) {
   })
 
   base.addTo(map)
-  return map
 }
 
 

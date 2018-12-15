@@ -2,11 +2,9 @@ import Config from './config.json'
 
 var helpers_f = require("./helpers.js")
 var update_f = require("./update.js")
+var shared = require("./shared.js")
 
 export default function(element, EV_svg_element, EV_circle_svg_element, legend_element, error, interComm_shape, voronoi_shape, onHistChange, onSchools) {
-  var current_geoLat = null;
-  var current_geoLong = null;
-
   const default_tl = new L.LatLng(
     Config.viewport.topLatitude,
     Config.viewport.leftLongitude
@@ -44,9 +42,9 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
       map.setZoom(11)
     }
 
-    current_geoLat = lat
-    current_geoLong = lng
-    update_f.updateMarker(current_geoLat,current_geoLong,map,markerElement)
+    shared.currentGeoLat = lat
+    shared.currentGeoLng = lng
+    update_f.updateMarker(markerElement)
   }
 
 
@@ -64,7 +62,8 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
 
   setLocationFromCurrent()
 
-  const map = helpers_f.createMap(element, initialBounds) //TODO: if the window is small, the zoom is too far (> 14) and the map is grey, untill we zoom in
+  helpers_f.createMap(element, initialBounds) //TODO: if the window is small, the zoom is too far (> 14) and the map is grey, untill we zoom in
+  var map = shared.map
 
   L.geoJson(interComm_shape, {
     style: helpers_f.blankStyle
@@ -96,14 +95,13 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
     .attr("xlink:href", "")
     .attr("clip-path", "")
 
-  update_f.update_clip(map,cachedLayers,currentLayerPath,defs_path)
+  update_f.update_clip(defs_path)
 
 
   var emptyOpacity = 0
   var fadedOpacity = 0.4
   var semiFullOpacity = 0.7
   var fullOpacity = 1
-  var currentLayerPath = ""
 
   var svg_EV = d3.select(EV_svg_element)
     .attr("style","display:none;")
@@ -139,9 +137,9 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
     .on("mouseover", function(d, i) {
       d3.select(this).style('fill-opacity', emptyOpacity);
       defs_path.datum(d.geometry)
-      update_f.update_clip(map,cachedLayers,currentLayerPath,defs_path)
-      update_f.update_chart(i, currentLayerPath, true, cachedLayers, onHistChange)
-      update_f.update_text_school(i, currentLayerPath, false, cachedLayers, onSchools)
+      update_f.update_clip(defs_path)
+      update_f.update_chart(i, true, onHistChange)
+      update_f.update_text_school(i, shared.currentLayerPath, false, onSchools)
     })
     .on("mouseout", function(d, i) {
       if (highlightedInterComm != -1) {
@@ -150,7 +148,7 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
       }
 
       defs_path.datum([])
-      update_f.update_clip(map,cachedLayers,currentLayerPath,defs_path)
+      update_f.update_clip(defs_path)
       svg_EV.attr("style","display:none;")
       svg_circle_EV.attr("style","display:none;")
     })
@@ -163,13 +161,13 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
       voronoi.style("stroke-opacity", emptyOpacity)
 
       defs_path.datum([])
-      update_f.update_clip(map,cachedLayers,currentLayerPath,defs_path)
+      update_f.update_clip(defs_path)
       svg_EV.attr("style","display:none;")
       svg_circle_EV.attr("style","display:none;")
     })
     .on("mousemove",function(){
-      if (d3.event && d3.event.clientX && d3.event.clientY && currentLayerPath != Config.EV_path){
-        update_f.update_EV_preview(d3.event.layerX,d3.event.layerY,cachedLayers,svg_EV,svg_circle_EV,map,imgs_EV)
+      if (d3.event && d3.event.clientX && d3.event.clientY && shared.currentLayerPath != Config.EV_path){
+        update_f.update_EV_preview(d3.event.layerX,d3.event.layerY,svg_EV,svg_circle_EV,imgs_EV)
       }
       else{
         svg_EV.attr("style","display:none;")
@@ -209,8 +207,8 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
         d3.select(this).style('fill-opacity', fadedOpacity);
       }
       //console.log(i)
-      update_f.update_chart(i, currentLayerPath, true, cachedLayers, onHistChange)
-      update_f.update_text_school(i, currentLayerPath, false, cachedLayers, onSchools)
+      update_f.update_chart(i, true, onHistChange)
+      update_f.update_text_school(i, shared.currentLayerPath, false, onSchools)
     })
     .on("mouseout", function(d, i) {
       if (highlightedInterComm != -1) {
@@ -245,9 +243,9 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
       svg_circle_EV.attr("style","display:none;")
     })
     .on("mousemove",function(){
-      if (d3.event && d3.event.clientX && d3.event.clientY && currentLayerPath != Config.EV_path){
+      if (d3.event && d3.event.clientX && d3.event.clientY && shared.currentLayerPath != Config.EV_path){
         //console.log(d3.event)
-        update_f.update_EV_preview(d3.event.layerX,d3.event.layerY,cachedLayers,svg_EV,svg_circle_EV,map,imgs_EV)
+        update_f.update_EV_preview(d3.event.layerX,d3.event.layerY,svg_EV,svg_circle_EV,imgs_EV)
       }
       else{
         svg_EV.attr("style","display:none;")
@@ -278,11 +276,11 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
   };
 
 
-  map.on('viewreset', function(){update_f.updateMap(update_parameters,interComms,voronoi,imgs,imgs_EV,map,svg_EV,svg_circle_EV,current_geoLat,current_geoLong,markerElement,path,cachedLayers,currentLayerPath,defs_path)})
+  map.on('viewreset', function(){update_f.updateMap(update_parameters,interComms,voronoi,imgs,imgs_EV,svg_EV,svg_circle_EV,markerElement,path,defs_path)})
 
   var firstVoronoiByInterComm = []
 
-  var cachedLayers = {} //placehoder for the layers, to compute them only once
+  var cachedLayers = shared.cachedLayers //placehoder for the layers, to compute them only once
 
   /**
    * Loads, pre-processes and caches the layer with the given path.
@@ -293,7 +291,7 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
    * - Dispatching those computations to worker threads.
    */
   function loadLayer(path, callback) {
-    if (cachedLayers[path]) {
+    if (shared.cachedLayers[path]) {
       callback();
       return;
     }
@@ -501,7 +499,7 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
   function setLayer(layerPath) {
     if (!layerPath) {
       update_parameters.hide = true
-      update_f.updateMap(update_parameters,interComms,voronoi,imgs,imgs_EV,map,svg_EV,svg_circle_EV,current_geoLat,current_geoLong,markerElement,path,cachedLayers,currentLayerPath,defs_path)
+      update_f.updateMap(update_parameters,interComms,voronoi,imgs,imgs_EV,svg_EV,svg_circle_EV,markerElement,path,defs_path)
       return;
     }
 
@@ -514,6 +512,11 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
       }
       // Once the layer is loaded, we can get it from the cache.
       const layer = cachedLayers[layerPath]
+
+      update_parameters.tl = new L.LatLng(layer.tl_lat, layer.tl_lng)
+      update_parameters.br = new L.LatLng(layer.br_lat, layer.br_lng)
+      update_parameters.currentGeoLat = shared.currentGeoLat
+      update_parameters.currentGaoLng = shared.currentGeoLng
 
       var min = 0
       var max = 255
@@ -561,13 +564,9 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
 
       // Update the bounding box and current coordinates.
       update_parameters.hide = false
-      update_parameters.tl = new L.LatLng(layer.tl_lat, layer.tl_lng)
-      update_parameters.br = new L.LatLng(layer.br_lat, layer.br_lng)
-      update_parameters.current_geoLat = current_geoLat
-      update_parameters.current_geoLong = current_geoLong
 
-      update_f.updateMap(update_parameters,interComms,voronoi,imgs,imgs_EV,map,svg_EV,svg_circle_EV,current_geoLat,current_geoLong,markerElement,path,cachedLayers,currentLayerPath,defs_path)
-      currentLayerPath = layerPath
+      update_f.updateMap(update_parameters,interComms,voronoi,imgs,imgs_EV,svg_EV,svg_circle_EV,markerElement,path,defs_path)
+      shared.currentLayerPath = layerPath
       imgs.attr('xlink:href', layer.url)
 
       if (layerPath == Config.EV_path){
