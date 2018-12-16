@@ -39,6 +39,31 @@ exports.createMap = function(element) {
   base.addTo(map)
 }
 
+/**
+ * Returns whether a given point is within the Paris region.
+ */
+function isWithinParis(point) {
+  return interComm_shape.features.some(s => d3.geoContains(s, point))
+}
+
+/**
+ * Sets the position of the geolocation marker.
+ */
+exports.setLocation = function(lat, lng) {
+  if (!lat || !lng || !isWithinParis([lng, lat])) {
+    lat = null
+    lng = null
+    shared.map.fitBounds(shared.initialBounds)
+  } else {
+    shared.map.setZoom(11)
+    shared.map.panTo(new L.LatLng(lat, lng))
+  }
+
+  shared.currentGeoLat = lat
+  shared.currentGeoLng = lng
+  update_f.updateMarker()
+}
+
 
 exports.getColorsFromScheme = function(colorSchemeId){
   var currentScheme = colorSchemeDict[colorSchemeId]

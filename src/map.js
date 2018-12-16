@@ -11,6 +11,7 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
   shared.voronoi_shape = voronoi_shape
   shared.onHistChange = onHistChange
   shared.onSchools = onSchools
+  shared.legend_element = legend_element
 
   const default_tl = new L.LatLng(
     Config.viewport.topLatitude,
@@ -28,32 +29,6 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
   shared.color_legend_svg = d3.select(legend_element)
     .append("svg")
   shared.color_legend_svg.append("g")
-  shared.legend_element = legend_element
-
-  /**
-   * Returns whether a given point is within the Paris region.
-   */
-  function isWithinParis(point) {
-    return interComm_shape.features.some(s => d3.geoContains(s, point))
-  }
-
-  /**
-   * Sets the position of the geolocation marker.
-   */
-  function setLocation(lat, lng) {
-    if (!lat || !lng || !isWithinParis([lng, lat])) {
-      lat = null
-      lng = null
-      map.fitBounds(shared.initialBounds)
-    } else {
-      map.panTo(new L.LatLng(lat, lng))
-      map.setZoom(11)
-    }
-
-    shared.currentGeoLat = lat
-    shared.currentGeoLng = lng
-    update_f.updateMarker()
-  }
 
 
   /**
@@ -63,7 +38,7 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
   function setLocationFromCurrent() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(pos => {
-        setLocation(pos.coords.latitude, pos.coords.longitude)
+        helpers_f.setLocation(pos.coords.latitude, pos.coords.longitude)
       })
     }
   }
@@ -71,16 +46,15 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
   setLocationFromCurrent()
 
   helpers_f.createMap(element) //TODO: if the window is small, the zoom is too far (> 14) and the map is grey, untill we zoom in
-  var map = shared.map
 
   L.geoJson(interComm_shape, {
     style: helpers_f.blankStyle
-  }).addTo(map); //needed! otherwise a svg isn't generated, we use this one for practical purposes
+  }).addTo(shared.map); //needed! otherwise a svg isn't generated, we use this one for practical purposes
 
   var svg = d3.select(element).select(".leaflet-zoom-animated")
 
   function projectPoint(x, y) {
-    var point = map.latLngToLayerPoint(new L.LatLng(y, x));
+    var point = shared.map.latLngToLayerPoint(new L.LatLng(y, x));
     this.stream.point(point.x, point.y);
   }
   var transform = d3.geo.transform({
@@ -88,13 +62,11 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
   });
   shared.pathGenerator = d3.geo.path()
     .projection(transform);
-  var path = shared.pathGenerator
 
   var defs = svg.append("defs");
   shared.defs_path = defs.append("path")
     .attr("id", "clip_path")
 
-  var defs_path = shared.defs_path
   defs.append("clipPath")
     .attr("id", "clip")
     .append("use")
@@ -107,7 +79,6 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
     .attr('y', 0)
     .attr("xlink:href", "")
     .attr("clip-path", "")
-  var imgs = shared.imgs
 
   update_f.update_clip()
 
@@ -119,20 +90,18 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
 
   shared.svg_EV = d3.select(EV_svg_element)
     .attr("style","display:none;")
-  var svg_EV = shared.svg_EV
+
   shared.svg_circle_EV = d3.select(EV_circle_svg_element)
     .attr("style","display:none;")
-  var svg_circle_EV = shared.svg_circle_EV
 
-  shared.imgs_EV = svg_EV.selectAll("image").data([0])
+  shared.imgs_EV = shared.svg_EV.selectAll("image").data([0])
     .enter()
     .append("svg:image")
     .attr('x', 0)
     .attr('y', 0)
     .attr("xlink:href", "")
-  var imgs_EV = shared.imgs_EV
 
-  var shape_EV = svg_EV.append("g")
+  var shape_EV = shared.svg_EV.append("g")
   shape_EV
     .selectAll("path")
     .data([interComm_shape.features[0]])
@@ -145,47 +114,30 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
 
   shared.voronoi = shapes_f.defineVoronoi(svg,emptyOpacity,fullOpacity)
 
-  var voronoi = shared.voronoi
-
-  shared.highlightedInterComm = -1
-
   shared.interComms = shapes_f.defineInterComms(svg,emptyOpacity,fadedOpacity,fullOpacity)
-
-  var interComms = shared.interComms
 
   shared.markerIcon = {
     iconUrl: 'assets/marker.png',
     iconSize: [24, 24],
     iconAnchor: [12, 24]
   }
-  var markerIcon = shared.markerIcon
 
   shared.markerElement = svg.append("g").selectAll("image").data([0])
     .enter()
     .append("svg:image")
-    .attr("xlink:href", markerIcon.iconUrl)
-    .attr("width", markerIcon.iconSize[0])
-    .attr("height", markerIcon.iconSize[1])
+    .attr("xlink:href", shared.markerIcon.iconUrl)
+    .attr("width", shared.markerIcon.iconSize[0])
+    .attr("height", shared.markerIcon.iconSize[1])
     .attr('visibility', 'hidden')
     .style("pointer-events", "none")
 
   shared.canvas = document.createElement("canvas")
-  var canvas = shared.canvas
-  var context = canvas.getContext('2d');
 
   shared.update_parameters = {
     hide: true,
   };
-  var update_parameters = shared.update_parameters
 
+  shared.map.on('viewreset', function(){update_f.updateMap()})
 
-  map.on('viewreset', function(){update_f.updateMap()})
-
-  var cachedLayers = shared.cachedLayers //placehoder for the layers, to compute them only once
-
-  function setEVLayer(path){
-    imgs_EV.attr("xlink:href", cachedLayers[Config.EV_path].url)
-  }
-
-  return [layers_f.loadLayer, layers_f.setLayer, setLocation, setEVLayer]
+  return [layers_f.loadLayer, layers_f.setLayer, helpers_f.setLocation, layers_f.setEVLayer]
 }

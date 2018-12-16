@@ -308,3 +308,7 @@ exports.setLayer = function(layerPath) {
     
   })
 }
+
+exports.setEVLayer = function(path){
+  shared.imgs_EV.attr("xlink:href", shared.cachedLayers[Config.EV_path].url)
+}
