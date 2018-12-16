@@ -46,7 +46,6 @@ exports.update_EV_preview = function(mouseX,mouseY){
   var svg_width = parseInt(svg_EV.style("width").substr(0,svg_EV.style("width").length-2))
   var svg_height = parseInt(svg_EV.style("height").substr(0,svg_EV.style("width").length-2))
 
-  //console.log(mouseX,mouseY)
   svg_EV.attr("style","top:"+(mouseY - svg_height - 30)+"; left:"+(mouseX - svg_width/2)+"; display:'';")
   shared.svg_circle_EV.attr("style","top:"+(mouseY - svg_height/2)+"; left:"+(mouseX - svg_width/2)+"; display:'';")
 
@@ -70,7 +69,7 @@ exports.update_EV_preview = function(mouseX,mouseY){
   )
 }
 
-exports.update_chart = function(i,layerURL,voro,onHistChange) {
+exports.update_chart = function(i,layerURL,voro) {
   var cachedLayers = shared.cachedLayers
   var info = cachedLayers[layerURL]
   if (!info) {
@@ -84,11 +83,11 @@ exports.update_chart = function(i,layerURL,voro,onHistChange) {
   }
 
   data[0]=0 // ignore 0 values
-  onHistChange(helpers_f.range(256),data)
+  shared.onHistChange(helpers_f.range(256),data)
 
 }
 
-exports.update_text_school = function(i,layerURL,voro,onSchools){
+exports.update_text_school = function(i,layerURL,voro){
   var cachedLayers = shared.cachedLayers
   if(layerURL==Config.Urban_cooling){
     var info = cachedLayers[Config.Ecole_path]
@@ -101,11 +100,11 @@ exports.update_text_school = function(i,layerURL,voro,onSchools){
     } else {
       data = info.interComm_hist[i]
     }
-    onSchools(data)
+    shared.onSchools(data)
     // change texte according to data 
   }
   else{
-    onSchools(null)
+    shared.onSchools(null)
   }
 }
 
@@ -119,8 +118,8 @@ exports.updateMarker = function() {
   var markerElement = shared.markerElement
   if (currentGeoLat && currentGeoLng) {
     const point = map.latLngToLayerPoint([currentGeoLat, currentGeoLng])
-    const x = point.x - markerIcon.iconAnchor[0]
-    const y = point.y - markerIcon.iconAnchor[1]
+    const x = point.x - shared.markerIcon.iconAnchor[0]
+    const y = point.y - shared.markerIcon.iconAnchor[1]
     markerElement.attr('visibility', 'visible')
     markerElement.attr('transform', `translate(${x}, ${y})`)
   } else {

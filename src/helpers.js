@@ -23,12 +23,12 @@ const MAP_ATTRIB = '&copy; <a href="http://www.openstreetmap.org/copyright">Open
 /**
  * Creates a Leaflet map of the Paris area and returns it.
  */
-exports.createMap = function(element, initialBounds) {
+exports.createMap = function(element) {
   shared.map = L.map(element, {
     zoomControl: false
   })
   var map = shared.map
-  map.fitBounds(initialBounds)
+  map.fitBounds(shared.initialBounds)
 
   const base = L.tileLayer(MAP_TILES, {
     minZoom: 9,

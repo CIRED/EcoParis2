@@ -41,3 +41,13 @@ exports.legend_element = null
 exports.color_legend_canvas = null
 
 exports.color_legend_svg = null
+
+exports.onSchools = null
+
+exports.onHistChange = null
+
+exports.highligthedInterComm = -1
+
+exports.initialBounds = null
+
+exports.markerIcon = {}

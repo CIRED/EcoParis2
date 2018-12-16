@@ -3,11 +3,14 @@ import Config from './config.json'
 var helpers_f = require("./helpers.js")
 var update_f = require("./update.js")
 var layers_f = require("./layers.js")
+var shapes_f = require("./shapes.js")
 var shared = require("./shared.js")
 
 export default function(element, EV_svg_element, EV_circle_svg_element, legend_element, error, interComm_shape, voronoi_shape, onHistChange, onSchools) {
   shared.interComm_shape = interComm_shape
   shared.voronoi_shape = voronoi_shape
+  shared.onHistChange = onHistChange
+  shared.onSchools = onSchools
 
   const default_tl = new L.LatLng(
     Config.viewport.topLatitude,
@@ -17,7 +20,7 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
     Config.viewport.bottomLatitude,
     Config.viewport.rightLongitude
   )
-  const initialBounds = L.latLngBounds(default_tl, default_br)
+  shared.initialBounds = L.latLngBounds(default_tl, default_br)
 
   shared.color_legend_canvas = d3.select(legend_element)
     .append("canvas")
@@ -41,7 +44,7 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
     if (!lat || !lng || !isWithinParis([lng, lat])) {
       lat = null
       lng = null
-      map.fitBounds(initialBounds)
+      map.fitBounds(shared.initialBounds)
     } else {
       map.panTo(new L.LatLng(lat, lng))
       map.setZoom(11)
@@ -67,7 +70,7 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
 
   setLocationFromCurrent()
 
-  helpers_f.createMap(element, initialBounds) //TODO: if the window is small, the zoom is too far (> 14) and the map is grey, untill we zoom in
+  helpers_f.createMap(element) //TODO: if the window is small, the zoom is too far (> 14) and the map is grey, untill we zoom in
   var map = shared.map
 
   L.geoJson(interComm_shape, {
@@ -140,142 +143,22 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
     .style("stroke-opacity", 1)
 
 
-  shared.voronoi = svg.append("g").selectAll("path")
-    .data(voronoi_shape.features)
-    .enter().append('path')
-    .attr('d', path)
-    .attr('vector-effect', 'non-scaling-stroke')
-    .style('stroke', "#666")
-    .style("fill-opacity", emptyOpacity)
-    .style("stroke-opacity", emptyOpacity)
-    .on("mouseover", function(d, i) {
-      d3.select(this).style('fill-opacity', emptyOpacity);
-      defs_path.datum(d.geometry)
-      update_f.update_clip()
-      update_f.update_chart(i, shared.currentLayerPath, true, onHistChange)
-      update_f.update_text_school(i, shared.currentLayerPath, false, onSchools)
-    })
-    .on("mouseout", function(d, i) {
-      if (highlightedInterComm != -1) {
-        d3.select(this).style('fill-opacity', oneIfInInterComm(highlightedInterComm)(d, i));
-        d3.select(this).style('stroke-opacity', oneIfInInterComm(highlightedInterComm)(d, i));
-      }
-
-      defs_path.datum([])
-      update_f.update_clip()
-      svg_EV.attr("style","display:none;")
-      svg_circle_EV.attr("style","display:none;")
-    })
-    .on("click", function(d, i) {
-      interComms.style("pointer-events", "all")
-      map.fitBounds(initialBounds) // zoom back to paris
-      highlightedInterComm = -1
-      interComms.style("fill-opacity", fullOpacity)
-      voronoi.style("fill-opacity", emptyOpacity)
-      voronoi.style("stroke-opacity", emptyOpacity)
-
-      defs_path.datum([])
-      update_f.update_clip()
-      svg_EV.attr("style","display:none;")
-      svg_circle_EV.attr("style","display:none;")
-    })
-    .on("mousemove",function(){
-      if (d3.event && d3.event.clientX && d3.event.clientY && shared.currentLayerPath != Config.EV_path){
-        update_f.update_EV_preview(d3.event.layerX,d3.event.layerY)
-      }
-      else{
-        svg_EV.attr("style","display:none;")
-        svg_circle_EV.attr("style","display:none;")
-      }
-    })
+  shared.voronoi = shapes_f.defineVoronoi(svg,emptyOpacity,fullOpacity)
 
   var voronoi = shared.voronoi
 
-  var highlightedInterComm = -1
+  shared.highlightedInterComm = -1
 
-  function oneIfInInterComm(interCommIndex) {
-    function oneIfInInterComm_(p, j) {
-      if (shared.firstVoronoiByInterComm[interCommIndex] <= j && (interCommIndex == interComm_shape.features.length - 1 || shared.firstVoronoiByInterComm[interCommIndex + 1] > j)) {
-        return 1
-      } else {
-        return 0
-      }
-    }
-    return oneIfInInterComm_
-  }
-  shared.interComms = svg.append("g").selectAll("path")
-    .data(interComm_shape.features)
-    .enter().append('path')
-    .attr('d', path)
-    .attr('vector-effect', 'non-scaling-stroke')
-    .style('stroke', "#333")
-    .attr("fill", "#fff")
-    .attr("fill-opacity", fullOpacity)
-    .style("pointer-events", "all")
-    .on("mouseover", function(d, i) {
-      if (highlightedInterComm != -1) {
-        if (i != highlightedInterComm) {
-          d3.select(this).style('fill-opacity', fullOpacity);
-        } else {
-          d3.select(this).style('fill-opacity', emptyOpacity);
-        }
-      } else {
-        d3.select(this).style('fill-opacity', fadedOpacity);
-      }
-      //console.log(i)
-      update_f.update_chart(i, shared.currentLayerPath, true, onHistChange)
-      update_f.update_text_school(i, shared.currentLayerPath, false, onSchools)
-    })
-    .on("mouseout", function(d, i) {
-      if (highlightedInterComm != -1) {
-        if (i == highlightedInterComm) {
-          d3.select(this).style('fill-opacity', emptyOpacity);
-        } else {
-          d3.select(this).style('fill-opacity', fadedOpacity);
-        }
-      } else {
-        d3.select(this).style('fill-opacity', fullOpacity);
-      }
-      svg_EV.attr("style","display:none;")
-      svg_circle_EV.attr("style","display:none;")
-    })
-    .on("click", function(d, i) {
-      interComms.style("pointer-events", "all") // now we can click/hover on every department
-      d3.select(this).style("pointer-events", "none") // except the current one!
-
-      interComms.style("fill-opacity", fadedOpacity) //same here, show every intercomm except this one
-      d3.select(this).style('fill-opacity', emptyOpacity);
-      highlightedInterComm = i
-
-
-      voronoi.style("fill-opacity", oneIfInInterComm(i))
-      voronoi.style("stroke-opacity", oneIfInInterComm(i))
-
-      var BBox = d3.select(this).node().getBBox()
-      var neBound = map.layerPointToLatLng(L.point(BBox.x, BBox.y))
-      var swBound = map.layerPointToLatLng(L.point(BBox.x + BBox.width, BBox.y + BBox.height))
-      map.fitBounds(L.latLngBounds(neBound, swBound)) // zoom to department
-      svg_EV.attr("style","display:none;")
-      svg_circle_EV.attr("style","display:none;")
-    })
-    .on("mousemove",function(){
-      if (d3.event && d3.event.clientX && d3.event.clientY && shared.currentLayerPath != Config.EV_path){
-        //console.log(d3.event)
-        update_f.update_EV_preview(d3.event.layerX,d3.event.layerY)
-      }
-      else{
-        svg_EV.attr("style","display:none;")
-        svg_circle_EV.attr("style","display:none;")
-      }
-    });
+  shared.interComms = shapes_f.defineInterComms(svg,emptyOpacity,fadedOpacity,fullOpacity)
 
   var interComms = shared.interComms
 
-  const markerIcon = {
+  shared.markerIcon = {
     iconUrl: 'assets/marker.png',
     iconSize: [24, 24],
     iconAnchor: [12, 24]
   }
+  var markerIcon = shared.markerIcon
 
   shared.markerElement = svg.append("g").selectAll("image").data([0])
     .enter()
