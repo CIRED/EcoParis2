@@ -2,10 +2,11 @@ var Config = require('./config.json')
 var helpers_f = require('./helpers.js')
 var shared = require('./shared.js')
 
-exports.update_clip = function(defs_path) {
+exports.update_clip = function() {
   var map = shared.map
   var cachedLayers = shared.cachedLayers
   var currentLayerPath = shared.currentLayerPath
+  var defs_path = shared.defs_path
   function clip_projectPoint(x, y) {
 
     var default_tl_point = map.latLngToLayerPoint([cachedLayers[currentLayerPath].tl_lat, cachedLayers[currentLayerPath].tl_lng])
@@ -30,9 +31,11 @@ exports.update_clip = function(defs_path) {
   defs_path.attr("d", clip_path)
 }
 
-exports.update_EV_preview = function(mouseX,mouseY,svg_EV,svg_circle_EV,imgs_EV){
+exports.update_EV_preview = function(mouseX,mouseY){
+  var svg_EV = shared.svg_EV
   var map = shared.map
   var cachedLayers = shared.cachedLayers
+  var imgs_EV = shared.imgs_EV
 
   var layer_path = Config.EV_path
   if (!cachedLayers[Config.EV_path]){
@@ -45,7 +48,7 @@ exports.update_EV_preview = function(mouseX,mouseY,svg_EV,svg_circle_EV,imgs_EV)
 
   //console.log(mouseX,mouseY)
   svg_EV.attr("style","top:"+(mouseY - svg_height - 30)+"; left:"+(mouseX - svg_width/2)+"; display:'';")
-  svg_circle_EV.attr("style","top:"+(mouseY - svg_height/2)+"; left:"+(mouseX - svg_width/2)+"; display:'';")
+  shared.svg_circle_EV.attr("style","top:"+(mouseY - svg_height/2)+"; left:"+(mouseX - svg_width/2)+"; display:'';")
 
 
   var tl = L.latLng(cachedLayers[layer_path].tl_lat,cachedLayers[layer_path].tl_lng)
@@ -109,10 +112,11 @@ exports.update_text_school = function(i,layerURL,voro,onSchools){
 /**
  * Updates the marker element on the map with the right coordinates.
  */
-exports.updateMarker = function(markerElement) {
+exports.updateMarker = function() {
   var map = shared.map
   var currentGeoLat = shared.currentGeoLat
   var currentGeoLng = shared.currentGeoLng
+  var markerElement = shared.markerElement
   if (currentGeoLat && currentGeoLng) {
     const point = map.latLngToLayerPoint([currentGeoLat, currentGeoLng])
     const x = point.x - markerIcon.iconAnchor[0]
@@ -124,9 +128,16 @@ exports.updateMarker = function(markerElement) {
   }
 }
 
-exports.updateMap = function(update_parameters,interComms,voronoi,imgs,imgs_EV,svg_EV,svg_circle_EV,markerElement,path,defs_path) {//add here everything that could potentially change
+exports.updateMap = function() {//add here everything that could potentially change
   var map = shared.map
   var cachedLayers = shared.cachedLayers
+  var voronoi = shared.voronoi
+  var interComms = shared.interComms
+  var imgs = shared.imgs
+  var imgs_EV = shared.imgs_EV
+  var update_parameters = shared.update_parameters
+  var path = shared.pathGenerator
+
   if (update_parameters.hide) {
     console.log('hidden!')
     interComms.attr('visibility', 'hidden')
@@ -160,8 +171,8 @@ exports.updateMap = function(update_parameters,interComms,voronoi,imgs,imgs_EV,s
   imgs.attr('height', height)
   interComms.attr("d", path)
   voronoi.attr("d", path)
-  exports.update_clip(defs_path)
-  exports.updateMarker(markerElement)
-  svg_EV.attr("style","display:none;")
-  svg_circle_EV.attr("style","display:none;")
+  exports.update_clip()
+  exports.updateMarker()
+  shared.svg_EV.attr("style","display:none;")
+  shared.svg_circle_EV.attr("style","display:none;")
 }
