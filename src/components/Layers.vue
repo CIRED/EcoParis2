@@ -117,7 +117,7 @@ export default {
 .loader-tile-grid .loader-tile {
   width: 33%;
   height: 33%;
-  background-color: #fff;
+  background-color: #eee;
   float: left;
 
   animation: loader-tileGridScaleDelay 1.3s infinite ease-in-out;

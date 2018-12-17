@@ -109,7 +109,6 @@ function defineInterComms(svg,emptyOpacity,fadedOpacity,fullOpacity){
       } else {
         d3.select(this).style('fill-opacity', fadedOpacity);
       }
-      console.log(i)
       update_f.update_chart(i, shared.currentLayerPath, true)
       update_f.update_text_school(i, shared.currentLayerPath, false)
     })
