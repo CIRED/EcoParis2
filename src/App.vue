@@ -10,7 +10,7 @@
       <Layers
         :layers="layers"
         v-model="currentLayerPath" />
-      <ZoomControl />
+      <!--ZoomControl /!-->
     </section>
     <section class="container">
       <Map

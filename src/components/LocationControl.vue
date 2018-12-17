@@ -56,7 +56,9 @@ export default {
     locate() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(pos => {
-          this.onLocation([pos.coords.latitude, pos.coords.longitude])
+          if (pos){
+            this.onLocation([pos.coords.latitude, pos.coords.longitude])
+          }
         })
       }
     },

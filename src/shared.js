@@ -55,6 +55,10 @@ var initialBounds = null //initial bounds of the map (set to paris)
 
 var markerIcon = {} //informations about the marker icon
 
+var lastMouseDownX = 0 //coordinates of the last mouse Down event
+
+var lastMouseDownY = 0 //coordinates of the last mouse Down event
+
 export default {cachedLayers,
 				currentLayerPath,
 				map,
@@ -81,4 +85,6 @@ export default {cachedLayers,
 				onHistChange,
 				highlightedInterComm,
 				initialBounds,
-				markerIcon}
+				markerIcon,
+				lastMouseDownX,
+				lastMouseDownY}

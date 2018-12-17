@@ -55,7 +55,7 @@ function defineVoronoi(svg,emptyOpacity,fullOpacity){
       shared.svg_EV.attr("style","display:none;")
       shared.svg_circle_EV.attr("style","display:none;")
     })
-    .on("click", function(d, i) {
+    .on("dblclick", function(d, i) {
       shared.interComms.style("pointer-events", "all")
       shared.map.fitBounds(shared.initialBounds) // zoom back to paris
       shared.highlightedInterComm = -1
@@ -77,6 +77,13 @@ function defineVoronoi(svg,emptyOpacity,fullOpacity){
         shared.svg_circle_EV.attr("style","display:none;")
       }
     })
+    .on("mousedown",function(){
+      if (d3.event && d3.event.clientX && d3.event.clientY && shared.currentLayerPath != Config.EV_path){
+        //console.log(d3.event)
+        shared.lastMouseDownX = d3.event.clientX
+        shared.lastMouseDownY = d3.event.clientY
+      }
+    });
 }
 
 /**
@@ -120,6 +127,10 @@ function defineInterComms(svg,emptyOpacity,fadedOpacity,fullOpacity){
       shared.svg_circle_EV.attr("style","display:none;")
     })
     .on("click", function(d, i) {
+      if (!d3.event || !d3.event.clientX || !d3.event.clientY ||
+          Math.abs(d3.event.clientX - shared.lastMouseDownX) >= 5 || Math.abs(d3.event.clientY - shared.lastMouseDownY) >= 5){
+        return
+      }
       shared.interComms.style("pointer-events", "all") // now we can click/hover on every department
       d3.select(this).style("pointer-events", "none") // except the current one!
 
@@ -146,6 +157,13 @@ function defineInterComms(svg,emptyOpacity,fadedOpacity,fullOpacity){
       else{
         shared.svg_EV.attr("style","display:none;")
         shared.svg_circle_EV.attr("style","display:none;")
+      }
+    })
+    .on("mousedown",function(){
+      if (d3.event && d3.event.clientX && d3.event.clientY && shared.currentLayerPath != Config.EV_path){
+        //console.log(d3.event)
+        shared.lastMouseDownX = d3.event.clientX
+        shared.lastMouseDownY = d3.event.clientY
       }
     });
 }

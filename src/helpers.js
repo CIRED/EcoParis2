@@ -26,10 +26,11 @@ const MAP_ATTRIB = '&copy; <a href="http://www.openstreetmap.org/copyright">Open
  */
 function createMap (element) {
   shared.map = L.map(element, {
-    zoomControl: false
+    zoomControl: true
   })
   var map = shared.map
   map.fitBounds(shared.initialBounds)
+  map.setMaxBounds(map.getBounds())
 
   const base = L.tileLayer(MAP_TILES, {
     minZoom: 9,
@@ -56,8 +57,9 @@ function setLocation (lat, lng) {
     lng = null
     shared.map.fitBounds(shared.initialBounds)
   } else {
-    shared.map.setZoom(11)
-    shared.map.panTo(new L.LatLng(lat, lng))
+    //console.log(lat,lng)
+    shared.map.setView(new L.LatLng(lat, lng),11)
+    //shared.map.setZoom(11)
   }
 
   shared.currentGeoLat = lat
