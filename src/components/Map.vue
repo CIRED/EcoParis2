@@ -1,6 +1,15 @@
 <template>
-  <section ref="map" class="map">
-  </section>
+  <div class="map-container">
+    <section ref="map" class="map"></section>
+
+    <svg ref="circle_svg" class="EV-circle-svg"></svg> 
+    <svg ref="svg" class="EV-svg"></svg>
+
+    <div class="legend">
+      <div ref="legend" class="legend-inner"></div>
+      <p>(mm.mol<sup>-1</sup>)</p>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -8,7 +17,7 @@ import Config from '../config.json'
 import displayMap from '../map'
 
 export default {
-  props: ['layers', 'currentLayerPath', 'currentLocation', 'onHist', 'onSchools', 'appRefs', 'onSchools'],
+  props: ['layers', 'currentLayerPath', 'currentLocation', 'onHist', 'onSchools'],
   data: () => ({
     loadLayer: () => {},
     setLayer: () => {},
@@ -28,7 +37,15 @@ export default {
       .defer(d3.json, urlVoronoi)
       .await((e, d, v) => {
         [this.loadLayer, this.setLayer, this.setLocation, this.setEVLayer, this.setTextUrban] =
-          displayMap(this.$refs.map,this.appRefs.svg,this.appRefs.circle_svg,this.appRefs.legend, e, d, v, this.onHist, this.onSchools)
+          displayMap(
+            this.$refs.map,
+            this.$refs.svg,
+            this.$refs.circle_svg,
+            this.$refs.legend,
+            e, d, v,
+            this.onHist,
+            this.onSchools
+          )
 
         Object.keys(Config.layers).forEach(layerPath => {
 
@@ -67,8 +84,14 @@ export default {
 </script>
 
 <style lang="scss" type="text/scss">
-.map {
+.map-container {
   flex: 1;
+  position: relative;
+}
+
+.map {
+  width: 100%;
+  height: 100%;
 }
 
 .leaflet-overlay-pane {
@@ -77,5 +100,65 @@ export default {
   image {
     image-rendering: optimizespeed;
   }
+}
+
+.EV-svg {
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  border: 1px solid #000;
+  box-shadow: 0 0 3px rgba(#000, .3);
+  position: absolute;
+  background: #fff;
+  display: flex;
+  pointer-events: none;
+  top: -120px;
+
+  image {
+    image-rendering: optimizespeed;
+  }
+}
+
+.EV-circle-svg {
+  border-radius: 50%;
+  width: 90px;
+  height: 90px;
+  border: 1px solid rgba(#000, .7);
+  position: absolute;
+  background: #fff0;
+  display: flex;
+  pointer-events: none;
+  top: -120px;
+}
+
+.legend {
+  position: absolute;
+  bottom: 30px;
+  right: 20px;
+  width: 90px;
+  text-align: center;
+
+  border: 1px solid #bbb;
+  box-shadow: 0 0 3px rgba(#000, .2);
+  background: #fff;
+
+  p {
+    font-size: .6em;
+    font-style: italic;
+    margin-top: 0;
+  }
+}
+
+.legend-inner {
+  height: 200px;
+  width: 70px;
+  margin: 8px auto;
+  position: relative;
+}
+
+.legend-inner canvas {
+  box-sizing: border-box;
+  border: 1px solid #000;
+  border-right: 0;
 }
 </style>

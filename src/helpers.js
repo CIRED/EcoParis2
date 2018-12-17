@@ -80,16 +80,15 @@ function getColorsFromScheme (colorSchemeId){
 
 // create continuous color legend
 function fillScale (scale_canvas, scale_svg, colorScale, minValue, maxValue) {
-  var legendheight = 200,
-      legendwidth = 80,
-      margin = {top: 10, right: 40, bottom: 10, left: 2};
+  const legendHeight = 200
+  const legendWidth = 70
+  const margin = {top: 5, right: 30, bottom: 5, left: 0}
 
   var canvas = scale_canvas
-    .attr("height", legendheight - margin.top - margin.bottom)
+    .attr("height", legendHeight - margin.top - margin.bottom)
     .attr("width", 1)
-    .style("height", (legendheight - margin.top - margin.bottom) + "px")
-    .style("width", (legendwidth - margin.left - margin.right) + "px")
-    .style("border", "1px solid #000")
+    .style("height", (legendHeight - margin.top - margin.bottom) + "px")
+    .style("width", (legendWidth - margin.left - margin.right) + "px")
     .style("position", "absolute")
     .style("top", (margin.top) + "px")
     .style("left", (margin.left) + "px")
@@ -97,15 +96,13 @@ function fillScale (scale_canvas, scale_svg, colorScale, minValue, maxValue) {
 
   var ctx = canvas.getContext("2d");
 
+  var legendScale = height =>
+    colorScale(((legendHeight - margin.top - margin.bottom) - height)/ (legendHeight - margin.top - margin.bottom) * 255)
 
-  var legendscale = function(height) {
-    return colorScale(((legendheight - margin.top - margin.bottom) - height)/ (legendheight - margin.top - margin.bottom) * 255)
-  }
+  var image = ctx.createImageData(1, (legendHeight - margin.top - margin.bottom));
 
-  var image = ctx.createImageData(1, (legendheight - margin.top - margin.bottom));
-
-  for (var i=0; i<legendheight - margin.top - margin.bottom; ++i){
-    var c = d3.rgb(legendscale(i));
+  for (var i=0; i<legendHeight - margin.top - margin.bottom; ++i){
+    var c = d3.rgb(legendScale(i));
     image.data[4*i] = c.r;
     image.data[4*i + 1] = c.g;
     image.data[4*i + 2] = c.b;
@@ -114,14 +111,14 @@ function fillScale (scale_canvas, scale_svg, colorScale, minValue, maxValue) {
   
   ctx.putImageData(image, 0, 0);
 
-  var legendaxis = d3.axisRight()
-    .scale(d3.scaleLinear().domain([maxValue,minValue]).range([1,legendheight - margin.bottom - margin.top]))
+  var legendAxis = d3.axisRight()
+    .scale(d3.scaleLinear().domain([maxValue, minValue]).range([1, legendHeight - margin.bottom - margin.top - 1]))
     .tickSize(6)
     .ticks(8);
 
   var svg = scale_svg
-    .attr("height", (legendheight) + "px")
-    .attr("width", (legendwidth) + "px")
+    .attr("height", `${legendHeight}px`)
+    .attr("width", `${legendWidth}px`)
     .style("position", "absolute")
     .style("left", "0px")
     .style("top", "0px")
@@ -129,8 +126,8 @@ function fillScale (scale_canvas, scale_svg, colorScale, minValue, maxValue) {
   svg
     .select("g")
     .attr("class", "axis")
-    .attr("transform", "translate(" + (legendwidth - margin.left - margin.right + 3) + "," + (margin.top) + ")")
-    .call(legendaxis);
+    .attr("transform", `translate(${legendWidth - margin.left - margin.right}, ${margin.top - 1})`)
+    .call(legendAxis);
 }
 
 

@@ -46,8 +46,8 @@ function update_EV_preview(mouseX,mouseY){
   var svg_width = parseInt(svg_EV.style("width").substr(0,svg_EV.style("width").length-2))
   var svg_height = parseInt(svg_EV.style("height").substr(0,svg_EV.style("width").length-2))
 
-  svg_EV.attr("style","top:"+(mouseY - svg_height - 30)+"px; left:"+(mouseX - svg_width/2)+"px; display:'';")
-  shared.svg_circle_EV.attr("style","top:"+(mouseY - svg_height/2)+"px; left:"+(mouseX - svg_width/2)+"px; display:'';")
+  svg_EV.attr("style","top:"+(mouseY - svg_height - 30 + 15)+"px; left:"+(mouseX - 15)+"px; display:'';")
+  shared.svg_circle_EV.attr("style","top:"+(mouseY - 90/2)+"px; left:"+(mouseX - 90/2)+"px; display:'';")
 
   console.l
   var tl = L.latLng(cachedLayers[layer_path].tl_lat,cachedLayers[layer_path].tl_lng)

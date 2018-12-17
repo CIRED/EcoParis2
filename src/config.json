@@ -1,67 +1,69 @@
 {
 	"layers": {
-
-		"data/rasters/espaces_verts.json":{
+		"data/rasters/espaces_verts.json": {
 			"name": "Esp. verts",
 			"icon": "E",
-			"colorScheme":0,
-			"useColorScheme":false,
-			"colors":["#00ff00","#0000ff","#008800"],
-			"min_value":0,
-			"max_value":0,
-
-			"title": "Espaces verts.",
-			"content": "<p>[texte espaces verts]</p>"
+			"colorScheme": 0,
+			"useColorScheme": false,
+			"colors": [
+				"#00ff00",
+				"#0000ff",
+				"#008800"
+			],
+			"min_value": 0,
+			"max_value": 0
 		},
-		"data/rasters/pollination_cc.json":{
+
+		"data/rasters/pollination_cc.json": {
 			"name": "Phosph.",
 			"icon": "P",
-			"colorScheme":1,
-			"useColorScheme":true,
-			"min_value":0.0,
-			"max_value":5.0,
-
+			"colorScheme": 1,
+			"useColorScheme": true,
+			"min_value": 0,
+			"max_value": 5,
+			"unit": "foo",
 			"title": "Mesure de la rétention de phosphore.",
 			"content": "<p>Le service de rétention du phosphore permet d'améliorer la qualité de l'eau (superficielle et souterraine). Il est directement utile aux organismes de gestion de l'eau (syndicats et département d'assainissement), et donc aux habitants dont les impôts financent la maintenance des services d'assainissement.</p>"
 		},
-		"data/rasters/T_reduction.json":{
+
+		"data/rasters/T_reduction.json": {
 			"name": "Nitrog.",
 			"icon": "N",
-			"colorScheme":0,
-			"useColorScheme":true,
-			"min_value":-5.0,
-			"max_value":5.0,
-
+			"colorScheme": 0,
+			"useColorScheme": true,
+			"min_value": -5,
+			"max_value": 5,
+			"unit": "bar",
 			"title": "Mesure de la rétention d'azote.",
 			"content": "<p>Le service de rétention de l'azote permet d'améliorer la qualité de l'eau (superficielle et souterraine). Il est directement utile aux organismes de gestion de l'eau (syndicats et département d'assainissement), et donc aux habitants dont les impôts financent la maintenance des services d'assainissement.</p>"
 		},
-        "data/rasters/ecoles_elementaires.json":{
+
+		"data/rasters/ecoles_elementaires.json": {
 			"name": "Ecoles elementaires",
 			"icon": "E",
-			"colorScheme":0,
-			"useColorScheme":true,
-			"min_value":0,
-			"max_value":0,
-
+			"colorScheme": 0,
+			"useColorScheme": true,
+			"min_value": 0,
+			"max_value": 0,
 			"title": "Nombre d'écoles élémentaires et maternelles",
 			"content": "<p>Should not appear anyway, find something to fill here.</p>",
 			"hidden": true
 		}
 	},
 
-	"viewport":	{
+	"viewport": {
 		"topLatitude": 49.23719070644322,
 		"bottomLatitude": 48.12054154281846,
 		"leftLongitude": 1.44727950476602,
 		"rightLongitude": 3.555686958558566
 	},
+
 	"EV_path": "data/rasters/espaces_verts.json",
-    "Ecole_path": "data/rasters/ecoles_elementaires.json",
-    "Urban_cooling": "data/rasters/T_air_ref.json",
+	"Ecole_path": "data/rasters/ecoles_elementaires.json",
+	"Urban_cooling": "data/rasters/T_air_ref.json",
 
-
-    "":" ====== reminder =======",
-    "":"here are the options for the 'colorScheme' parameter:",
-    "":"0 - red-yellow-blue",
-    "":"1 - blue-green"
+	"":" ====== reminder =======",
+	"":"here are the options for the 'colorScheme' parameter:",
+	"":"0 - red-yellow-blue",
+	"":"1 - blue-green"
 }

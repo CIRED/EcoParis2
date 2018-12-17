@@ -18,11 +18,7 @@
         :currentLayerPath="currentLayerPath"
         :currentLocation="currentLocation"
         :onHist="(x,y) => {this.currentHistogramX = x; this.currentHistogramY = y;}" 
-        :onSchools="(n) => {}"
-        :appRefs="this.$refs"/>
-      <svg ref="circle_svg" class="EV-circle-svg"></svg> 
-      <svg ref="svg" class="EV-svg"></svg> 
-      <div ref="legend" class="color_legend"></div>
+        :onSchools="(n) => {}" />
       <Sidebar
         :layers="layers"
         :currentLayerPath="currentLayerPath"
@@ -135,6 +131,8 @@ p {
   height: 100%;
 }
 
+// TODO(liautaud): Create mixins and move everything
+// back in their respective files.
 .zoom-control, .location-control {
   height: 40px;
   border: 1px solid #bbb;
@@ -159,40 +157,5 @@ p {
   a:first-child {
     border-right: 1px solid #bbb;
   }
-}
-
-.EV-svg {
-  border-radius:50%;
-  width:120px;
-  height:120px;
-  border: 1px solid #000;
-  position:absolute;
-  background-color: #fff;
-  display: flex;
-  pointer-events: none;
-  top: -120px;
-}
-
-.EV-circle-svg {
-  border-radius:50%;
-  width:120px;
-  height:120px;
-  border: 1px solid #000;
-  position:absolute;
-  background-color: #fff0;
-  display: flex;
-  pointer-events: none;
-  top: -120px;
-}
-
-.color_legend {
-  width:80px;
-  height:200px;
-  position:absolute;
-  background-color: #fff0;
-  display: inline-block;
-  pointer-events: none;
-  top: 50px;
-  right: 30%;
 }
 </style>

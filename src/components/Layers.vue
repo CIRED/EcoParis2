@@ -53,11 +53,18 @@ export default {
   flex-direction: column;
 }
 
+.layers .buttons {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .layers h3, .layers a {
   text-transform: uppercase;
 }
 
-.layers h3 {
+.layers h3, h3 {
   width: 100%;
   margin: 0;
   padding: 7px 0;
@@ -65,13 +72,6 @@ export default {
   font-size: 11pt;
   font-weight: normal;
   text-align: center;
-}
-
-.layers .buttons {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
 }
 
 .layers a {

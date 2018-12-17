@@ -297,15 +297,11 @@ function setLayer(layerPath) {
     if (layerPath == Config.EV_path){
       //TODO: show color legend, but discrete!
       d3.select(shared.legend_element).style("display","none")
-        .style("border", "1px solid #0000")
     }
     else{
+      d3.select(shared.legend_element).style("display","block")
       helpers_f.fillScale(shared.color_legend_canvas,shared.color_legend_svg,colorScale,Config.layers[layerPath].min_value,Config.layers[layerPath].max_value)
-      d3.select(shared.legend_element).style("background-color","#fff")
-      d3.select(shared.legend_element).style("display","")
-        .style("border", "1px solid #000")
     }
-    
   })
 }
 
