@@ -1,6 +1,6 @@
 <template>
   <section class="sidebar">
-    <div v-if="currentLayerPath && layers[currentLayerPath].loaded">
+    <div v-if="currentLayerPath && layers[currentLayerPath].loaded && currentLayerPath != EV_path">
       <h2>{{ layers[currentLayerPath].title }}</h2>
       <div v-html="layers[currentLayerPath].content"></div>
       <Histogram v-if="currentLayerPath != EV_path" :x="currentHistogramX"
