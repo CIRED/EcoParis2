@@ -79,6 +79,8 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
     .attr('y', 0)
     .attr("xlink:href", "")
     .attr("clip-path", "")
+    .attr("preserveAspectRatio","none")
+    .style("object-fit","cover")
 
   update_f.update_clip()
 
@@ -100,6 +102,8 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
     .attr('x', 0)
     .attr('y', 0)
     .attr("xlink:href", "")
+    .attr("preserveAspectRatio","none")
+    .style("object-fit","cover")
 
   var shape_EV = shared.svg_EV.append("g")
   shape_EV

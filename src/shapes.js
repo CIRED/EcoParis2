@@ -160,7 +160,7 @@ function defineInterComms(svg,emptyOpacity,fadedOpacity,fullOpacity){
       }
     })
     .on("mousedown",function(){
-      if (d3.event && d3.event.clientX && d3.event.clientY && shared.currentLayerPath != Config.EV_path){
+      if (d3.event && d3.event.clientX && d3.event.clientY){
         //console.log(d3.event)
         shared.lastMouseDownX = d3.event.clientX
         shared.lastMouseDownY = d3.event.clientY
