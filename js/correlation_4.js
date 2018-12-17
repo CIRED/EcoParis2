@@ -83,19 +83,23 @@ function whenDocumentLoaded(action) {
 
 whenDocumentLoaded(() => {
     queue()
-	    .defer(d3.json, "p_export.json") // Load Watershed Shape
-	    .defer(d3.json, "n_export.json") // Load Voronoi Shape
+	    .defer(d3.json, "data/rasters/L_cc.json") // Load Watershed Shape
+	    .defer(d3.json, "data/rasters/n_ret_cc.json") // Load Voronoi Shape
+        .defer(d3.json, "data/rasters/pollination_cc.json") // Load Voronoi Shape
+        .defer(d3.json, "data/rasters/T_air_cc.json") // Load Voronoi Shape
 	    .await(loadJSON); // When the GeoJsons are fully loaded, call the function loadGeom
 
-    function loadJSON(error, metric1, metric2){
+    function loadJSON(error, metric1, metric2, metric3, metric4){
         var output_width = 1943 //same as our reference image, so that the image is not too big (8000 x 6000...)
         var output_height = 1586
-        var OutputFileName = "correlation.json" //.json
+        var OutputFileName = "correlation_cc.json" //.json
         var HistogramBins = [80,160] //3 categories: 0-80, 81-160, 161-255
         
         var metric = []
         metric[0] = metric1
         metric[1] = metric2
+        metric[2] = metric3
+        metric[3] = metric4
         
         //var North = 49.215485585
         //var South = 48.127383524
@@ -157,6 +161,7 @@ whenDocumentLoaded(() => {
         for(var i=0; i<output.length; i++){
             output[i] /= metric.length
             output[i] *= 255
+            output[i] = Math.round(output[i])
         }
         //console.log(output)
         download(JSON.stringify({"width":output_width,
@@ -168,5 +173,7 @@ whenDocumentLoaded(() => {
                                 "percentiles":JSON.stringify([percentile_25,percentile_50,percentile_75]),
                                 "buckets":JSON.stringify(HistogramBins),
                                 "data":JSON.stringify(output)}),OutputFileName)
+
+        alert("File generated!")
     }
 });                             
