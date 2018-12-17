@@ -1,10 +1,10 @@
 import Config from './config.json'
 
-var helpers_f = require("./helpers.js")
-var update_f = require("./update.js")
-var layers_f = require("./layers.js")
-var shapes_f = require("./shapes.js")
-var shared = require("./shared.js")
+import helpers_f from './helpers.js'
+import update_f from './update.js'
+import layers_f from './layers.js'
+import shapes_f from './shapes.js'
+import shared from './shared.js'
 
 export default function(element, EV_svg_element, EV_circle_svg_element, legend_element, error, interComm_shape, voronoi_shape, onHistChange, onSchools) {
   shared.interComm_shape = interComm_shape

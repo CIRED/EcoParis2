@@ -4,12 +4,12 @@ const colorSchemeDict = {
   2:d3.interpolateCool
 }
 
-var shared =  require('./shared.js')
+import shared from './shared.js'
 
 /**
  * Loads a JSON containment file and parses it.
  */
-exports.loadContainmentFile = function(url) {
+function loadContainmentFile (url) {
   return fetch(url)
     .then(res => res.json())
     .then(json => {
@@ -23,7 +23,7 @@ const MAP_ATTRIB = '&copy; <a href="http://www.openstreetmap.org/copyright">Open
 /**
  * Creates a Leaflet map of the Paris area and returns it.
  */
-exports.createMap = function(element) {
+function createMap (element) {
   shared.map = L.map(element, {
     zoomControl: false
   })
@@ -43,13 +43,13 @@ exports.createMap = function(element) {
  * Returns whether a given point is within the Paris region.
  */
 function isWithinParis(point) {
-  return interComm_shape.features.some(s => d3.geoContains(s, point))
+  return shared.interComm_shape.features.some(s => d3.geoContains(s, point))
 }
 
 /**
  * Sets the position of the geolocation marker.
  */
-exports.setLocation = function(lat, lng) {
+function setLocation (lat, lng) {
   if (!lat || !lng || !isWithinParis([lng, lat])) {
     lat = null
     lng = null
@@ -65,7 +65,7 @@ exports.setLocation = function(lat, lng) {
 }
 
 
-exports.getColorsFromScheme = function(colorSchemeId){
+function getColorsFromScheme (colorSchemeId){
   var currentScheme = colorSchemeDict[colorSchemeId]
   var range = []
   for (var i=0; i<256; ++i){
@@ -76,7 +76,7 @@ exports.getColorsFromScheme = function(colorSchemeId){
 
 
 // create continuous color legend
-exports.fillScale = function(scale_canvas, scale_svg, colorScale, minValue, maxValue) {
+function fillScale (scale_canvas, scale_svg, colorScale, minValue, maxValue) {
   var legendheight = 200,
       legendwidth = 80,
       margin = {top: 10, right: 40, bottom: 10, left: 2};
@@ -131,7 +131,7 @@ exports.fillScale = function(scale_canvas, scale_svg, colorScale, minValue, maxV
 }
 
 
-exports.computeColorRange = function(percentiles,colors){
+function computeColorRange (percentiles,colors){
   var domain_percentiles = percentiles.slice()
   domain_percentiles.unshift(0)
   domain_percentiles.push(255)
@@ -154,17 +154,19 @@ exports.computeColorRange = function(percentiles,colors){
 }
 
 
-exports.blankStyle = function(feature) {
+function blankStyle (feature) {
   return {
     opacity: 0,
     fillOpacity: 0
   };
 }
 
-exports.range = function(length){
+function range (length){
   var range = []
   for (var i=0; i<length; ++i){
     range[i]=i
   }
   return range
 }
+
+export default {loadContainmentFile,createMap,setLocation,getColorsFromScheme,fillScale,computeColorRange,blankStyle,range}

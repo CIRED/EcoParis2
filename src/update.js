@@ -1,8 +1,8 @@
 var Config = require('./config.json')
-var helpers_f = require('./helpers.js')
-var shared = require('./shared.js')
+import helpers_f from './helpers.js'
+import shared from './shared.js'
 
-exports.update_clip = function() {
+function update_clip() {
   var map = shared.map
   var cachedLayers = shared.cachedLayers
   var currentLayerPath = shared.currentLayerPath
@@ -31,7 +31,7 @@ exports.update_clip = function() {
   defs_path.attr("d", clip_path)
 }
 
-exports.update_EV_preview = function(mouseX,mouseY){
+function update_EV_preview(mouseX,mouseY){
   var svg_EV = shared.svg_EV
   var map = shared.map
   var cachedLayers = shared.cachedLayers
@@ -69,7 +69,7 @@ exports.update_EV_preview = function(mouseX,mouseY){
   )
 }
 
-exports.update_chart = function(i,layerURL,voro) {
+function update_chart(i,layerURL,voro) {
   var cachedLayers = shared.cachedLayers
   var info = cachedLayers[layerURL]
   if (!info) {
@@ -87,7 +87,7 @@ exports.update_chart = function(i,layerURL,voro) {
 
 }
 
-exports.update_text_school = function(i,layerURL,voro){
+function update_text_school(i,layerURL,voro){
   var cachedLayers = shared.cachedLayers
   if(layerURL==Config.Urban_cooling){
     var info = cachedLayers[Config.Ecole_path]
@@ -111,7 +111,7 @@ exports.update_text_school = function(i,layerURL,voro){
 /**
  * Updates the marker element on the map with the right coordinates.
  */
-exports.updateMarker = function() {
+function updateMarker() {
   var map = shared.map
   var currentGeoLat = shared.currentGeoLat
   var currentGeoLng = shared.currentGeoLng
@@ -127,7 +127,7 @@ exports.updateMarker = function() {
   }
 }
 
-exports.updateMap = function() {//add here everything that could potentially change
+function updateMap() {//add here everything that could potentially change
   var map = shared.map
   var cachedLayers = shared.cachedLayers
   var voronoi = shared.voronoi
@@ -170,8 +170,10 @@ exports.updateMap = function() {//add here everything that could potentially cha
   imgs.attr('height', height)
   interComms.attr("d", path)
   voronoi.attr("d", path)
-  exports.update_clip()
-  exports.updateMarker()
+  update_clip()
+  updateMarker()
   shared.svg_EV.attr("style","display:none;")
   shared.svg_circle_EV.attr("style","display:none;")
 }
+
+export default{update_clip,update_EV_preview,update_chart,update_text_school,updateMarker,updateMap}

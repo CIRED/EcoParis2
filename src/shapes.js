@@ -1,7 +1,7 @@
 var Config = require('./config.json')
-var helpers_f = require('./helpers.js')
-var shared = require('./shared.js')
-var update_f = require("./update.js")
+import helpers_f from './helpers.js'
+import shared from './shared.js'
+import update_f from'./update.js'
 
 function oneIfInInterComm(interCommIndex) {
   function oneIfInInterComm_(p, j) {
@@ -14,7 +14,7 @@ function oneIfInInterComm(interCommIndex) {
   return oneIfInInterComm_
 }
 
-exports.defineVoronoi = function(svg,emptyOpacity,fullOpacity){
+function defineVoronoi(svg,emptyOpacity,fullOpacity){
   return svg.append("g").selectAll("path")
     .data(shared.voronoi_shape.features)
     .enter().append('path')
@@ -65,7 +65,7 @@ exports.defineVoronoi = function(svg,emptyOpacity,fullOpacity){
     })
 }
 
-exports.defineInterComms = function(svg,emptyOpacity,fadedOpacity,fullOpacity){
+function defineInterComms(svg,emptyOpacity,fadedOpacity,fullOpacity){
   return svg.append("g").selectAll("path")
     .data(shared.interComm_shape.features)
     .enter().append('path')
@@ -85,7 +85,7 @@ exports.defineInterComms = function(svg,emptyOpacity,fadedOpacity,fullOpacity){
       } else {
         d3.select(this).style('fill-opacity', fadedOpacity);
       }
-      //console.log(i)
+      console.log(i)
       update_f.update_chart(i, shared.currentLayerPath, true)
       update_f.update_text_school(i, shared.currentLayerPath, false)
     })
@@ -132,3 +132,5 @@ exports.defineInterComms = function(svg,emptyOpacity,fadedOpacity,fullOpacity){
       }
     });
 }
+
+export default {defineVoronoi,defineInterComms}

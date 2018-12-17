@@ -1,7 +1,7 @@
 var Config = require('./config.json')
-var helpers_f = require('./helpers.js')
-var shared = require('./shared.js')
-var update_f = require("./update.js")
+import helpers_f from './helpers.js'
+import shared from './shared.js'
+import update_f from './update.js'
 
 
 /**
@@ -12,7 +12,7 @@ var update_f = require("./update.js")
  * - Preparing arrays for means, counts and histograms.
  * - Dispatching those computations to worker threads.
  */
-exports.loadLayer = function(path, callback) {
+function loadLayer(path, callback) {
   var canvas = shared.canvas
   var voronoi_shape = shared.voronoi_shape
   var interComm_shape = shared.interComm_shape
@@ -220,7 +220,7 @@ exports.loadLayer = function(path, callback) {
 /**
  * Changes the current layer to the one with a given path.
  */
-exports.setLayer = function(layerPath) {
+function setLayer(layerPath) {
   var update_parameters = shared.update_parameters
   var imgs = shared.imgs
 
@@ -309,6 +309,8 @@ exports.setLayer = function(layerPath) {
   })
 }
 
-exports.setEVLayer = function(path){
+function setEVLayer(path){
   shared.imgs_EV.attr("xlink:href", shared.cachedLayers[Config.EV_path].url)
 }
+
+export default {loadLayer,setLayer,setEVLayer}
