@@ -32,7 +32,13 @@ var processData = function(output, output_p, input, input_p){
           var pos_original = (input_px + input_py * input_p.width)
           value = input[pos_original]
       }
-      output[pos] += value     
+      if (input[pos_original] != null && output[pos] != null){
+        output[pos] += value     
+      }
+      else{
+        output[pos] = null
+      }
+      
     }
 }
 
@@ -46,7 +52,9 @@ var normalize = function(data){
     }
     
     for( var i = 0; i < data.length; i++ ){
-        data[i] /= max
+        if (data[i] != null){
+             data[i] /= max
+        }
     }
 }
 
@@ -73,26 +81,26 @@ function download(text, OutputFileName) {
 }
 
 function whenDocumentLoaded(action) {
-	if (document.readyState === "loading") {
-		document.addEventListener("DOMContentLoaded", action);
-	} else {
-		// `DOMContentLoaded` already fired
-		action();
-	}
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", action);
+    } else {
+        // `DOMContentLoaded` already fired
+        action();
+    }
 }
 
 whenDocumentLoaded(() => {
     queue()
-	    .defer(d3.json, "data/rasters/L_cc.json") // Load Watershed Shape
-	    .defer(d3.json, "data/rasters/n_ret_cc.json") // Load Voronoi Shape
-        .defer(d3.json, "data/rasters/pollination_cc.json") // Load Voronoi Shape
+        .defer(d3.json, "data/rasters/L_ref.json") // Load Watershed Shape
+        .defer(d3.json, "data/rasters/n_ret_ref.json") // Load Voronoi Shape
+        .defer(d3.json, "data/rasters/pollination_ref.json") // Load Voronoi Shape
         .defer(d3.json, "data/rasters/T_reduction.json") // Load Voronoi Shape
-	    .await(loadJSON); // When the GeoJsons are fully loaded, call the function loadGeom
+        .await(loadJSON); // When the GeoJsons are fully loaded, call the function loadGeom
 
     function loadJSON(error, metric1, metric2, metric3, metric4){
         var output_width = 1943 //same as our reference image, so that the image is not too big (8000 x 6000...)
         var output_height = 1586
-        var OutputFileName = "correlation_cc.json" //.json
+        var OutputFileName = "correlation_ref.json" //.json
         var HistogramBins = [80,160] //3 categories: 0-80, 81-160, 161-255
         
         var metric = []
@@ -110,6 +118,11 @@ whenDocumentLoaded(() => {
         var tl_lngs = []
         var br_lats = []
         var br_lngs = []
+
+        console.log(metric[0])
+        console.log(metric[1])
+        console.log(metric[2])
+        console.log(metric[3])
         for (var i=0; i<metric.length; i++) {
             tl_lats[i] = metric[i].tl_lat
             tl_lngs[i] = metric[i].tl_lng
@@ -118,6 +131,7 @@ whenDocumentLoaded(() => {
             metric[i].data = JSON.parse(metric[i].data)
             normalize(metric[i].data)
         }
+
         var North = Math.min(...tl_lats)
         var South = Math.max(...br_lats)
         var West = Math.max(...tl_lngs)
@@ -159,11 +173,12 @@ whenDocumentLoaded(() => {
         var percentile_75 = sorted[Math.floor(sorted.length * 0.75)]
 
         for(var i=0; i<output.length; i++){
-            output[i] /= metric.length
-            output[i] *= 255
-            output[i] = Math.round(output[i])
+            if (output[i] != null){
+                output[i] /= metric.length
+                output[i] *= 255
+                output[i] = Math.round(output[i])
+            }
         }
-        //console.log(output)
         download(JSON.stringify({"width":output_width,
                                 "height":output_height,
                                 "tl_lat":tl.lat,
