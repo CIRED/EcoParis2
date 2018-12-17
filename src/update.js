@@ -33,6 +33,7 @@ function update_clip() {
 
 function update_EV_preview(mouseX,mouseY){
   var svg_EV = shared.svg_EV
+  var svg_circle_EV = shared.svg_circle_EV
   var map = shared.map
   var cachedLayers = shared.cachedLayers
   var imgs_EV = shared.imgs_EV
@@ -42,30 +43,38 @@ function update_EV_preview(mouseX,mouseY){
     return
   }
 
-  svg_EV.style("width").substr(0,svg_EV.style("width").length-2)
   var svg_width = parseInt(svg_EV.style("width").substr(0,svg_EV.style("width").length-2))
   var svg_height = parseInt(svg_EV.style("height").substr(0,svg_EV.style("width").length-2))
+  var svg_circle_width = parseInt(svg_circle_EV.style("width").substr(0,svg_circle_EV.style("width").length-2))
+  var svg_circle_height = parseInt(svg_circle_EV.style("height").substr(0,svg_circle_EV.style("width").length-2))
 
-  svg_EV.attr("style","top:"+(mouseY - svg_height - 30 + 15)+"px; left:"+(mouseX - 15)+"px; display:'';")
-  shared.svg_circle_EV.attr("style","top:"+(mouseY - 90/2)+"px; left:"+(mouseX - 90/2)+"px; display:'';")
+  svg_EV.attr("style","top:"+(mouseY - svg_height - 15)+"px; left:"+(mouseX +15)+"px; display:'';")
+  shared.svg_circle_EV.attr("style","top:"+(mouseY - svg_circle_height/2)+"px; left:"+(mouseX - svg_circle_width/2)+"px; display:'';")
 
-  console.l
+  var magnifyingRatio = svg_width/svg_circle_width
+
   var tl = L.latLng(cachedLayers[layer_path].tl_lat,cachedLayers[layer_path].tl_lng)
   var br = L.latLng(cachedLayers[layer_path].br_lat,cachedLayers[layer_path].br_lng)
 
   var tl_pixels = map.latLngToContainerPoint(tl)
   var br_pixels = map.latLngToContainerPoint(br)
 
-  var image_width = (map.latLngToLayerPoint(br).x - map.latLngToLayerPoint(tl).x)
-  var image_height = (map.latLngToLayerPoint(br).y - map.latLngToLayerPoint(tl).y)
+  var pixels_on_left = mouseX - tl_pixels.x
+  var pixels_on_top = mouseY - tl_pixels.y
+
+  var magnified_tl_pixels = L.point(mouseX - pixels_on_left * magnifyingRatio,
+                                    mouseY - pixels_on_top * magnifyingRatio)
+
+  var image_width = (map.latLngToLayerPoint(br).x - map.latLngToLayerPoint(tl).x) * magnifyingRatio
+  var image_height = (map.latLngToLayerPoint(br).y - map.latLngToLayerPoint(tl).y) * magnifyingRatio
 
   imgs_EV.attr('width', image_width)
   imgs_EV.attr('height', image_height)
 
   imgs_EV.attr("transform",
     "translate(" +
-      (+ tl_pixels.x - mouseX + svg_width/2) + "," +
-      (+ tl_pixels.y - mouseY + svg_height/2) + ")"
+      (+ magnified_tl_pixels.x - mouseX + svg_width/2) + "," +
+      (+ magnified_tl_pixels.y - mouseY + svg_height/2) + ")"
   )
 }
 
