@@ -1,7 +1,9 @@
 const colorSchemeDict = {
-  0:d3.interpolateRdYlBu,
-  1:d3.interpolateBuGn,
-  2:d3.interpolateCool
+  0:d3.interpolateOranges,
+  1:d3.interpolateRdBu,
+  2:d3.interpolateBlues,
+  3:d3.interpolateGnBu,
+  4:d3.interpolateReds,
 }
 
 import shared from './shared.js'
