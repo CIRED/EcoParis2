@@ -5,6 +5,7 @@ const colorSchemeDict = {
 }
 
 import shared from './shared.js'
+import update_f from './update.js'
 
 /**
  * Loads a JSON containment file and parses it.

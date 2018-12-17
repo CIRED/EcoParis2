@@ -3,6 +3,9 @@ import helpers_f from './helpers.js'
 import shared from './shared.js'
 import update_f from'./update.js'
 
+/**
+ * returns a function that, gived data p and voronoi index j, returns one if and only if the voronoi j is inside the interComm interCommIndex
+ */
 function oneIfInInterComm(interCommIndex) {
   function oneIfInInterComm_(p, j) {
     if (shared.firstVoronoiByInterComm[interCommIndex] <= j && (interCommIndex == shared.interComm_shape.features.length - 1 || shared.firstVoronoiByInterComm[interCommIndex + 1] > j)) {
@@ -14,6 +17,9 @@ function oneIfInInterComm(interCommIndex) {
   return oneIfInInterComm_
 }
 
+/**
+ * Defines the voronoi entity. Given an svg container (and some opacity parameters), will return a d3.selectAll("path") element defining the inner areas (i.e. voronois)
+ */
 function defineVoronoi(svg,emptyOpacity,fullOpacity){
   return svg.append("g").selectAll("path")
     .data(shared.voronoi_shape.features)
@@ -23,19 +29,27 @@ function defineVoronoi(svg,emptyOpacity,fullOpacity){
     .style('stroke', "#666")
     .style("fill-opacity", emptyOpacity)
     .style("stroke-opacity", emptyOpacity)
-    .on("mouseover", function(d, i) {
+    .on("mouseover", function(d, i) { 
+      // when the mouse hovers it, it should show the data behind, and become transparent
       d3.select(this).style('fill-opacity', emptyOpacity);
+
+      //update the data clip to show the layer inside this voronoi
       shared.defs_path.datum(d.geometry)
       update_f.update_clip()
+
+      //additionally, update the right elements according to current voronoi
       update_f.update_chart(i, shared.currentLayerPath, true, shared.onHistChange)
       update_f.update_text_school(i, shared.currentLayerPath, false, shared.onSchools)
     })
     .on("mouseout", function(d, i) {
+      //when the mouse goes out of this area, we should revert changes
       if (shared.highlightedInterComm != -1) {
+        //if we are inside an interComm, fill again voronois inside the current interComm
         d3.select(this).style('fill-opacity', oneIfInInterComm(shared.highlightedInterComm)(d, i));
         d3.select(this).style('stroke-opacity', oneIfInInterComm(shared.highlightedInterComm)(d, i));
       }
 
+      //revert clip for this area
       shared.defs_path.datum([])
       update_f.update_clip()
       shared.svg_EV.attr("style","display:none;")
@@ -56,7 +70,7 @@ function defineVoronoi(svg,emptyOpacity,fullOpacity){
     })
     .on("mousemove",function(){
       if (d3.event && d3.event.clientX && d3.event.clientY && shared.currentLayerPath != Config.EV_path){
-        update_f.update_EV_preview(d3.event.layerX,d3.event.layerY)
+        update_f.update_EV_preview(d3.event.clientX,d3.event.clientY)
       }
       else{
         shared.svg_EV.attr("style","display:none;")
@@ -65,6 +79,9 @@ function defineVoronoi(svg,emptyOpacity,fullOpacity){
     })
 }
 
+/**
+ * Defines the voronoi entity. Given an svg container (and some opacity parameters), will return a d3.selectAll("path") element defining the inner areas (i.e. voronois)
+ */
 function defineInterComms(svg,emptyOpacity,fadedOpacity,fullOpacity){
   return svg.append("g").selectAll("path")
     .data(shared.interComm_shape.features)
@@ -124,7 +141,7 @@ function defineInterComms(svg,emptyOpacity,fadedOpacity,fullOpacity){
     .on("mousemove",function(){
       if (d3.event && d3.event.clientX && d3.event.clientY && shared.currentLayerPath != Config.EV_path){
         //console.log(d3.event)
-        update_f.update_EV_preview(d3.event.layerX,d3.event.layerY)
+        update_f.update_EV_preview(d3.event.clientX,d3.event.clientY)
       }
       else{
         shared.svg_EV.attr("style","display:none;")
