@@ -86,7 +86,7 @@ whenDocumentLoaded(() => {
 	    .defer(d3.json, "data/rasters/L_cc.json") // Load Watershed Shape
 	    .defer(d3.json, "data/rasters/n_ret_cc.json") // Load Voronoi Shape
         .defer(d3.json, "data/rasters/pollination_cc.json") // Load Voronoi Shape
-        .defer(d3.json, "data/rasters/T_air_cc.json") // Load Voronoi Shape
+        .defer(d3.json, "data/rasters/T_reduction.json") // Load Voronoi Shape
 	    .await(loadJSON); // When the GeoJsons are fully loaded, call the function loadGeom
 
     function loadJSON(error, metric1, metric2, metric3, metric4){
