@@ -22,17 +22,24 @@
 
 // ========= CHANGE PARAMETERS HERE =========
 
-var FileName = "espaces_verts_image.tif"
-var OutputFileName = "espaces_verts.json" //.json
+var FileName = "pollination_cc_image.tif"
+var OutputFileName = "pollination_cc.json" //.json
 
-var North = 49.235386374 // espaces verts
-var South = 48.111114327
-var West = 1.458223266
-var East = 3.565682555
+var North = 49.248415209 // pollination ref & cc
+var South = 48.110677418
+var West = 1.440530148
+var East = 3.565831209
 
 var HistogramBins = [80,160] //3 categories: 0-80, 81-160, 161-255
 
-var AreValuesDiscrete = true //typically true when a pixel color is a category
+//according to QGis:
+var RefMinValue = 0 // pollination
+var RefMaxValue = 0.123434
+var CCMinValue = 0
+var CCMaxValue = 0.030854
+
+var isCC = true //false for ref, true for cc
+var AreValuesDiscrete = false //typically true when a pixel color is a category
 
 
 function whenDocumentLoaded(action) {
@@ -105,6 +112,23 @@ whenDocumentLoaded(() => {
 
 	            //console.log(px,py)
 	            var value = pixels[pos]
+
+	            if (isCC){
+	            	var CCTx = value/255 
+	            	var RealValue = CCTx * (CCMaxValue - CCMinValue) + CCMinValue
+	            	var RefTx = (RealValue - RefMinValue) / (RefMaxValue - RefMinValue)
+
+	            	value = RefTx * 255
+
+	            	value = Math.round(value)
+	            	if (value < 0){
+	            		value = 0
+	            	}
+	            	if (value > 255){
+	            		value = 255
+	            	}
+	            }
+	            
 
 	            //this part is actually not useful, but it is nice to see the result beforehand
 	            var reference_size_pos = (Math.floor(i / objective_width) * canvas.width + (i % objective_width))*4
