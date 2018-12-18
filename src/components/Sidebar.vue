@@ -1,10 +1,12 @@
 <template>
   <section class="sidebar">
-    <div v-if="currentLayerPath && layers[currentLayerPath].loaded && currentLayerPath != EV_path">
+    <div v-if="currentLayerPath && layers[currentLayerPath].loaded && !isEspacesVerts">
       <h2>{{ layers[currentLayerPath].title }}</h2>
       <div v-html="layers[currentLayerPath].content"></div>
-      <Histogram v-if="currentLayerPath != EV_path" :x="currentHistogramX"
-                 :y="currentHistogramY"/>
+      <Histogram
+        v-if="!isEspacesVerts"
+        :x="currentHistogramX"
+        :y="currentHistogramY"/>
     </div>
 
     <div v-else class="split">
@@ -35,22 +37,28 @@
 </template>
 
 <script>
+import Config from '../config.json'
 import Histogram from './Histogram.vue'
 
 export default {
-  props: ['layers', 'currentLayerPath', 'EV_path', 'currentHistogramX', 'currentHistogramY'],
+  props: ['layers', 'currentLayerPath', 'currentHistogramX', 'currentHistogramY'],
   components: { Histogram },
+  computed: {
+    isEspacesVerts() {
+      return this.currentLayerPath == Config.EV_path;
+    }
+  }
 }
 </script>
 
 <style lang="scss" type="text/scss">
-
 #espacesVerts {
   height: 300px;
   width: 100%;
   margin-top: 25px;
   margin-bottom: 5px;
 }
+
 .sidebar {
   z-index: 500;
   width: 450px;

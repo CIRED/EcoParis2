@@ -5,7 +5,10 @@
     <svg ref="circle_svg" class="EV-circle-svg"></svg> 
     <svg ref="svg" class="EV-svg"></svg>
 
-    <div class="legend">
+    <div class="legend" v-if="isEspacesVerts">
+      <p>Espace verts</p>
+    </div>
+    <div class="legend" v-else>
       <div ref="legend" class="legend-inner"></div>
       <p>(mm.mol<sup>-1</sup>)</p>
     </div>

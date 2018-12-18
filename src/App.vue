@@ -1,7 +1,9 @@
 <template>
   <div id="app">
     <transition name="fade">
-      <Intro v-if="introVisible" :onDismiss="() => {introVisible = false; this.currentLayerPath = this.defaultLayer}" />
+      <Intro v-if="introVisible" :onDismiss="() => {
+        introVisible = false;
+        this.currentLayerPath = this.defaultLayer; }" />
     </transition>
 
     <section class="menu">
@@ -10,7 +12,7 @@
       <Layers
         :layers="layers"
         v-model="currentLayerPath" />
-      <!--ZoomControl /!-->
+      <ZoomControl />
     </section>
     <section class="container">
       <Map
@@ -22,7 +24,6 @@
       <Sidebar
         :layers="layers"
         :currentLayerPath="currentLayerPath"
-        :EV_path="EV_path"
         :currentHistogramX="currentHistogramX"
         :currentHistogramY="currentHistogramY" />
     </section>
@@ -50,7 +51,6 @@ export default {
       return m
     }, {}),
 
-    // currentLayer: 'data/p_export.json',
     currentLayerPath: null,
     currentLocation: null,
     currentHistogramX: null,
