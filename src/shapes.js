@@ -54,6 +54,8 @@ function defineVoronoi(svg,emptyOpacity,fullOpacity){
       update_f.update_clip()
       shared.svg_EV.attr("style","display:none;")
       shared.svg_circle_EV.attr("style","display:none;")
+
+      shared.lastMousePosition={x:-300,y:-300}
     })
     .on("dblclick", function(d, i) {
       shared.interComms.style("pointer-events", "all")
@@ -70,6 +72,7 @@ function defineVoronoi(svg,emptyOpacity,fullOpacity){
     })
     .on("mousemove",function(){
       if (d3.event && d3.event.clientX && d3.event.clientY && shared.currentLayerPath != Config.EV_path){
+        shared.lastMousePosition={x:d3.event.clientX,y:d3.event.clientY}
         update_f.update_EV_preview(d3.event.clientX,d3.event.clientY)
       }
       else{
@@ -124,6 +127,8 @@ function defineInterComms(svg,emptyOpacity,fadedOpacity,fullOpacity){
       }
       shared.svg_EV.attr("style","display:none;")
       shared.svg_circle_EV.attr("style","display:none;")
+      
+      shared.lastMousePosition={x:-300,y:-300}
     })
     .on("click", function(d, i) {
       if (!d3.event || !d3.event.clientX || !d3.event.clientY ||
@@ -151,6 +156,7 @@ function defineInterComms(svg,emptyOpacity,fadedOpacity,fullOpacity){
     .on("mousemove",function(){
       if (d3.event && d3.event.clientX && d3.event.clientY && shared.currentLayerPath != Config.EV_path){
         //console.log(d3.event)
+        shared.lastMousePosition={x:d3.event.clientX,y:d3.event.clientY}
         update_f.update_EV_preview(d3.event.clientX,d3.event.clientY)
       }
       else{

@@ -147,6 +147,8 @@ function loadLayer(path, isFuture, callback) {
           var hist_buckets = [70, 140]; //TODO: change acodring to layer (hard-coded...)
 
           var value = canvas.toDataURL("png");
+
+          update_f.switchEVPreview()//refresh the EV overlay, the layer we want might be ready now
           //imgs.attr("xlink:href", value)
           
           shared.cachedLayers[truePath] = {
@@ -316,6 +318,9 @@ function setLayer(layerPath, isFuture) {
       helpers_f.fillScale(shared.color_legend_canvas,shared.color_legend_svg,colorScale,Config.layers[layerPath].min_value,Config.layers[layerPath].max_value)
     }
   })
+
+  shared.isFuture = isFuture
+  update_f.update_EV_preview(shared.lastMousePosition.x,shared.lastMousePosition.y)
 }
 
 function setEVLayer(path){

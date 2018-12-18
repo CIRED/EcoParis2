@@ -171,4 +171,14 @@ function range (length){
   return range
 }
 
-export default {loadContainmentFile,createMap,setLocation,getColorsFromScheme,fillScale,computeColorRange,blankStyle,range}
+function handleKeyEvent(e){
+  if (e && e.keyCode == 120){ // 'x' key
+    shared.showCirclePreview = ! shared.showCirclePreview
+  }
+  if (e && e.keyCode == 32){ // space bar
+    shared.showFutureInsteadOfEV = ! shared.showFutureInsteadOfEV
+  }
+  update_f.update_EV_preview(shared.lastMousePosition.x,shared.lastMousePosition.y)
+}
+
+export default {loadContainmentFile,createMap,setLocation,getColorsFromScheme,fillScale,computeColorRange,blankStyle,range,handleKeyEvent}

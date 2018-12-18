@@ -63,6 +63,16 @@ var voronoiContainment = null //precomputed containment tests for the voronois
 
 var interCommContainment = null //precomputed containment tests for the interComms
 
+var showCirclePreview = true //do we show the circle preview, or do we hide it?
+
+var showFutureInsteadOfEV = false //do we show the future preview in the circle instead of the EV?
+
+var lastMousePosition = {x:0,y:0} //last known position of the mouse
+
+var isFuture = false
+
+var currentCircleLayerPath = ""
+
 export default {cachedLayers,
 				currentLayerPath,
 				map,
@@ -93,4 +103,9 @@ export default {cachedLayers,
 				lastMouseDownX,
 				lastMouseDownY,
 				voronoiContainment,
-				interCommContainment}
+				interCommContainment,
+				showCirclePreview,
+				showFutureInsteadOfEV,
+				lastMousePosition,
+				isFuture,
+				currentLayerPath}

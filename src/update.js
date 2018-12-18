@@ -32,14 +32,17 @@ function update_clip() {
 }
 
 function update_EV_preview(mouseX,mouseY){
+  switchEVPreview()
   var svg_EV = shared.svg_EV
   var svg_circle_EV = shared.svg_circle_EV
   var map = shared.map
   var cachedLayers = shared.cachedLayers
   var imgs_EV = shared.imgs_EV
 
-  var layer_path = Config.EV_path
-  if (!cachedLayers[Config.EV_path]){
+  var layer_path = shared.currentCircleLayerPath
+  if (!cachedLayers[layer_path] || !shared.showCirclePreview){
+    shared.svg_EV.attr("style","display:none;")
+    shared.svg_circle_EV.attr("style","display:none;")
     return
   }
 
@@ -70,6 +73,8 @@ function update_EV_preview(mouseX,mouseY){
 
   imgs_EV.attr('width', image_width)
   imgs_EV.attr('height', image_height)
+
+  imgs_EV.attr("xlink:href", shared.cachedLayers[layer_path].url)
 
   imgs_EV.attr("transform",
     "translate(" +
@@ -184,4 +189,19 @@ function updateMap() {//add here everything that could potentially change
   shared.svg_circle_EV.attr("style","display:none;")
 }
 
-export default{update_clip,update_EV_preview,update_chart,update_text_school,updateMarker,updateMap}
+function switchEVPreview(){
+
+  if (!shared.showFutureInsteadOfEV){
+    shared.currentCircleLayerPath = Config.EV_path
+  }
+  else{
+    if (shared.isFuture){
+      shared.currentCircleLayerPath = shared.currentLayerPath
+    }
+    else{
+      shared.currentCircleLayerPath = Config.layers[shared.currentLayerPath].future
+    }
+  }
+}
+
+export default{update_clip,update_EV_preview,update_chart,update_text_school,updateMarker,updateMap,switchEVPreview}

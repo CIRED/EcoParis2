@@ -132,7 +132,7 @@ export default {
                   this.layers[layerPath].loaded = true
                   
                   if (layerPath == Config.EV_path){
-                    this.setEVLayer(layerPath)
+                    //this.setEVLayer(layerPath)
                   }          
                 }
               )
