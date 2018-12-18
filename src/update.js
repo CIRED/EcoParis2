@@ -105,9 +105,9 @@ function update_text_school(i,layerURL,voro){
     }
     var data=[]
     if (voro == true) {
-      data = info.voronoi_hist[i]
+      data = info.voronoi_hist[i].slice(-1).pop()
     } else {
-      data = info.interComm_hist[i]
+      data = info.interComm_hist[i].slice(-1).pop()
     }
     shared.onSchools(data)
   }

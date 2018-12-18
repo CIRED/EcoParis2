@@ -7,6 +7,8 @@
         v-if="!isEspacesVerts"
         :x="currentHistogramX"
         :y="currentHistogramY"/>
+
+        <p v-if="schoolCount">Il y a {{ schoolCount }} établissements scolaires dans la région sélectionnée.</p>
     </div>
 
     <div v-else class="split">
@@ -41,7 +43,7 @@ import Config from '../config.json'
 import Histogram from './Histogram.vue'
 
 export default {
-  props: ['layers', 'currentLayerPath', 'currentHistogramX', 'currentHistogramY'],
+  props: ['layers', 'currentLayerPath', 'currentHistogramX', 'currentHistogramY', 'schoolCount'],
   components: { Histogram },
   computed: {
     isEspacesVerts() {

@@ -39,7 +39,7 @@ function defineVoronoi(svg,emptyOpacity,fullOpacity){
 
       //additionally, update the right elements according to current voronoi
       update_f.update_chart(i, shared.currentLayerPath, true, shared.onHistChange)
-      update_f.update_text_school(i, shared.currentLayerPath, false, shared.onSchools)
+      update_f.update_text_school(i, shared.currentLayerPath, true, shared.onSchools)
     })
     .on("mouseout", function(d, i) {
       //when the mouse goes out of this area, we should revert changes

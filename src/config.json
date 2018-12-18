@@ -101,7 +101,7 @@
 
 	"EV_path": "data/rasters/espaces_verts.json",
     "Ecole_path": "data/rasters/ecoles_elementaires.json",
-    "Urban_cooling": "data/rasters/T_air_ref.json",
+    "Urban_cooling": "data/rasters/T_reduction.json",
 
     "":" ====== reminder =======",
     "":"here are the options for the 'colorScheme' parameter:",

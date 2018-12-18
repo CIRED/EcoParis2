@@ -29,12 +29,13 @@
         :currentLocation="currentLocation"
         :currentZoom="currentZoom"
         :onHist="(x,y) => {this.currentHistogramX = x; this.currentHistogramY = y;}" 
-        :onSchools="(n) => {}" />
+        :onSchools="n => this.schoolCount = n" />
       <Sidebar
         :layers="layers"
         :currentLayerPath="currentLayerPath"
         :currentHistogramX="currentHistogramX"
-        :currentHistogramY="currentHistogramY" />
+        :currentHistogramY="currentHistogramY"
+        :schoolCount="schoolCount" />
     </section>
   </div>
 </template>
@@ -60,7 +61,7 @@ export default {
     layers: Object.keys(Config.layers).reduce((m, layerPath) => {
       m[layerPath] = Config.layers[layerPath]
       m[layerPath].loaded = false
-      m[layerPath].path=layerPath
+      m[layerPath].path = layerPath
       return m
     }, {}),
 
@@ -72,6 +73,8 @@ export default {
     introVisible: true,
     sidebarVisible: false,
     aboutVisible: false,
+
+    schoolCount: null,
   }),
 
   computed: {
