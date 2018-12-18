@@ -5,7 +5,20 @@
     <svg ref="circle_svg" class="EV-circle-svg"></svg> 
     <svg ref="svg" class="EV-svg"></svg>
 
-    <div class="legend">
+    <section class="year" v-if="hasFutureAvailable && !isFuture">
+      <p>{{ currentYear }}</p>
+      <a href="#" @click.prevent="() => $emit('toggleFuture')">
+        <i class="fas fa-fast-forward"></i>
+      </a>
+    </section>
+    <section class="year" v-else-if="hasFutureAvailable">
+      <p>2025</p>
+      <a href="#" @click.prevent="() => $emit('toggleFuture')">
+        <i class="fas fa-fast-backward"></i>
+      </a>
+    </section>
+
+    <section class="legend">
       <div ref="legend" class="legend-inner"></div>
 
       <section v-if="isEspacesVerts">
@@ -28,7 +41,7 @@
       <section v-else-if="currentUnit">
         <p>({{ currentUnit }})</p>
       </section>
-    </div>
+    </section>
   </div>
 </template>
 
@@ -37,7 +50,7 @@ import Config from '../config.json'
 import displayMap from '../map'
 
 export default {
-  props: ['layers', 'currentLayerPath', 'currentLocation', 'currentZoom', 'onHist', 'onSchools'],
+  props: ['layers', 'currentLayerPath', 'currentLocation', 'currentZoom', 'isFuture'],
   data: () => ({
     loadLayer: () => {},
     setLayer: () => {},
@@ -68,6 +81,14 @@ export default {
 
     greenColor() {
       return Config.layers[Config.EV_path].colors[2]
+    },
+
+    currentYear() {
+      return new Date().getFullYear()
+    },
+
+    hasFutureAvailable() {
+      return !!Config.layers[this.currentLayerPath].future
     }
   },
 
@@ -91,23 +112,32 @@ export default {
             this.$refs.circle_svg,
             this.$refs.legend,
             e, d, v,
-            this.onHist,
-            this.onSchools
+            (x, y) => this.$emit('newHistogram', x, y),
+            n => this.$emit('newSchools', n)
           )
 
         Object.keys(Config.layers).forEach(layerPath => {
+          this.layers[layerPath].path=layerPath;
 
-        this.layers[layerPath].path=layerPath;
-        this.loadLayer(
-          layerPath,
-          () => {
-            this.layers[layerPath].loaded = true
-            
-            if (layerPath == Config.EV_path){
-              this.setEVLayer(layerPath)
-            }          
+          // Preload all the layers.
+          this.loadLayer(
+            layerPath,
+            false,
+            () => {
+              this.layers[layerPath].loaded = true
+              
+              if (layerPath == Config.EV_path){
+                this.setEVLayer(layerPath)
+              }          
+            }
+          )
+
+          // Also preload the future layers when applicable.
+          if (Config.layers[layerPath].future) {
+            console.log('Preloading future layer:', Config.layers[layerPath].future)
+            this.loadLayer(layerPath, true, () => {})
           }
-        )})
+        })
 
         this.setLayer(this.currentLayerPath)
       })
@@ -117,8 +147,15 @@ export default {
     /**
      * Watches changes to the currentLayerPath prop, and updates the map.
      */
-    currentLayerPath(layerPath) {
-      this.setLayer(layerPath)
+    currentLayerPath() {
+      this.setLayer(this.currentLayerPath, this.hasFutureAvailable && this.isFuture)
+    },
+
+    /**
+     * Watches changes to the isFuture prop, and updates the map.
+     */
+    isFuture() {
+      this.setLayer(this.currentLayerPath, this.hasFutureAvailable && this.isFuture)
     },
 
     /**
@@ -190,6 +227,35 @@ export default {
   display: flex;
   pointer-events: none;
   top: -120px;
+}
+
+.year {
+  position: absolute;
+  top: 35px;
+  right: 25px;
+
+  box-shadow: 0 0 2px rgba(0, 0, 0, .3);
+  background: #fff;
+
+  display: flex;
+
+  p {
+    margin: 5px 20px;
+    color: #666;
+    font-size: 25pt;
+    font-family: 'IBM Plex Sans', sans-serif;
+  }
+
+  a {
+    display: flex;
+    align-items: center;
+    border-left: 1px solid #ddd;
+    font-size: 18pt;
+    outline: none;
+    text-decoration: none;
+    padding: 15px;
+    color: #444;
+  }
 }
 
 .legend {

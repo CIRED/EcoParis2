@@ -36,8 +36,7 @@
 
 			"title": "Mesure du service de rafraîchissement.",
 			"content": "<p>Le service de rafraichissement peut atteindre plusieurs degrés. Il réduit les risques sanitaires (maladies cardio-vasculaires et décès directement liés aux canicules) et potentiellement la consommation énergétique associée à la climatisation.</p>",
-            "unit":"en °C",
-            "future":"data/rasters/T_reduction.json"
+            "unit":"en °C"
 		},
 		"data/rasters/L_ref.json":{
 			"name": "Nappe",

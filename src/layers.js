@@ -12,7 +12,7 @@ import update_f from './update.js'
  * - Preparing arrays for means, counts and histograms.
  * - Dispatching those computations to worker threads.
  */
-function loadLayer(path, callback) {
+function loadLayer(path, isFuture, callback) {
   var canvas = shared.canvas
   var voronoi_shape = shared.voronoi_shape
   var interComm_shape = shared.interComm_shape
@@ -21,9 +21,16 @@ function loadLayer(path, callback) {
     return;
   }
 
-  fetch(path)
+  let truePath = path
+  if (isFuture) {
+    truePath = Config.layers[path].future
+  }
+
+  fetch(truePath)
     .then(res => res.json())
     .then(json => {
+      console.log('Preloaded layer:', truePath)
+      
       json.data = JSON.parse(json.data)
       json.percentiles = JSON.parse(json.percentiles)
 
@@ -142,7 +149,7 @@ function loadLayer(path, callback) {
           var value = canvas.toDataURL("png");
           //imgs.attr("xlink:href", value)
           
-          shared.cachedLayers[path] = {
+          shared.cachedLayers[truePath] = {
             "url": value,
             "tl_lat": json.tl_lat,
             "tl_lng": json.tl_lng,
@@ -156,8 +163,10 @@ function loadLayer(path, callback) {
             "interComm_hist": interComm_hist,
             "hist_buckets": hist_buckets,
             "percentiles" : json.percentiles,
-            "layerUrl": path
+            "layerUrl": truePath
           }
+
+          console.log('Processed layer:', truePath)
 
           callback();
         }
@@ -168,7 +177,7 @@ function loadLayer(path, callback) {
 
       var domain = helpers_f.range(256)
       var range = []
-      if (Config.layers[path].useColorScheme){
+      if (Config.layers[path] && Config.layers[path].useColorScheme){
         range = helpers_f.getColorsFromScheme(Config.layers[path].colorScheme)
       }
       else{
@@ -220,7 +229,7 @@ function loadLayer(path, callback) {
 /**
  * Changes the current layer to the one with a given path.
  */
-function setLayer(layerPath) {
+function setLayer(layerPath, isFuture) {
   var update_parameters = shared.update_parameters
   var imgs = shared.imgs
 
@@ -230,15 +239,21 @@ function setLayer(layerPath) {
     return;
   }
 
-  this.loadLayer(layerPath,() => {
-    if (layerPath == Config.EV_path){ //TODO: add parameter "AlwaysShowLayer" in config?
+  let truePath = layerPath
+  if (isFuture) {
+    truePath = Config.layers[layerPath].future
+  }
+
+  this.loadLayer(layerPath, isFuture, () => {
+  if (layerPath == Config.EV_path){ //TODO: add parameter "AlwaysShowLayer" in config?
       imgs.attr("clip-path", "")
     }
     else{
       imgs.attr("clip-path", "url(#clip)")
     }
+
     // Once the layer is loaded, we can get it from the cache.
-    const layer = shared.cachedLayers[layerPath]
+    const layer = shared.cachedLayers[truePath]
 
     update_parameters.tl = new L.LatLng(layer.tl_lat, layer.tl_lng)
     update_parameters.br = new L.LatLng(layer.br_lat, layer.br_lng)

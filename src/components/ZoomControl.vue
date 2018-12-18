@@ -1,14 +1,12 @@
 <template>
   <section class="zoom-control">
-    <a class="minus" @click.prevent="onZoomMinus">-</a>
-    <a class="plus" @click.prevent="onZoomPlus">+</a>
+    <a class="minus" @click.prevent="$emit('zoomOut')">-</a>
+    <a class="plus" @click.prevent="$emit('zoomIn')">+</a>
   </section>
 </template>
 
 <script>
-export default {
-  props: ['onZoomMinus', 'onZoomPlus']
-}
+export default {}
 </script>
 
 <style lang="scss" type="text/scss">

@@ -9,14 +9,14 @@
 
     <section class="buttons">
       <a v-if="isLoading" class="button loading">Chargement</a>
-      <a v-else @click.prevent="onDismiss" href="#" class="button">Commencer la visite</a>
+      <a v-else @click.prevent="$emit('dismiss')" href="#" class="button">Commencer la visite</a>
     </section>
   </section>
 </template>
 
 <script>
 export default {
-  props: ['onDismiss', 'isLoading']
+  props: ['isLoading']
 }
 </script>
 

@@ -1,6 +1,6 @@
 <template>
     <div class="about-wrapper">
-        <a href="#" class="about-close" @click.prevent="onDismiss">X</a>
+        <a href="#" class="about-close" @click.prevent="$emit('dismiss')">X</a>
         
         <section class="about-box">
             <h2>Réalisation et remerciements.</h2>
@@ -30,9 +30,7 @@
 </template>
 
 <script>
-export default {
-    props: ['onDismiss']
-}
+export default {}
 </script>
 
 <style lang="scss">

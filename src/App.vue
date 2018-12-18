@@ -4,10 +4,10 @@
       <Intro
         v-if="introVisible"
         :isLoading="!currentLayerLoaded"
-        :onDismiss="() => introVisible = false" />
+        @dismiss="() => introVisible = false" />
     </transition>
 
-    <About v-if="aboutVisible" :onDismiss="() => aboutVisible = false" />
+    <About v-if="aboutVisible" @dismiss="() => aboutVisible = false" />
 
     <section class="menu">
       <LocationControl
@@ -16,8 +16,8 @@
         :layers="layers"
         v-model="currentLayerPath" />
       <ZoomControl
-        :onZoomMinus="() => currentZoom -= 1"
-        :onZoomPlus="() => currentZoom += 1" />
+        @zoomOut="() => currentZoom -= 1"
+        @zoomIn="() => currentZoom += 1" />
 
       <a href="#" class="about-button"
         @click.prevent="() => aboutVisible = true">À propos</a>
@@ -28,8 +28,10 @@
         :currentLayerPath="currentLayerPath"
         :currentLocation="currentLocation"
         :currentZoom="currentZoom"
-        :onHist="(x,y) => {this.currentHistogramX = x; this.currentHistogramY = y;}" 
-        :onSchools="n => this.schoolCount = n" />
+        :isFuture="isFuture"
+        @toggleFuture="() => isFuture ^= true"
+        @newHistogram="(x, y) => {this.currentHistogramX = x; this.currentHistogramY = y;}" 
+        @newSchools="n => this.schoolCount = n" />
       <Sidebar
         :layers="layers"
         :currentLayerPath="currentLayerPath"
@@ -65,8 +67,10 @@ export default {
       return m
     }, {}),
 
-    currentZoom: 0,
+    isFuture: false,
     currentLayerPath: defaultLayerPath,
+
+    currentZoom: 0,
     currentLocation: null,
     currentHistogramX: null,
     currentHistogramY: null,
