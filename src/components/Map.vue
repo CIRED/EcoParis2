@@ -198,8 +198,7 @@ export default {
   right: 25px;
   text-align: center;
 
-  border: 1px solid #bbb;
-  box-shadow: 0 0 3px rgba(#000, .2);
+  box-shadow: 0 0 2px rgba(0, 0, 0, .3);
   background: #fff;
 
   h3 {

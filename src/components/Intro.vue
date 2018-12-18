@@ -8,14 +8,15 @@
     <p>Découvrez l'influence de la nature sur votre vie à Paris.</p>
 
     <section class="buttons">
-      <a @click.prevent="onDismiss" href="#" class="button">Commencer la visite</a>
+      <a v-if="isLoading" class="button loading">Chargement</a>
+      <a v-else @click.prevent="onDismiss" href="#" class="button">Commencer la visite</a>
     </section>
   </section>
 </template>
 
 <script>
 export default {
-  props: ['onDismiss']
+  props: ['onDismiss', 'isLoading']
 }
 </script>
 
@@ -68,11 +69,43 @@ export default {
 }
 
 .intro .buttons {
-  margin-top: 60px;
+  margin-top: 50px;
 }
 
 .intro .button {
   margin-left: 10px;
   margin-right: 10px;
+}
+
+.intro .button.loading {
+  cursor: not-allowed;
+
+  &:before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(#fff, .2);
+    animation: loading 4s infinite ease-in-out;
+  }
+}
+
+@keyframes loading {
+  0% {
+    left: 0;
+    width: 0%;
+  }
+
+  50% {
+    left: 0;
+    width: 100%;
+  }
+
+  100% {
+    left: 100%;
+    width: 0%;
+  }
 }
 </style>

@@ -1,9 +1,10 @@
 <template>
   <div id="app">
     <transition name="fade">
-      <Intro v-if="introVisible" :onDismiss="() => {
-        introVisible = false;
-        this.currentLayerPath = this.defaultLayer; }" />
+      <Intro
+        v-if="introVisible"
+        :isLoading="!currentLayerLoaded"
+        :onDismiss="() => introVisible = false" />
     </transition>
 
     <About v-if="aboutVisible" :onDismiss="() => aboutVisible = false" />
@@ -49,9 +50,12 @@ import Layers from './components/Layers.vue'
 import Map from './components/Map.vue'
 import Sidebar from './components/Sidebar.vue'
 
-var defaultLayer = Config.EV_path
+/** The layer that should first be loaded. */
+const defaultLayerPath = Config.EV_path
 
 export default {
+  components: { Intro, About, ZoomControl, LocationControl, Layers, Map, Sidebar },
+
   data: () => ({
     layers: Object.keys(Config.layers).reduce((m, layerPath) => {
       m[layerPath] = Config.layers[layerPath]
@@ -61,18 +65,20 @@ export default {
     }, {}),
 
     currentZoom: 0,
-    currentLayerPath: null,
+    currentLayerPath: defaultLayerPath,
     currentLocation: null,
     currentHistogramX: null,
     currentHistogramY: null,
     introVisible: true,
     sidebarVisible: false,
     aboutVisible: false,
-    defaultLayer: defaultLayer,
-    EV_path: Config.EV_path,
   }),
 
-  components: { Intro, About, ZoomControl, LocationControl, Layers, Map, Sidebar }
+  computed: {
+    currentLayerLoaded() {
+      return this.layers[this.currentLayerPath].loaded
+    }
+  },
 }
 </script>
 
