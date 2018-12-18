@@ -25,10 +25,10 @@
 
         <section class="slideshow">
           <a href="https://www.epfl.ch/">
-            <img src="https://mediacom.epfl.ch/files/content/sites/mediacom/files/EPFL-Logo.jpg" alt="Logo EPFL">
+            <img src="assets/epfl.png" alt="Logo EPFL">
           </a>
           <a href="https://naturalcapitalproject.stanford.edu/">
-            <img src="https://idefese.files.wordpress.com/2018/11/image5.jpg?w=172&h=171" alt="Logo NatCap">
+            <img src="assets/natcap.jpg" alt="Logo NatCap">
           </a>
         </section>
       </article>
