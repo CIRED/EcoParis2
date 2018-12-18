@@ -17,7 +17,7 @@
 
         <p>EcoParis est une visualisation interactive des données cartographiques des services écosystémiques en territoires urbains et péri-urbains en région Ile-de-France issues du projet <a href="https://idefese.wordpress.com/">IDEFESE</a>.</p>
 
-        <p>Pour commencer, vous pouvez sélectionner une couche à afficher parmi des mesures de rétention <a href="#">de phosphore</a> et <a href="#">d'azote</a>, des mesures de <a href="#">réduction de la température</a> due à la végétation ou encore de <a href="#">valeur économique</a> des régions.</p>
+        <p>Pour commencer, vous pouvez sélectionner une couche à afficher parmi des mesures de rétention de phosphore d'azote, des mesures de réduction de la température due à la végétation ou encore de valeur économique des régions.</p>
 
         <p>Vous pouvez aussi choisir d'afficher l'évolution estimée de ces mesures à l'horizon 2030 dans un scénario de changement climatique.</p>
       </article>

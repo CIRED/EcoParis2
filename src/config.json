@@ -5,7 +5,7 @@
 			"icon": "E",
 			"colorScheme":0,
 			"useColorScheme":false,
-			"colors":["#966F33","#356FD7","#228B22"],
+			"colors":["#006400","#356FD7","#90EE90"],
 			"min_value":0,
 			"max_value":0,
 
@@ -22,7 +22,7 @@
 			"max_value":0.123434,
 
 			"title": "Mesure de la pollinisation.",
-			"content": "<p>Pour de nombreuses plantes à fleurs, la réalisation du cycle sexuel implique l’intervention d’animaux pollinisateurs, qui permettent la rencontre des gamètes par leur comportement de prise alimentaire. L’abondance de pollinisateurs est donc un facteur déterminant du rendement agricole et ce pour 75% des cultures humaines.</p><p style='text-align: center;'><a class='button' href='https://bees.techno-science.ca/francais/les-abeilles/la-pollinisation/default.php' target='_blank'>En savoir plus</a></p>",
+			"content": "<p>Pour de nombreuses plantes à fleurs, la réalisation du cycle sexuel implique l’intervention d’animaux pollinisateurs, qui permettent la rencontre des gamètes par leur comportement de prise alimentaire. L’abondance de pollinisateurs est donc un facteur déterminant du rendement agricole et ce pour 75% des cultures humaines.</p><p style='text-align: center;'><a class='button' href='http://data.naturalcapitalproject.org/nightly-build/invest-users-guide/html/croppollination.html' target='_blank'>En savoir plus</a></p>",
             "unit":"indice d'abondance",
             "future":"data/rasters/pollination_cc.json"
 		},
@@ -36,7 +36,7 @@
 			"max_value":-2.45584,
 
 			"title": "Mesure du service de rafraîchissement.",
-			"content": "<p>Le service de rafraichissement peut atteindre plusieurs degrés. Il réduit les risques sanitaires (maladies cardio-vasculaires et décès directement liés aux canicules) et potentiellement la consommation énergétique associée à la climatisation.</p>",
+			"content": "<p>Le service de rafraichissement peut atteindre plusieurs degrés. Il réduit les risques sanitaires (maladies cardio-vasculaires et décès directement liés aux canicules) et potentiellement la consommation énergétique associée à la climatisation.<a class='button' href='https://www.iucn.org/content/nature-cools-when-things-heat' target='_blank'>En savoir plus</a></p><p>Les enfants étant l'une des catégories de population vulnérables aux canicules, nous représentons le nombre d'établissements dans chaque intercommunalité.</p>",
             "unit":"en °C",
             "future":"data/rasters/T_reduction.json"
 		},
@@ -49,7 +49,7 @@
 			"max_value":771.576,
 
 			"title": "Mesure du rechargement des nappes.",
-			"content": "<p>Cette mesure permet de quantifier la rétention des eaux de pluie par les écosystèmes en amont des cours d’eau. Elle établit, pour chaque pixel, un bilan hydrique mensuel permettant de calculer la quantité d’eau pluviale s’infiltrant vers les nappes phréatiques, nette du ruissellement et de l’évapotranspiration. La majorité des captages pour la production d’eaux destinées à la consommation humaine exploitent des eaux souterraines. Avec les effets du changement climatique, des aléas météorologiques plus marqués et plus fréquents, sécheresses ou épisodes pluvieux intenses, vont impacter les ressources en eau.</p><p style='text-align: center;'><a class='button' href='http://www.mauldre.fr/les-actions/reconquerir-la-qualite-de-l-eau/164-proteger-les-nappes-phreatiques' target='_blank'>En savoir plus</a></p>",
+			"content": "<p>Cette mesure permet de quantifier la rétention des eaux de pluie par les écosystèmes en amont des cours d’eau. Elle établit, pour chaque pixel, un bilan hydrique mensuel permettant de calculer la quantité d’eau pluviale s’infiltrant vers les nappes phréatiques, nette du ruissellement et de l’évapotranspiration. La majorité des captages pour la production d’eaux destinées à la consommation humaine exploitent des eaux souterraines. Avec les effets du changement climatique, des aléas météorologiques plus marqués et plus fréquents, sécheresses ou épisodes pluvieux intenses, vont impacter les ressources en eau.</p><p style='text-align: center;'><a class='button' href='http://data.naturalcapitalproject.org/nightly-build/invest-users-guide/html/seasonal_water_yield.html' target='_blank'>En savoir plus</a></p>",
             "unit":"en mm/an",
             "future":"data/rasters/L_cc.json"
 		},
@@ -62,7 +62,7 @@
 			"max_value":100,
 
 			"title": "Mesure de la rétention des nutriments.",
-			"content": "<p>La mesure vise à estimer les quantités d’azote et de phosphore retenues annuellement en amont du réseau hydrographique après un dépôt diffus. Le service de rétention permet d'améliorer la qualité de l'eau (superficielle et souterraine). Il est directement utile aux organismes de gestion de l'eau (syndicats et département d'assainissement), et donc aux habitants dont les impôts financent la maintenance des services d'assainissement.</p><p style='text-align: center;'p><a class='button' href='http://croppp.org/IMG/pdf/herpollu_cle8bc23e.pdf' target='_blank'>En savoir plus</a></p>",
+			"content": "<p>La mesure vise à estimer les quantités d’azote et de phosphore retenues annuellement en amont du réseau hydrographique après un dépôt diffus. Le service de rétention permet d'améliorer la qualité de l'eau (superficielle et souterraine). Il est directement utile aux organismes de gestion de l'eau (syndicats et département d'assainissement), et donc aux habitants dont les impôts financent la maintenance des services d'assainissement.</p><p style='text-align: center;'p><a class='button' href='http://data.naturalcapitalproject.org/nightly-build/invest-users-guide/html/ndr.html' target='_blank'>En savoir plus</a></p>",
             "unit":"en pourcent d'absorption",
             "future":"data/rasters/n_ret_cc.json"
         },
@@ -75,7 +75,7 @@
 			"max_value":100,
 
 			"title": "Hotspots des services.",
-            "content": "<p>Une mesure pour mettre en avant les hotspots naturels, espaces de bien-être. La mesure calcule la moyenne des quatre autres (rétention des nutriments, rechargement des nappes, rafraîchissement et pollinisation) normalisées par pixel. Plus il y a d'espaces naturels, plus la quantité de service augmente tout en dépendant des procédés biophysiques propres à chaque service.</p>",
+            "content": "<p>Un indicateur multi-critère a été calculé pour identifier les hotspots de services. La mesure consiste en la moyenne des quatre valeurs de service (rétention des nutriments, rechargement des nappes, rafraîchissement et pollinisation), préalablement normalisées (transformation linéaire vers des valeurs entre 0 et 1). Plus il y a d'espaces naturels, plus la quantité de service augmente tout en dépendant des procédés biophysiques propres à chaque service.</p>",
 			"unit":"",
 			"future":"data/rasters/correlation_cc.json"
 		},

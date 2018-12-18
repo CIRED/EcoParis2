@@ -6,7 +6,7 @@
     <svg ref="svg" class="EV-svg"></svg>
 
     <section class="year" v-if="hasFutureAvailable && !isFuture">
-      <p>{{ currentYear }}</p>
+      <p>2012</p>
       <a href="#" @click.prevent="() => $emit('toggleFuture')">
         <i class="fas fa-fast-forward"></i>
       </a>
