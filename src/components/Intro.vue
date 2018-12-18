@@ -8,8 +8,7 @@
     <p>Découvrez l'influence de la nature sur votre vie à Paris.</p>
 
     <section class="buttons">
-      <a @click.prevent="onDismiss" href="#" class="button accent">Commencer</a>
-      <a @click.prevent="onDismiss" href="#" class="button">Visite guidée</a>
+      <a @click.prevent="onDismiss" href="#" class="button">Commencer la visite</a>
     </section>
   </section>
 </template>
@@ -34,10 +33,7 @@ export default {
   align-items: center;
 
   color: #fff;
-  // background: linear-gradient(to right, rgba(#1fa2ff, .95), rgba(#12d8fa, .95), rgba(#a6ffcb, .95));
-  // background: linear-gradient(to right, rgba(#4cb8c4, .95), rgba(#3cd3ad, .95));
-  // background: linear-gradient(to right, rgba(#56ab2f, .95), rgba(#a8e063, .95));
-  background: linear-gradient(to right, rgba(#ffe259, .93), rgba(#ffa751, .95));
+  background: linear-gradient(120deg, rgba(#84fab0, .98) 10%, rgba(#8fd3f4, .98) 100%);
 }
 
 .intro.fade-enter-active, .intro.fade-leave-active {

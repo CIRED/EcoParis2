@@ -102,13 +102,11 @@ p {
   transition: padding .2s;
   position: relative;
   outline: none;
+  text-shadow: 0 0 2px rgba(#000, .2);
+  box-shadow: 0 0 2px rgba(#000, .2), inset 0 0 2px rgba(#000, .2);
 
   &:hover {
     padding: 9px 16px;
-  }
-
-  &.accent {
-    background: rgba(#fff, .2);
   }
 }
 
