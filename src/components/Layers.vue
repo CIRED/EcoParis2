@@ -64,14 +64,10 @@ export default {
   text-transform: uppercase;
 }
 
-.layers h3, h3 {
+.layers h3 {
   width: 100%;
   margin: 0;
   padding: 7px 0;
-  color: #666;
-  font-size: 11pt;
-  font-weight: normal;
-  text-align: center;
 }
 
 .layers a {

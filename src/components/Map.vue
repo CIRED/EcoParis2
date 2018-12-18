@@ -9,7 +9,20 @@
       <div ref="legend" class="legend-inner"></div>
 
       <section v-if="isEspacesVerts">
-        <p>Espace verts</p>
+        <h3>Espace naturels</h3>
+
+        <figure>
+          <div class="item" :style="{backgroundColor: forestColor}"></div>
+          <figcaption>Espaces boisés</figcaption>
+        </figure>
+        <figure>
+          <div class="item" :style="{backgroundColor: waterColor}"></div>
+          <figcaption>Fleuves et <br />espaces en eau</figcaption>
+        </figure>
+        <figure>
+          <div class="item" :style="{backgroundColor: greenColor}"></div>
+          <figcaption>Espaces verts et <br />espaces de loisirs</figcaption>
+        </figure>
       </section>
 
       <section v-else-if="currentUnit">
@@ -43,6 +56,18 @@ export default {
       if (this.currentLayerPath) {
         return Config.layers[this.currentLayerPath].unit
       }
+    },
+
+    forestColor() {
+      return Config.layers[Config.EV_path].colors[0]
+    },
+
+    waterColor() {
+      return Config.layers[Config.EV_path].colors[1]
+    },
+
+    greenColor() {
+      return Config.layers[Config.EV_path].colors[2]
     }
   },
 
@@ -169,26 +194,41 @@ export default {
 
 .legend {
   position: absolute;
-  bottom: 30px;
-  right: 20px;
-  width: 90px;
+  bottom: 35px;
+  right: 25px;
   text-align: center;
 
   border: 1px solid #bbb;
   box-shadow: 0 0 3px rgba(#000, .2);
   background: #fff;
 
-  p {
+  h3 {
+    text-transform: uppercase;
+    margin: 10px;
+  }
+
+  p, figcaption {
     font-size: .6em;
     font-style: italic;
     margin-top: 0;
+  }
+
+  figure {
+    margin: 15px 10px;
+  }
+
+  .item {
+    width: 70px;
+    height: 28px;
+    border: 1px solid #000;
+    margin: 10px auto;
   }
 }
 
 .legend-inner {
   height: 200px;
   width: 70px;
-  margin: 8px auto;
+  margin: 8px 10px;
   position: relative;
 }
 

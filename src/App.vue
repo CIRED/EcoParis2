@@ -97,6 +97,13 @@ h2 {
   font-size: 1.2rem;
 }
 
+h3 {
+  color: #666;
+  font-size: 11pt;
+  font-weight: normal;
+  text-align: center;
+}
+
 p {
   font-family: 'Crimson Text', serif;
 }
