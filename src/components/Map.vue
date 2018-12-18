@@ -5,12 +5,16 @@
     <svg ref="circle_svg" class="EV-circle-svg"></svg> 
     <svg ref="svg" class="EV-svg"></svg>
 
-    <div class="legend" v-if="isEspacesVerts">
-      <p>Espace verts</p>
-    </div>
-    <div class="legend" v-else>
+    <div class="legend">
       <div ref="legend" class="legend-inner"></div>
-      <p>(mm.mol<sup>-1</sup>)</p>
+
+      <section v-if="isEspacesVerts">
+        <p>Espace verts</p>
+      </section>
+
+      <section v-else-if="currentUnit">
+        <p>({{ currentUnit }})</p>
+      </section>
     </div>
   </div>
 </template>
@@ -26,14 +30,19 @@ export default {
     setLayer: () => {},
     setLocation: () => {},
     setEVLayer: () => {},
-    setTextUrban: () => {},
     zoomMinus: () => {},
     zoomPlus: () => {},
   }),
 
   computed: {
     isEspacesVerts() {
-      return this.currentLayerPath == Config.EV_path;
+      return this.currentLayerPath == Config.EV_path
+    },
+
+    currentUnit() {
+      if (this.currentLayerPath) {
+        return Config.layers[this.currentLayerPath].unit
+      }
     }
   },
 

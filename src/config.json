@@ -23,7 +23,7 @@
 
 			"title": "Mesure de la pollinisation.",
 			"content": "<p>Pour de nombreuses plantes à fleurs, la réalisation du cycle sexuel implique l’intervention d’animaux pollinisateurs, qui permettent la rencontre des gamètes par leur comportement de prise alimentaire. L’abondance de pollinisateurs est donc un facteur déterminant du rendement agricole et ce pour 75% des cultures humaines. <a href='https://bees.techno-science.ca/francais/les-abeilles/la-pollinisation/default.php'>En savoir plus </a></p>",
-            "unit":"en pourcentage (%)",
+            "unit":"en pourcent",
             "future":"data/rasters/pollination_cc.json"
 		},
 		"data/rasters/T_reduction.json":{
@@ -36,7 +36,7 @@
 
 			"title": "Mesure du service de rafraîchissement.",
 			"content": "<p>Le service de rafraichissement peut atteindre plusieurs degrés. Il réduit les risques sanitaires (maladies cardio-vasculaires et décès directement liés aux canicules) et potentiellement la consommation énergétique associée à la climatisation. </p>",
-            "unit":"en degré Celsius",
+            "unit":"en °C",
             "future":"data/rasters/T_reduction.json"
 		},
 		"data/rasters/L_ref.json":{
@@ -62,7 +62,7 @@
 
 			"title": "Mesure de la rétention des nutriments.",
 			"content": "<p>La mesure vise à estimer les quantités d’azote et de phosphore retenues annuellement en amont du réseau hydrographique après un dépôt diffus. Le service de rétention permet d'améliorer la qualité de l'eau (superficielle et souterraine). Il est directement utile aux organismes de gestion de l'eau (syndicats et département d'assainissement), et donc aux habitants dont les impôts financent la maintenance des services d'assainissement. <a href='http://croppp.org/IMG/pdf/herpollu_cle8bc23e.pdf'>En savoir plus</a></p>",
-            "unit":"en pourcentage (%)",
+            "unit":"en pourcent",
             "future":"data/rasters/n_ret_cc.json"
         },
 		"data/rasters/correlation_ref.json":{
@@ -74,7 +74,7 @@
 			"max_value":100,
 
 			"title": "Hotspots des services.",
-            "content": "<p>Une mesure de corrélation a été calculé pour mettre en avant les hotspots naturels. La mesure consiste en la moyenne des quatre mesures(rétention des nutriments, rechargement des nappes, rafraîchissement et pollinisation) normalisées par pixel. Plus il y a d'espaces naturels, plus la quantité de service augmente tout en dépendant des procédés biophysiques propres à chaque service.</p>",
+            "content": "<p>Une mesure de corrélation a été calculée pour mettre en avant les hotspots naturels. La mesure consiste en la moyenne des quatre autres (rétention des nutriments, rechargement des nappes, rafraîchissement et pollinisation) normalisées par pixel. Plus il y a d'espaces naturels, plus la quantité de service augmente tout en dépendant des procédés biophysiques propres à chaque service.</p>",
 			"unit":""
 		},
         "data/rasters/ecoles_elementaires.json":{
