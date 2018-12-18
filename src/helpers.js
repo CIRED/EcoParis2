@@ -3,11 +3,12 @@ const colorSchemeDict = {
   1:d3.interpolateRdBu,
   2:d3.interpolateBlues,
   3:d3.interpolateGnBu,
-  4:d3.interpolateReds,
+  4:d3.interpolateRdYlGn,
 }
 
 import shared from './shared.js'
 import update_f from './update.js'
+var Config = require('./config.json')
 
 /**
  * Loads a JSON containment file and parses it.
@@ -76,12 +77,13 @@ function getColorsFromScheme (colorSchemeId){
   for (var i=0; i<256; ++i){
     range.push(currentScheme(i/255))
   }
+  
   return range
 }
 
 
 // create continuous color legend
-function fillScale (scale_canvas, scale_svg, colorScale, minValue, maxValue) {
+function fillScale (scale_canvas, scale_svg, colorScale, minValue, maxValue, invertColorScheme) {
   const legendHeight = 200
   const legendWidth = 70
   const margin = {top: 5, right: 30, bottom: 5, left: 0}
@@ -105,16 +107,25 @@ function fillScale (scale_canvas, scale_svg, colorScale, minValue, maxValue) {
 
   for (var i=0; i<legendHeight - margin.top - margin.bottom; ++i){
     var c = d3.rgb(legendScale(i));
-    image.data[4*i] = c.r;
-    image.data[4*i + 1] = c.g;
-    image.data[4*i + 2] = c.b;
-    image.data[4*i + 3] = 255;
+    var pos = i*4;
+
+    if (invertColorScheme){
+      pos = (legendHeight - margin.top - margin.bottom - 1)*4 - i*4
+    }
+    image.data[pos] = c.r;
+    image.data[pos + 1] = c.g;
+    image.data[pos + 2] = c.b;
+    image.data[pos + 3] = 255;
   }
   
   ctx.putImageData(image, 0, 0);
 
+  var domain = [maxValue, minValue]
+  if (invertColorScheme){
+    domain = [minValue, maxValue]
+  }
   var legendAxis = d3.axisRight()
-    .scale(d3.scaleLinear().domain([maxValue, minValue]).range([1, legendHeight - margin.bottom - margin.top - 1]))
+    .scale(d3.scaleLinear().domain(domain).range([1, legendHeight - margin.bottom - margin.top - 1]))
     .tickSize(6)
     .ticks(8);
 

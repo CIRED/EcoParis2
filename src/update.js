@@ -75,7 +75,6 @@ function update_EV_preview(mouseX,mouseY){
   imgs_EV.attr('height', image_height)
 
   imgs_EV.attr("xlink:href", shared.cachedLayers[layer_path].url)
-
   imgs_EV.attr("transform",
     "translate(" +
       (+ magnified_tl_pixels.x - mouseX + svg_width/2) + "," +
@@ -190,7 +189,6 @@ function updateMap() {//add here everything that could potentially change
 }
 
 function switchEVPreview(){
-
   if (!shared.showFutureInsteadOfEV){
     shared.currentCircleLayerPath = Config.EV_path
   }

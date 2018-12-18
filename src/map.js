@@ -15,7 +15,6 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
   shared.interCommContainment = interCommContainment
   shared.voronoiContainment = voronoiContainment
 
-  console.log(document.body)
   document.body.addEventListener("keypress",helpers_f.handleKeyEvent)
 
   const default_tl = new L.LatLng(

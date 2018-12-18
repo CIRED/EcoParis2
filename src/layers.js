@@ -247,6 +247,7 @@ function setLayer(layerPath, isFuture) {
   }
 
   this.loadLayer(layerPath, isFuture, () => {
+
   if (layerPath == Config.EV_path){ //TODO: add parameter "AlwaysShowLayer" in config?
       imgs.attr("clip-path", "")
     }
@@ -269,7 +270,7 @@ function setLayer(layerPath, isFuture) {
     var range = []
     if (Config.layers[layerPath].useColorScheme){
       domain = helpers_f.range(256)
-      range = helpers_f.getColorsFromScheme(Config.layers[layerPath].colorScheme)
+      range = helpers_f.getColorsFromScheme(Config.layers[layerPath].colorScheme,Config.layers[layerPath].invertColorScheme)
     }
     else{
       var domain_range =helpers_f.computeColorRange(layer.percentiles,Config.layers[layerPath].colors)
@@ -315,7 +316,7 @@ function setLayer(layerPath, isFuture) {
 
     if (layerPath != Config.EV_path){
       d3.select(shared.legend_element).style("display","block")
-      helpers_f.fillScale(shared.color_legend_canvas,shared.color_legend_svg,colorScale,Config.layers[layerPath].min_value,Config.layers[layerPath].max_value)
+      helpers_f.fillScale(shared.color_legend_canvas,shared.color_legend_svg,colorScale,Config.layers[layerPath].min_value,Config.layers[layerPath].max_value,Config.layers[layerPath].invertColorScheme)
     }
   })
 
