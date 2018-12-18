@@ -294,11 +294,9 @@ function setLayer(layerPath) {
     shared.currentLayerPath = layerPath
     imgs.attr('xlink:href', layer.url)
 
-    if (layerPath == Config.EV_path){
-      //TODO: show color legend, but discrete!
-      d3.select(shared.legend_element).style("display","none")
-    }
-    else{
+    d3.select(shared.legend_element).style("display","none")
+
+    if (layerPath != Config.EV_path){
       d3.select(shared.legend_element).style("display","block")
       helpers_f.fillScale(shared.color_legend_canvas,shared.color_legend_svg,colorScale,Config.layers[layerPath].min_value,Config.layers[layerPath].max_value)
     }

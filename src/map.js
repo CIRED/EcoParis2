@@ -23,6 +23,7 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
   )
   shared.initialBounds = L.latLngBounds(default_tl, default_br)
 
+  d3.select(legend_element).style("display","none")
   shared.color_legend_canvas = d3.select(legend_element)
     .append("canvas")
 

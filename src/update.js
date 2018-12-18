@@ -110,7 +110,6 @@ function update_text_school(i,layerURL,voro){
       data = info.interComm_hist[i]
     }
     shared.onSchools(data)
-    // change texte according to data 
   }
   else{
     shared.onSchools(null)
