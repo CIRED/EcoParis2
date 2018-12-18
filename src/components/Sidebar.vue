@@ -19,7 +19,7 @@
 
         <p>Pour commencer, vous pouvez sélectionner une couche à afficher parmi des mesures de rétention <a href="#">de phosphore</a> et <a href="#">d'azote</a>, des mesures de <a href="#">réduction de la température</a> due à la végétation ou encore de <a href="#">valeur économique</a> des régions.</p>
 
-        <p>Vous pouvez aussi choisir d'afficher l'évolution estimée de ces mesures à l'horizon 2025 dans un scénario de changement climatique.</p>
+        <p>Vous pouvez aussi choisir d'afficher l'évolution estimée de ces mesures à l'horizon 2030 dans un scénario de changement climatique.</p>
       </article>
 
       <article class="about">

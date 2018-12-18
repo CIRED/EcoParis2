@@ -12,7 +12,7 @@
       </a>
     </section>
     <section class="year" v-else-if="hasFutureAvailable">
-      <p>2025</p>
+      <p>2030</p>
       <a href="#" @click.prevent="() => $emit('toggleFuture')">
         <i class="fas fa-fast-backward"></i>
       </a>

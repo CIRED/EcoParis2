@@ -32,7 +32,7 @@ function createMap (element) {
   })
   var map = shared.map
   map.fitBounds(shared.initialBounds)
-  map.setMaxBounds(map.getBounds())
+  map.setMaxBounds(map.getBounds().pad(0.025))
 
   const base = L.tileLayer(MAP_TILES, {
     minZoom: 9,
