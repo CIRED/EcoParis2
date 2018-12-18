@@ -6,6 +6,8 @@
         this.currentLayerPath = this.defaultLayer; }" />
     </transition>
 
+    <About v-if="aboutVisible" :onDismiss="() => aboutVisible = false" />
+
     <section class="menu">
       <LocationControl
         :onLocation="loc => this.currentLocation = loc" />
@@ -15,6 +17,9 @@
       <ZoomControl
         :onZoomMinus="() => currentZoom -= 1"
         :onZoomPlus="() => currentZoom += 1" />
+
+      <a href="#" class="about-button"
+        @click.prevent="() => aboutVisible = true">À propos</a>
     </section>
     <section class="container">
       <Map
@@ -37,6 +42,7 @@
 import Config from './config.json'
 
 import Intro from './components/Intro.vue'
+import About from './components/About.vue'
 import ZoomControl from './components/ZoomControl.vue'
 import LocationControl from './components/LocationControl.vue'
 import Layers from './components/Layers.vue'
@@ -61,11 +67,12 @@ export default {
     currentHistogramY: null,
     introVisible: true,
     sidebarVisible: false,
+    aboutVisible: false,
     defaultLayer: defaultLayer,
     EV_path: Config.EV_path,
   }),
 
-  components: { Intro, ZoomControl, LocationControl, Layers, Map, Sidebar }
+  components: { Intro, About, ZoomControl, LocationControl, Layers, Map, Sidebar }
 }
 </script>
 
@@ -148,7 +155,7 @@ p {
     outline: none;
     height: 40px;
     width: 39px;
-    font-family: Courier New;
+    font-family: 'Courier New';
     font-size: 18pt;
     line-height: 40px;
     text-align: center;
@@ -159,5 +166,24 @@ p {
   a:first-child {
     border-right: 1px solid #bbb;
   }
+}
+
+.zoom-control {
+  margin-bottom: 0;
+}
+
+.about-button {
+  display: block;
+  text-align: center;
+  height: 40px;
+  line-height: 40px;
+  border: 1px solid #bbb;
+  border-top: 0;
+  box-shadow: 0 0 3px rgba(#000, .2);
+  background: #fff;
+  text-transform: uppercase;
+  color: #666;
+  font-size: 10pt;
+  text-decoration: none;
 }
 </style>
