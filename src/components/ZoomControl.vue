@@ -1,16 +1,22 @@
 <template>
   <section class="zoom-control">
-    <a href="#" class="minus">-</a>
-    <a href="#" class="plus">+</a>
+    <a class="minus" @click.prevent="onZoomMinus">-</a>
+    <a class="plus" @click.prevent="onZoomPlus">+</a>
   </section>
 </template>
 
 <script>
-export default {}
+export default {
+  props: ['onZoomMinus', 'onZoomPlus']
+}
 </script>
 
-<style>
+<style lang="scss" type="text/scss">
 .zoom-control {
   width: 80px;
+
+  a {
+    cursor: pointer;
+  }
 }
 </style>

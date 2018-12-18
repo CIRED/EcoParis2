@@ -12,13 +12,16 @@
       <Layers
         :layers="layers"
         v-model="currentLayerPath" />
-      <ZoomControl />
+      <ZoomControl
+        :onZoomMinus="() => currentZoom -= 1"
+        :onZoomPlus="() => currentZoom += 1" />
     </section>
     <section class="container">
       <Map
         :layers="layers"
         :currentLayerPath="currentLayerPath"
         :currentLocation="currentLocation"
+        :currentZoom="currentZoom"
         :onHist="(x,y) => {this.currentHistogramX = x; this.currentHistogramY = y;}" 
         :onSchools="(n) => {}" />
       <Sidebar
@@ -51,6 +54,7 @@ export default {
       return m
     }, {}),
 
+    currentZoom: 0,
     currentLayerPath: null,
     currentLocation: null,
     currentHistogramX: null,

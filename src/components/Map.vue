@@ -20,12 +20,22 @@ import Config from '../config.json'
 import displayMap from '../map'
 
 export default {
-  props: ['layers', 'currentLayerPath', 'currentLocation', 'onHist', 'onSchools'],
+  props: ['layers', 'currentLayerPath', 'currentLocation', 'currentZoom', 'onHist', 'onSchools'],
   data: () => ({
     loadLayer: () => {},
     setLayer: () => {},
     setLocation: () => {},
+    setEVLayer: () => {},
+    setTextUrban: () => {},
+    zoomMinus: () => {},
+    zoomPlus: () => {},
   }),
+
+  computed: {
+    isEspacesVerts() {
+      return this.currentLayerPath == Config.EV_path;
+    }
+  },
 
   /**
    * Triggers when the component has been mounted.
@@ -39,7 +49,8 @@ export default {
       .defer(d3.json, urlInterComm)
       .defer(d3.json, urlVoronoi)
       .await((e, d, v) => {
-        [this.loadLayer, this.setLayer, this.setLocation, this.setEVLayer, this.setTextUrban] =
+        // FIXME(liautaud): Please, clean up this mess.
+        [this.loadLayer, this.setLayer, this.setLocation, this.setEVLayer, this.zoomMinus, this.zoomPlus] =
           displayMap(
             this.$refs.map,
             this.$refs.svg,
@@ -81,6 +92,19 @@ export default {
      */
     currentLocation([lat, lng]) {
       this.setLocation(lat, lng)
+    },
+
+    /**
+     * Watches changes to the currentZoom prop, and updates the marker.
+     */
+    currentZoom(after, before) {
+      // FIXME(liautaud): This only takes +/-1 changes into account.
+      // It's a dirty hack anyway, we should hold the currentZoom instead.
+      if (after < before) {
+        this.zoomMinus()
+      } else {
+        this.zoomPlus()
+      }
     }
   }
 }

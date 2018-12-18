@@ -28,7 +28,7 @@ const MAP_ATTRIB = '&copy; <a href="http://www.openstreetmap.org/copyright">Open
  */
 function createMap (element) {
   shared.map = L.map(element, {
-    zoomControl: true
+    zoomControl: false
   })
   var map = shared.map
   map.fitBounds(shared.initialBounds)

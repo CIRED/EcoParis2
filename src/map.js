@@ -143,5 +143,8 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
 
   shared.map.on('viewreset', function(){update_f.updateMap()})
 
-  return [layers_f.loadLayer, layers_f.setLayer, helpers_f.setLocation, layers_f.setEVLayer]
+  const zoomOut = shared.map.zoomOut.bind(shared.map)
+  const zoomIn = shared.map.zoomIn.bind(shared.map)
+
+  return [layers_f.loadLayer, layers_f.setLayer, helpers_f.setLocation, layers_f.setEVLayer, zoomOut, zoomIn]
 }
