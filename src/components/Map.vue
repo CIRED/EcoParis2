@@ -48,6 +48,7 @@
 <script>
 import Config from '../config.json'
 import displayMap from '../map'
+import helpers_f from '../helpers.js'
 
 export default {
   props: ['layers', 'currentLayerPath', 'currentLocation', 'currentZoom', 'isFuture'],
@@ -99,47 +100,53 @@ export default {
   mounted () {
     var urlInterComm = 'data/intercommunalites.geojson'
     var urlVoronoi = 'data/voronois.json'
+    var urlInterCommContainment = 'data/intercomm_cont.json'
+    var urlVoronoiContainment = 'data/voronoi_cont.json'
 
     queue()
       .defer(d3.json, urlInterComm)
       .defer(d3.json, urlVoronoi)
       .await((e, d, v) => {
-        // FIXME(liautaud): Please, clean up this mess.
-        [this.loadLayer, this.setLayer, this.setLocation, this.setEVLayer, this.zoomMinus, this.zoomPlus] =
-          displayMap(
-            this.$refs.map,
-            this.$refs.svg,
-            this.$refs.circle_svg,
-            this.$refs.legend,
-            e, d, v,
-            (x, y) => this.$emit('newHistogram', x, y),
-            n => this.$emit('newSchools', n)
-          )
+        helpers_f.loadContainmentFile(urlVoronoiContainment).then(voronoiContainment => {
+          helpers_f.loadContainmentFile(urlInterCommContainment).then(interCommContainment => {
+            // FIXME(liautaud): Please, clean up this mess.
+            [this.loadLayer, this.setLayer, this.setLocation, this.setEVLayer, this.zoomMinus, this.zoomPlus] =
+              displayMap(
+                this.$refs.map,
+                this.$refs.svg,
+                this.$refs.circle_svg,
+                this.$refs.legend,
+                e, d, v, interCommContainment, voronoiContainment,
+                (x, y) => this.$emit('newHistogram', x, y),
+                n => this.$emit('newSchools', n)
+              )
 
-        Object.keys(Config.layers).forEach(layerPath => {
-          this.layers[layerPath].path=layerPath;
+            Object.keys(Config.layers).forEach(layerPath => {
+              this.layers[layerPath].path=layerPath;
 
-          // Preload all the layers.
-          this.loadLayer(
-            layerPath,
-            false,
-            () => {
-              this.layers[layerPath].loaded = true
-              
-              if (layerPath == Config.EV_path){
-                this.setEVLayer(layerPath)
-              }          
-            }
-          )
+              // Preload all the layers.
+              this.loadLayer(
+                layerPath,
+                false,
+                () => {
+                  this.layers[layerPath].loaded = true
+                  
+                  if (layerPath == Config.EV_path){
+                    this.setEVLayer(layerPath)
+                  }          
+                }
+              )
 
-          // Also preload the future layers when applicable.
-          if (Config.layers[layerPath].future) {
-            console.log('Preloading future layer:', Config.layers[layerPath].future)
-            this.loadLayer(layerPath, true, () => {})
-          }
+              // Also preload the future layers when applicable.
+              if (Config.layers[layerPath].future) {
+                console.log('Preloading future layer:', Config.layers[layerPath].future)
+                this.loadLayer(layerPath, true, () => {})
+              }
+            })
+
+            this.setLayer(this.currentLayerPath)
+          })
         })
-
-        this.setLayer(this.currentLayerPath)
       })
   },
 

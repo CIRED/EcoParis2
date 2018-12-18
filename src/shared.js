@@ -59,6 +59,10 @@ var lastMouseDownX = 0 //coordinates of the last mouse Down event
 
 var lastMouseDownY = 0 //coordinates of the last mouse Down event
 
+var voronoiContainment = null //precomputed containment tests for the voronois
+
+var interCommContainment = null //precomputed containment tests for the interComms
+
 export default {cachedLayers,
 				currentLayerPath,
 				map,
@@ -87,4 +91,6 @@ export default {cachedLayers,
 				initialBounds,
 				markerIcon,
 				lastMouseDownX,
-				lastMouseDownY}
+				lastMouseDownY,
+				voronoiContainment,
+				interCommContainment}

@@ -193,8 +193,8 @@ function loadLayer(path, isFuture, callback) {
         }
       }
 
-      helpers_f.loadContainmentFile("data/voronoi_cont.json").then(voronoiContainment => {
-        helpers_f.loadContainmentFile("data/intercomm_cont.json").then(interCommContainment => {
+      //helpers_f.loadContainmentFile("data/voronoi_cont.json").then(voronoiContainment => {
+      //  helpers_f.loadContainmentFile("data/intercomm_cont.json").then(interCommContainment => {
           for (var index = 0; index < workersCount; index++) {
             var worker = new Worker("assets/pictureProcessor.js");
             worker.onmessage = onWorkEnded;
@@ -206,8 +206,8 @@ function loadLayer(path, isFuture, callback) {
               length: segmentLength,
               width: canvas.width,
               height: canvas.height,
-              voronoiContainmentData: voronoiContainment.data,
-              interCommContainmentData: interCommContainment.data,
+              voronoiContainmentData: shared.voronoiContainment.data,
+              interCommContainmentData: shared.interCommContainment.data,
               numVoronois: voronoi_shape.features.length,
               numInterComms: interComm_shape.features.length,
               tl_lat: json.tl_lat,
@@ -218,8 +218,8 @@ function loadLayer(path, isFuture, callback) {
               colorRange: range
             });
           }
-        })
-      })
+        //})
+      //})
     })
 
   // TODO(liautaud): Return a Promise.

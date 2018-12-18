@@ -36,7 +36,8 @@
 
 			"title": "Mesure du service de rafraîchissement.",
 			"content": "<p>Le service de rafraichissement peut atteindre plusieurs degrés. Il réduit les risques sanitaires (maladies cardio-vasculaires et décès directement liés aux canicules) et potentiellement la consommation énergétique associée à la climatisation.</p>",
-            "unit":"en °C"
+            "unit":"en °C",
+            "future":"data/rasters/T_reduction.json"
 		},
 		"data/rasters/L_ref.json":{
 			"name": "Nappe",
@@ -74,7 +75,8 @@
 
 			"title": "Hotspots des services.",
             "content": "<p>Une mesure de corrélation a été calculée pour mettre en avant les hotspots naturels. La mesure consiste en la moyenne des quatre autres (rétention des nutriments, rechargement des nappes, rafraîchissement et pollinisation) normalisées par pixel. Plus il y a d'espaces naturels, plus la quantité de service augmente tout en dépendant des procédés biophysiques propres à chaque service.</p>",
-			"unit":""
+			"unit":"",
+            "future":"data/rasters/correlation_cc.json"
 		},
         "data/rasters/ecoles_elementaires.json":{
 			"name": "Ecoles elementaires",
