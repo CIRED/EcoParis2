@@ -115,6 +115,7 @@ p {
   outline: none;
   text-shadow: 0 0 2px rgba(#000, .2);
   box-shadow: 0 0 2px rgba(#000, .2), inset 0 0 2px rgba(#000, .2);
+  font-family: 'IBM Plex Sans', sans-serif;
 
   &:hover {
     padding: 9px 16px;

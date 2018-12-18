@@ -65,7 +65,6 @@ export default {
   max-width: 30%;
   box-sizing: border-box;
   padding: 40px;
-  text-align: justify;
 
   background: #fff;
   box-shadow: 0 0 2px rgba(0, 0, 0, .3);
@@ -104,5 +103,15 @@ export default {
   img {
     height: 100%;
   }
+}
+
+.sidebar .button {
+  color: #000;
+  border-color: #000;
+  box-shadow: none;
+  text-shadow: none;
+  margin: 5px 0 20px;
+  font-size: 0.8em;
+  display: inline-block;
 }
 </style>
