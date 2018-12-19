@@ -183,7 +183,6 @@ function range (length){
 }
 
 function handleKeyEvent(e){
-  console.log(e)
   if (e && (e.charCode || e.keyCode) == 120){ // 'x' key
     shared.showCirclePreview = ! shared.showCirclePreview
   }
