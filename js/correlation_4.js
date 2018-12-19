@@ -5,8 +5,13 @@ var change_referential = function(px,py,output_p,input_p){
     var current_lng = (1-current_tx) * input_p.tl_lng + current_tx * input_p.br_lng
     var current_lat = (1-current_ty) * input_p.tl_lat + current_ty * input_p.br_lat
 
-    var original_tx = (current_lng - input_p.tl_lng) / (input_p.br_lng - input_p.tl_lng) //between 0 and 1, included (should anyway)
-    var original_ty = (input_p.tl_lat - current_lat) / (input_p.tl_lat - input_p.br_lat)
+    var input_tl_lng = input_p.tl_lng * 100000 //to correct floating point imprecisions later
+    var input_tl_lat = input_p.tl_lat * 100000 //anyway, we apply the same factor to every coordinates,
+    var input_br_lng = input_p.br_lng * 100000 //so the rations stay the scc
+    var input_br_lat = input_p.br_lat * 100000
+
+    var original_tx = (current_lng - input_tl_lng) / (input_br_lng - input_tl_lng) //between 0 and 1, included (should anyway)
+    var original_ty = (input_tl_lat - current_lat) / (input_tl_lat - input_br_lat)
 
     var original_px = Math.floor(original_tx * (input_p.width - 1))
     var original_py = Math.floor(original_ty * (input_p.height - 1)) //in the original image, the one that generated the containment data
@@ -91,16 +96,16 @@ function whenDocumentLoaded(action) {
 
 whenDocumentLoaded(() => {
     queue()
-        .defer(d3.json, "data/rasters/L_ref.json") // Load Watershed Shape
-        .defer(d3.json, "data/rasters/n_ret_ref.json") // Load Voronoi Shape
-        .defer(d3.json, "data/rasters/pollination_ref.json") // Load Voronoi Shape
+        .defer(d3.json, "data/rasters/L_cc.json") // Load Watershed Shape
+        .defer(d3.json, "data/rasters/n_ret_cc.json") // Load Voronoi Shape
+        .defer(d3.json, "data/rasters/pollination_cc.json") // Load Voronoi Shape
         .defer(d3.json, "data/rasters/T_reduction.json") // Load Voronoi Shape
         .await(loadJSON); // When the GeoJsons are fully loaded, call the function loadGeom
 
     function loadJSON(error, metric1, metric2, metric3, metric4){
         var output_width = 1943 //same as our reference image, so that the image is not too big (8000 x 6000...)
         var output_height = 1586
-        var OutputFileName = "correlation_ref.json" //.json
+        var OutputFileName = "correlation_cc.json" //.json
         var HistogramBins = [80,160] //3 categories: 0-80, 81-160, 161-255
         
         var metric = []
