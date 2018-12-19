@@ -25,7 +25,6 @@
 
     <div v-else class="split">
       <article>
-        $$x^2 = \frac{n^2+n}{2}$$
         <h2>Bienvenue sur EcoParis.</h2>
 
         <p>EcoParis est une visualisation interactive des données cartographiques des services écosystémiques en territoires urbains et péri-urbains en région Ile-de-France issues du projet <a href="https://idefese.wordpress.com/">IDEFESE</a>.</p>
