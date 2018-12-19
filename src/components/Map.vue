@@ -7,13 +7,15 @@
 
     <section class="year" v-if="hasFutureAvailable && !isFuture">
       <p>2012</p>
-      <a href="#" @click.prevent="() => $emit('toggleFuture')">
+      <a href="#" @click.prevent="() => $emit('toggleFuture')"
+        v-bind:style="{'color': futureColor}">
         <i class="fas fa-fast-forward"></i>
       </a>
     </section>
     <section class="year" v-else-if="hasFutureAvailable">
       <p>2030</p>
-      <a href="#" @click.prevent="() => $emit('toggleFuture')">
+      <a href="#" @click.prevent="() => $emit('toggleFuture')"
+        v-bind:style="{'color': presentColor}">
         <i class="fas fa-fast-backward"></i>
       </a>
     </section>
@@ -82,6 +84,14 @@ export default {
 
     greenColor() {
       return Config.layers[Config.EV_path].colors[2]
+    },
+
+    futureColor() {
+      return Config.color_future
+    },
+
+    presentColor() {
+      return Config.color_present
     },
 
     currentYear() {
@@ -212,7 +222,8 @@ export default {
   border-radius: 50%;
   width: 120px;
   height: 120px;
-  border: 1px solid #000;
+  border: 1px solid;
+  border-color:#000;
   box-shadow: 0 0 3px rgba(#000, .3);
   position: absolute;
   background: #fff;
@@ -229,7 +240,8 @@ export default {
   border-radius: 50%;
   width: 90px;
   height: 90px;
-  border: 1px solid rgba(#000, .7);
+  border: 1px solid;
+  border-color:rgba(#000,0.7);
   position: absolute;
   background: #fff0;
   display: flex;

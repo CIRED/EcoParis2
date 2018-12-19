@@ -56,8 +56,8 @@ function defineVoronoi(svg,emptyOpacity,fullOpacity){
       //revert clip for this area
       shared.defs_path.datum([])
       update_f.update_clip()
-      shared.svg_EV.attr("style","display:none;")
-      shared.svg_circle_EV.attr("style","display:none;")
+      shared.svg_EV.style("display","none")
+      shared.svg_circle_EV.style("display","none")
 
       shared.lastMousePosition={x:-300,y:-300}
     })
@@ -78,8 +78,8 @@ function defineVoronoi(svg,emptyOpacity,fullOpacity){
 
       shared.defs_path.datum([])
       update_f.update_clip()
-      shared.svg_EV.attr("style","display:none;")
-      shared.svg_circle_EV.attr("style","display:none;")
+      shared.svg_EV.style("display","none")
+      shared.svg_circle_EV.style("display","none")
     })
     .on("mousemove",function(){
       if (d3.event && d3.event.clientX && d3.event.clientY && shared.currentLayerPath != Config.EV_path){
@@ -87,8 +87,8 @@ function defineVoronoi(svg,emptyOpacity,fullOpacity){
         update_f.update_EV_preview(d3.event.clientX,d3.event.clientY)
       }
       else{
-        shared.svg_EV.attr("style","display:none;")
-        shared.svg_circle_EV.attr("style","display:none;")
+        shared.svg_EV.style("display","none")
+        shared.svg_circle_EV.style("display","none")
       }
     })
     .on("mousedown",function(){
@@ -147,8 +147,8 @@ function defineInterComms(svg,emptyOpacity,fadedOpacity,fullOpacity){
       } else { // we are zoomed in a particular interComm
         d3.select(this).style('fill-opacity', fullOpacity);
       }
-      shared.svg_EV.attr("style","display:none;")
-      shared.svg_circle_EV.attr("style","display:none;")
+      shared.svg_EV.style("display","none")
+      shared.svg_circle_EV.style("display","none")
       
       shared.lastMousePosition={x:-300,y:-300} //be sure not to display the preview circle!
       shared.onNewName('')
@@ -184,8 +184,8 @@ function defineInterComms(svg,emptyOpacity,fadedOpacity,fullOpacity){
         update_f.update_EV_preview(d3.event.clientX,d3.event.clientY)
       }
       else{
-        shared.svg_EV.attr("style","display:none;")
-        shared.svg_circle_EV.attr("style","display:none;")
+        shared.svg_EV.style("display","none")
+        shared.svg_circle_EV.style("display","none")
       }
     })
     .on("mousedown",function(){

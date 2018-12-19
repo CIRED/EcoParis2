@@ -44,8 +44,8 @@ function update_EV_preview(mouseX,mouseY){
 
   var layer_path = shared.currentCircleLayerPath
   if (!cachedLayers[layer_path] || !shared.showCirclePreview){
-    shared.svg_EV.attr("style","display:none;")
-    shared.svg_circle_EV.attr("style","display:none;")
+    shared.svg_EV.style("display","none")
+    shared.svg_circle_EV.style("display","none")
     return
   }
 
@@ -54,8 +54,13 @@ function update_EV_preview(mouseX,mouseY){
   var svg_circle_width = parseInt(svg_circle_EV.style("width").substr(0,svg_circle_EV.style("width").length-2))
   var svg_circle_height = parseInt(svg_circle_EV.style("height").substr(0,svg_circle_EV.style("width").length-2))
 
-  svg_EV.attr("style","top:"+(mouseY - svg_height - 15)+"px; left:"+(mouseX +15)+"px; display:'';")
-  shared.svg_circle_EV.attr("style","top:"+(mouseY - svg_circle_height/2)+"px; left:"+(mouseX - svg_circle_width/2)+"px; display:'';")
+  svg_EV.style("top",(mouseY - svg_height - 15)+"px")
+  svg_EV.style("left",(mouseX + 15)+"px")
+  svg_EV.style("display","")
+
+  svg_circle_EV.style("top",(mouseY - svg_circle_height/2)+"px")
+  svg_circle_EV.style("left",(mouseX - svg_circle_width/2)+"px")
+  svg_circle_EV.style("display","")
 
   var magnifyingRatio = svg_width/svg_circle_width
 
@@ -187,20 +192,26 @@ function updateMap() {//add here everything that could potentially change
   voronoi.attr("d", path)
   update_clip()
   updateMarker()
-  shared.svg_EV.attr("style","display:none;")
-  shared.svg_circle_EV.attr("style","display:none;")
+  shared.svg_EV.style("display","none")
+  shared.svg_circle_EV.style("display","none")
 }
 
 function switchEVPreview(){
-  if (!shared.showFutureInsteadOfEV){
+  if (!shared.showFutureInsteadOfEV){ //if show EV
     shared.currentCircleLayerPath = Config.EV_path
+    shared.svg_circle_EV.style("border-color",Config.layers[Config.EV_path].colors[0])
+    shared.svg_EV.style("border-color",Config.layers[Config.EV_path].colors[0])
   }
   else{
-    if (shared.isFuture){
+    if (shared.isFuture){ //if show present
       shared.currentCircleLayerPath = shared.currentLayerPath
+      shared.svg_circle_EV.style("border-color",Config.color_present)
+      shared.svg_EV.style("border-color",Config.color_present)
     }
-    else{
+    else{ //if show future
       shared.currentCircleLayerPath = Config.layers[shared.currentLayerPath].future
+      shared.svg_circle_EV.style("border-color",Config.color_future)
+      shared.svg_EV.style("border-color",Config.color_future)
     }
   }
 }

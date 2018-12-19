@@ -12,8 +12,8 @@
 			"title": "",
 			"content": "",
             "unit":"",
-						"color":"#d2f8d2",
-						"active_color":"#8FBC8F"
+			"color":"#d2f8d2",
+			"active_color":"#8FBC8F"
 		},
 		"data/rasters/pollination_ref.json":{
 			"name": "Polli.",
@@ -106,7 +106,10 @@
 	"EV_path": "data/rasters/espaces_verts.json",
     "Ecole_path": "data/rasters/ecoles_elementaires.json",
     "Urban_cooling": "data/rasters/T_reduction.json",
-		"Correlation" : "data/rasters/correlation_ref.json",
+	"Correlation" : "data/rasters/correlation_ref.json",
+
+	"color_present":"#00f",
+	"color_future":"#f00",
 
     "":" ====== reminder =======",
     "":"here are the options for the 'colorScheme' parameter:",
