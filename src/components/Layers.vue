@@ -5,7 +5,9 @@
     <div class="buttons">
       <a v-for="layer in layers"
         v-if="!layer.hidden"
-        :class="{ active: value == layer.path }"
+        v-bind:style="[value == layer.path ? {'background': layer.active_color} : {'background-color':layer.color}]"
+        :class="{ active: value == layer.path}"
+
         @click.prevent="select(layer)">
         <span class="icon" v-html="layer.icon"></span>
         <span>{{ layer.name }}</span>
@@ -21,6 +23,7 @@
           <div class="loader-tile loader-tile8"></div>
           <div class="loader-tile loader-tile9"></div>
         </div>
+
       </a>
     </div>
   </section>
@@ -113,7 +116,7 @@ export default {
 .loader-tile-grid .loader-tile {
   width: 33%;
   height: 33%;
-  background-color: #eee;
+  background-color: #0002;
   float: left;
 
   animation: loader-tileGridScaleDelay 1.3s infinite ease-in-out;
