@@ -61,6 +61,10 @@ function defineVoronoi(svg,emptyOpacity,fullOpacity){
       shared.interComms.style("pointer-events", "all")
       shared.map.fitBounds(shared.initialBounds) // zoom back to paris
       shared.highlightedInterComm = -1
+
+      shared.interComms.style("fill", function(_,j){
+        shared.cachedLayers[shared.currentLayerPath].colorScale(shared.cachedLayers[shared.currentLayerPath].interComm_means[j])
+      })
       shared.interComms.style("fill-opacity", fullOpacity)
       shared.voronoi.style("fill-opacity", emptyOpacity)
       shared.voronoi.style("stroke-opacity", emptyOpacity)
@@ -103,11 +107,14 @@ function defineInterComms(svg,emptyOpacity,fadedOpacity,fullOpacity){
     .attr("fill-opacity", fullOpacity)
     .style("pointer-events", "all")
     .on("mouseover", function(d, i) {
-      if (shared.highlightedInterComm != -1) { // i.e. we are not zoomed in
+      if (shared.highlightedInterComm != -1) { // i.e. we are zoomed in
         if (i != shared.highlightedInterComm) {
+          d3.select(this).style("fill",shared.cachedLayers[shared.currentLayerPath].colorScale(shared.cachedLayers[shared.currentLayerPath].interComm_means[i]))
           d3.select(this).style('fill-opacity', fullOpacity);
         } else {
-          d3.select(this).style('fill-opacity', emptyOpacity);
+          //should never happen
+          //d3.select(this).style("fill","#000")
+          //d3.select(this).style('fill-opacity', emptyOpacity);
         }
       } else { // we are zoomed in a particular interComm
         d3.select(this).style('fill-opacity', fadedOpacity);
@@ -116,11 +123,12 @@ function defineInterComms(svg,emptyOpacity,fadedOpacity,fullOpacity){
       update_f.update_text_school(i, shared.currentLayerPath, false)
     })
     .on("mouseout", function(d, i) {
-      if (shared.highlightedInterComm != -1) {
-        if (i == shared.highlightedInterComm) { // i.e. we are not zoomed in
-          d3.select(this).style('fill-opacity', emptyOpacity);
-        } else {
+      if (shared.highlightedInterComm != -1) { // i.e. we are not zoomed in
+        if (i != shared.highlightedInterComm) {
+          d3.select(this).style("fill","#000")
           d3.select(this).style('fill-opacity', fadedOpacity);
+        } else {
+          //d3.select(this).style('fill-opacity', emptyOpacity);
         }
       } else { // we are zoomed in a particular interComm
         d3.select(this).style('fill-opacity', fullOpacity);
@@ -138,7 +146,8 @@ function defineInterComms(svg,emptyOpacity,fadedOpacity,fullOpacity){
       shared.interComms.style("pointer-events", "all") // now we can click/hover on every department
       d3.select(this).style("pointer-events", "none") // except the current one!
 
-      shared.interComms.style("fill-opacity", fadedOpacity) //same here, show every intercomm except this one
+      shared.interComms.style("fill","#000")
+      shared.interComms.style('fill-opacity', fadedOpacity);
       d3.select(this).style('fill-opacity', emptyOpacity);
       shared.highlightedInterComm = i
 
