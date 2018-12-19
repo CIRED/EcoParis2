@@ -63,7 +63,10 @@ function defineVoronoi(svg,emptyOpacity,fullOpacity){
       shared.highlightedInterComm = -1
 
       shared.interComms.style("fill", function(_,j){
-        shared.cachedLayers[shared.currentLayerPath].colorScale(shared.cachedLayers[shared.currentLayerPath].interComm_means[j])
+        if (!Config.layers[shared.currentLayerPath].useColorScheme){
+          return "#00000011"
+        }
+        return shared.cachedLayers[shared.currentLayerPath].colorScale(shared.cachedLayers[shared.currentLayerPath].interComm_means[j])
       })
       shared.interComms.style("fill-opacity", fullOpacity)
       shared.voronoi.style("fill-opacity", emptyOpacity)
@@ -109,12 +112,16 @@ function defineInterComms(svg,emptyOpacity,fadedOpacity,fullOpacity){
     .on("mouseover", function(d, i) {
       if (shared.highlightedInterComm != -1) { // i.e. we are zoomed in
         if (i != shared.highlightedInterComm) {
-          d3.select(this).style("fill",shared.cachedLayers[shared.currentLayerPath].colorScale(shared.cachedLayers[shared.currentLayerPath].interComm_means[i]))
+          if (!Config.layers[shared.currentLayerPath].useColorScheme){
+            d3.select(this).style("fill","#00000011")
+          }
+          else{
+            d3.select(this).style("fill",shared.cachedLayers[shared.currentLayerPath].colorScale(shared.cachedLayers[shared.currentLayerPath].interComm_means[i]))
+          }
+          
           d3.select(this).style('fill-opacity', fullOpacity);
         } else {
           //should never happen
-          //d3.select(this).style("fill","#000")
-          //d3.select(this).style('fill-opacity', emptyOpacity);
         }
       } else { // we are zoomed in a particular interComm
         d3.select(this).style('fill-opacity', fadedOpacity);
@@ -128,7 +135,7 @@ function defineInterComms(svg,emptyOpacity,fadedOpacity,fullOpacity){
           d3.select(this).style("fill","#000")
           d3.select(this).style('fill-opacity', fadedOpacity);
         } else {
-          //d3.select(this).style('fill-opacity', emptyOpacity);
+          //should never happen
         }
       } else { // we are zoomed in a particular interComm
         d3.select(this).style('fill-opacity', fullOpacity);

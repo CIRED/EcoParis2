@@ -291,7 +291,7 @@ function setLayer(layerPath, isFuture) {
     
 
     const colorScale = layer.colorScale
-    shared.voronoi.attr('fill', (_, i) =>{
+    shared.voronoi.style('fill', function(_, i){
       //console.log(layer.voronoi_means[i],colorScale(layer.voronoi_means[i]))
       if (layerPath == Config.EV_path){
         return "#00000011" //transparent
@@ -301,12 +301,22 @@ function setLayer(layerPath, isFuture) {
     min = 0//Math.min(...layer.interComm_means)
     max = 255//Math.max(...layer.interComm_means)
 
-    shared.interComms.attr('fill', (_, i) =>{
+    shared.interComms.style('fill', function(_, i){
       //console.log(layer.interComm_means[i],colorScale(layer.interComm_means[i]))
-      if (layerPath == Config.EV_path){
-        return "#00000011" //transparent
-      }
-      return colorScale(layer.interComm_means[i])})
+      if (shared.highlightedInterComm != -1) { // i.e. we are zoomed in
+        if (i != shared.highlightedInterComm) {
+            return "#000"
+          
+        } else {
+          //should never happen
+        }
+      } else { // we are not zoomed in
+        if (!Config.layers[layerPath].useColorScheme){
+          return "#00000011"
+        }
+        return colorScale(layer.interComm_means[i])
+      }})
+      
 
 
     // Reset the width and height of the canvas.
