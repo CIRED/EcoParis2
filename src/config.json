@@ -11,7 +11,9 @@
 
 			"title": "",
 			"content": "",
-            "unit":""
+            "unit":"",
+						"color":"#d2f8d2",
+						"active_color":"#8FBC8F"
 		},
 		"data/rasters/pollination_ref.json":{
 			"name": "Polli.",
@@ -36,7 +38,7 @@
 			"max_value":-2.45584,
 
 			"title": "Mesure du service de rafraîchissement.",
-			"content": "<p>Le service de rafraichissement peut atteindre plusieurs degrés. Il réduit les risques sanitaires (maladies cardio-vasculaires et décès directement liés aux canicules) et potentiellement la consommation énergétique associée à la climatisation.<a class='button' href='https://www.iucn.org/content/nature-cools-when-things-heat' target='_blank'>En savoir plus</a></p><p>Les enfants étant l'une des catégories de population vulnérables aux canicules, nous représentons le nombre d'établissements scolaires dans chaque intercommunalité.</p>",
+			"content": "<p>Le service de rafraichissement peut atteindre plusieurs degrés. Il réduit les risques sanitaires (maladies cardio-vasculaires et décès directement liés aux canicules) et potentiellement la consommation énergétique associée à la climatisation.</p><p style='text-align: center;'><a class='button' href='https://www.iucn.org/content/nature-cools-when-things-heat' target='_blank'>En savoir plus</a></p><p>Les enfants étant l'une des catégories de population vulnérables aux canicules, nous représentons le nombre d'établissements scolaires dans chaque intercommunalité.</p>",
             "unit":"en °C",
             "future":"data/rasters/T_reduction.json"
 		},
