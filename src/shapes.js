@@ -38,8 +38,8 @@ function defineVoronoi(svg,emptyOpacity,fullOpacity){
       update_f.update_clip()
 
       //additionally, update the right elements according to current voronoi
-      update_f.update_chart(i, shared.currentLayerPath, true, shared.onHistChange)
-      update_f.update_text_school(i, shared.currentLayerPath, true, shared.onSchools)
+      update_f.update_chart(i, shared.currentLayerPath, true)
+      update_f.update_text_school(i, shared.currentLayerPath, true)
     })
     .on("mouseout", function(d, i) {
       //when the mouse goes out of this area, we should revert changes
@@ -61,6 +61,13 @@ function defineVoronoi(svg,emptyOpacity,fullOpacity){
       shared.interComms.style("pointer-events", "all")
       shared.map.fitBounds(shared.initialBounds) // zoom back to paris
       shared.highlightedInterComm = -1
+
+      shared.interComms.style("fill", function(_,j){
+        if (!Config.layers[shared.currentLayerPath].useColorScheme){
+          return "#00000011"
+        }
+        return shared.cachedLayers[shared.currentLayerPath].colorScale(shared.cachedLayers[shared.currentLayerPath].interComm_means[j])
+      })
       shared.interComms.style("fill-opacity", fullOpacity)
       shared.voronoi.style("fill-opacity", emptyOpacity)
       shared.voronoi.style("stroke-opacity", emptyOpacity)
@@ -103,32 +110,40 @@ function defineInterComms(svg,emptyOpacity,fadedOpacity,fullOpacity){
     .attr("fill-opacity", fullOpacity)
     .style("pointer-events", "all")
     .on("mouseover", function(d, i) {
-      if (shared.highlightedInterComm != -1) {
+      if (shared.highlightedInterComm != -1) { // i.e. we are zoomed in
         if (i != shared.highlightedInterComm) {
+          if (!Config.layers[shared.currentLayerPath].useColorScheme){
+            d3.select(this).style("fill","#00000011")
+          }
+          else{
+            d3.select(this).style("fill",shared.cachedLayers[shared.currentLayerPath].colorScale(shared.cachedLayers[shared.currentLayerPath].interComm_means[i]))
+          }
+          
           d3.select(this).style('fill-opacity', fullOpacity);
         } else {
-          d3.select(this).style('fill-opacity', emptyOpacity);
+          //should never happen
         }
-      } else {
+      } else { // we are zoomed in a particular interComm
         d3.select(this).style('fill-opacity', fadedOpacity);
       }
-      update_f.update_chart(i, shared.currentLayerPath, true)
+      update_f.update_chart(i, shared.currentLayerPath, false)
       update_f.update_text_school(i, shared.currentLayerPath, false)
     })
     .on("mouseout", function(d, i) {
-      if (shared.highlightedInterComm != -1) {
-        if (i == shared.highlightedInterComm) {
-          d3.select(this).style('fill-opacity', emptyOpacity);
-        } else {
+      if (shared.highlightedInterComm != -1) { // i.e. we are not zoomed in
+        if (i != shared.highlightedInterComm) {
+          d3.select(this).style("fill","#000")
           d3.select(this).style('fill-opacity', fadedOpacity);
+        } else {
+          //should never happen
         }
-      } else {
+      } else { // we are zoomed in a particular interComm
         d3.select(this).style('fill-opacity', fullOpacity);
       }
       shared.svg_EV.attr("style","display:none;")
       shared.svg_circle_EV.attr("style","display:none;")
       
-      shared.lastMousePosition={x:-300,y:-300}
+      shared.lastMousePosition={x:-300,y:-300} //be sure not to display the preview circle!
     })
     .on("click", function(d, i) {
       if (!d3.event || !d3.event.clientX || !d3.event.clientY ||
@@ -138,7 +153,8 @@ function defineInterComms(svg,emptyOpacity,fadedOpacity,fullOpacity){
       shared.interComms.style("pointer-events", "all") // now we can click/hover on every department
       d3.select(this).style("pointer-events", "none") // except the current one!
 
-      shared.interComms.style("fill-opacity", fadedOpacity) //same here, show every intercomm except this one
+      shared.interComms.style("fill","#000")
+      shared.interComms.style('fill-opacity', fadedOpacity);
       d3.select(this).style('fill-opacity', emptyOpacity);
       shared.highlightedInterComm = i
 

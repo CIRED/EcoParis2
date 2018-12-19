@@ -16,13 +16,13 @@
             <p>Ce projet a été réalisé en colloboration avec <a href="https://naturalcapitalproject.stanford.edu/">Natural Capital Project</a> de Stanford dont la mission consiste 
             à développer des approches scientifiques pour mettre en avant les bénéfices de la nature aux yeux de la société dans le but d'incorporer le patrimoine naturel dans la prise de décision.</p>
 
-            <p>Les données sur les services de rétention des nutriments, recharge des nappes, et pollinisation ont été créées par Emmanuel Fauré pour son <a href="https://www.dropbox.com/s/s4ccqoz7yg38sgw/Faure_memoire.pdf?dl=0">mémoire de thèse de Master</a> et restent préliminaires. Le calcul des données ainsi que les limitations sont décrites dans le mémoire.</p>
+            <p>Les données sur les services de rétention des nutriments, recharge des nappes, et pollinisation ont été créées par Emmanuel Faure pour son <a href="https://www.dropbox.com/s/s4ccqoz7yg38sgw/Faure_memoire.pdf?dl=0">mémoire de thèse de Master</a> et restent préliminaires. Le calcul des données ainsi que les limitations sont décrites dans le mémoire.</p>
             
             <p>Les données sur le service de rafraîchissement ne sont fournies qu'à titre illustratif, en attendant les résultat des travaux du projet <a href="https://idefese.wordpress.com/">IDEFESE</a>.
             Les données sur les <a href="http://data.iau-idf.fr/datasets?q=espaces+verts&sort_by=relevance">espaces verts</a> et sur 
             le <a href="http://data.iau-idf.fr/datasets?q=r%C3%A9seau+hydrographique+principal+simplifi%C3%A9+d%27%C3%8Ele-de-france&sort_by=relevance"> réseau hydrographique </a> proviennent de l'IAU Ile-de-France.</p>
             
-            <p>Nos remerciements à Perrine Hamel, hydrologue du Natural Capital Project, pour la supervision du projet.</p>
+            <p>Nos remerciements à Perrine Hamel, chargée de recherche au Natural Capital Project, et à Emmanuel Faure pour les descriptions en français des services.</p>
             
             <p>Le logo du perroquet a été réalisé par <a href="https://www.flaticon.com/authors/freepik">Freepik</a> pour <a href="http://www.flaticon.com/">Flaticon</a>.</p>
         </section>

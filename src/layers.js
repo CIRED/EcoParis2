@@ -150,6 +150,19 @@ function loadLayer(path, isFuture, callback) {
 
           update_f.switchEVPreview()//refresh the EV overlay, the layer we want might be ready now
           //imgs.attr("xlink:href", value)
+
+          var colorScale = null
+          if (Config.layers[path] && Config.layers[path].useColorScheme){
+            var domain = helpers_f.range(256)
+            var range = helpers_f.getColorsFromScheme(Config.layers[path].colorScheme)
+          
+            colorScale = d3.scale.linear()
+              .range(range).domain(domain)
+          }
+          
+          if (Config.layers[path] && Config.layers[path].useColorScheme){
+            range = helpers_f.getColorsFromScheme(Config.layers[path].colorScheme)
+          }
           
           shared.cachedLayers[truePath] = {
             "url": value,
@@ -165,7 +178,8 @@ function loadLayer(path, isFuture, callback) {
             "interComm_hist": interComm_hist,
             "hist_buckets": hist_buckets,
             "percentiles" : json.percentiles,
-            "layerUrl": truePath
+            "layerUrl": truePath,
+            "colorScale": colorScale
           }
 
           console.log('Processed layer:', truePath)
@@ -175,7 +189,6 @@ function loadLayer(path, isFuture, callback) {
       };
 
       // FIXME(liautaud): Nested callbacks is a code smell.
-      // FIXME(liautaud): This should be done only once.
 
       var domain = helpers_f.range(256)
       var range = []
@@ -195,33 +208,29 @@ function loadLayer(path, isFuture, callback) {
         }
       }
 
-      //helpers_f.loadContainmentFile("data/voronoi_cont.json").then(voronoiContainment => {
-      //  helpers_f.loadContainmentFile("data/intercomm_cont.json").then(interCommContainment => {
-          for (var index = 0; index < workersCount; index++) {
-            var worker = new Worker("assets/pictureProcessor.js");
-            worker.onmessage = onWorkEnded;
-            var canvasData = tempContext.getImageData(0, blockSize * index, canvas.width, blockSize);
-            worker.postMessage({
-              canvasData: canvasData,
-              pixels: pixels,
-              index: index,
-              length: segmentLength,
-              width: canvas.width,
-              height: canvas.height,
-              voronoiContainmentData: shared.voronoiContainment.data,
-              interCommContainmentData: shared.interCommContainment.data,
-              numVoronois: voronoi_shape.features.length,
-              numInterComms: interComm_shape.features.length,
-              tl_lat: json.tl_lat,
-              tl_lng: json.tl_lng,
-              br_lat: json.br_lat,
-              br_lng: json.br_lng,
-              colorDomain: domain,
-              colorRange: range
-            });
-          }
-        //})
-      //})
+      for (var index = 0; index < workersCount; index++) {
+        var worker = new Worker("assets/pictureProcessor.js");
+        worker.onmessage = onWorkEnded;
+        var canvasData = tempContext.getImageData(0, blockSize * index, canvas.width, blockSize);
+        worker.postMessage({
+          canvasData: canvasData,
+          pixels: pixels,
+          index: index,
+          length: segmentLength,
+          width: canvas.width,
+          height: canvas.height,
+          voronoiContainmentData: shared.voronoiContainment.data,
+          interCommContainmentData: shared.interCommContainment.data,
+          numVoronois: voronoi_shape.features.length,
+          numInterComms: interComm_shape.features.length,
+          tl_lat: json.tl_lat,
+          tl_lng: json.tl_lng,
+          br_lat: json.br_lat,
+          br_lng: json.br_lng,
+          colorDomain: domain,
+          colorRange: range
+        });
+      }
     })
 
   // TODO(liautaud): Return a Promise.
@@ -281,9 +290,8 @@ function setLayer(layerPath, isFuture) {
 
     
 
-    const colorScale = d3.scale.linear()
-      .range(range).domain(domain)
-    shared.voronoi.attr('fill', (_, i) =>{
+    const colorScale = layer.colorScale
+    shared.voronoi.style('fill', function(_, i){
       //console.log(layer.voronoi_means[i],colorScale(layer.voronoi_means[i]))
       if (layerPath == Config.EV_path){
         return "#00000011" //transparent
@@ -293,12 +301,22 @@ function setLayer(layerPath, isFuture) {
     min = 0//Math.min(...layer.interComm_means)
     max = 255//Math.max(...layer.interComm_means)
 
-    shared.interComms.attr('fill', (_, i) =>{
+    shared.interComms.style('fill', function(_, i){
       //console.log(layer.interComm_means[i],colorScale(layer.interComm_means[i]))
-      if (layerPath == Config.EV_path){
-        return "#00000011" //transparent
-      }
-      return colorScale(layer.interComm_means[i])})
+      if (shared.highlightedInterComm != -1) { // i.e. we are zoomed in
+        if (i != shared.highlightedInterComm) {
+            return "#000"
+          
+        } else {
+          //should never happen
+        }
+      } else { // we are not zoomed in
+        if (!Config.layers[layerPath].useColorScheme){
+          return "#00000011"
+        }
+        return colorScale(layer.interComm_means[i])
+      }})
+      
 
 
     // Reset the width and height of the canvas.
