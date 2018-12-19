@@ -2,8 +2,8 @@ var change_referential = function(px,py,output_p,input_p){
     var current_tx = px / (output_p.width - 1) //between 0 and 1 included
     var current_ty = py / (output_p.height - 1)
 
-    var current_lng = ((1-current_tx) * input_p.tl_lng + current_tx * input_p.br_lng) * 100000
-    var current_lat = ((1-current_ty) * input_p.tl_lat + current_ty * input_p.br_lat) * 100000
+    var current_lng = ((1-current_tx) * output_p.tl_lng + current_tx * output_p.br_lng) * 100000
+    var current_lat = ((1-current_ty) * output_p.tl_lat + current_ty * output_p.br_lat) * 100000
 
 
     var input_tl_lng = input_p.tl_lng * 100000 //to correct floating point imprecisions later
@@ -97,16 +97,16 @@ function whenDocumentLoaded(action) {
 
 whenDocumentLoaded(() => {
     queue()
-        .defer(d3.json, "data/rasters/L_cc.json") // Load Watershed Shape
-        .defer(d3.json, "data/rasters/n_ret_cc.json") // Load Voronoi Shape
-        .defer(d3.json, "data/rasters/pollination_cc.json") // Load Voronoi Shape
+        .defer(d3.json, "data/rasters/L_ref.json") // Load Watershed Shape
+        .defer(d3.json, "data/rasters/n_ret_ref.json") // Load Voronoi Shape
+        .defer(d3.json, "data/rasters/pollination_ref.json") // Load Voronoi Shape
         .defer(d3.json, "data/rasters/T_reduction.json") // Load Voronoi Shape
         .await(loadJSON); // When the GeoJsons are fully loaded, call the function loadGeom
 
     function loadJSON(error, metric1, metric2, metric3, metric4){
         var output_width = 1943 //same as our reference image, so that the image is not too big (8000 x 6000...)
         var output_height = 1586
-        var OutputFileName = "correlation_cc.json" //.json
+        var OutputFileName = "correlation_ref.json" //.json
         var HistogramBins = [80,160] //3 categories: 0-80, 81-160, 161-255
         
         var metric = []
