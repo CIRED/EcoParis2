@@ -49,6 +49,8 @@ var onSchools = null //onSchools callback function, called when the number of sc
 
 var onHistChange = null //onHistChange callback function, called when the histogram must be changed (e.g. we hovered another area)
 
+var onNewName = null //onNewName callback function, called when the current intercomm name has changed
+
 var highlightedInterComm = -1 //id of the currently highlighted interComm
 
 var initialBounds = null //initial bounds of the map (set to paris)
@@ -97,6 +99,7 @@ export default {cachedLayers,
 				color_legend_svg,
 				onSchools,
 				onHistChange,
+				onNewName,
 				highlightedInterComm,
 				initialBounds,
 				markerIcon,

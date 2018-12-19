@@ -6,11 +6,12 @@ import layers_f from './layers.js'
 import shapes_f from './shapes.js'
 import shared from './shared.js'
 
-export default function(element, EV_svg_element, EV_circle_svg_element, legend_element, error, interComm_shape, voronoi_shape, interCommContainment, voronoiContainment, onHistChange, onSchools) {
+export default function(element, EV_svg_element, EV_circle_svg_element, legend_element, error, interComm_shape, voronoi_shape, interCommContainment, voronoiContainment, onHistChange, onSchools, onNewName) {
   shared.interComm_shape = interComm_shape
   shared.voronoi_shape = voronoi_shape
   shared.onHistChange = onHistChange
   shared.onSchools = onSchools
+  shared.onNewName = onNewName
   shared.legend_element = legend_element
   shared.interCommContainment = interCommContainment
   shared.voronoiContainment = voronoiContainment
