@@ -35,7 +35,7 @@ function update_clip() {
 }
 
 function update_EV_preview(mouseX,mouseY){
-  switchEVPreview()
+  updateCirclePreviewPath()
   var svg_EV = shared.svg_EV
   var svg_circle_EV = shared.svg_circle_EV
   var map = shared.map
@@ -82,7 +82,6 @@ function update_EV_preview(mouseX,mouseY){
   imgs_EV.attr('width', image_width)
   imgs_EV.attr('height', image_height)
 
-  imgs_EV.attr("xlink:href", shared.cachedLayers[layer_path].url)
   imgs_EV.attr("transform",
     "translate(" +
       (+ magnified_tl_pixels.x - mouseX + svg_width/2) + "," +
@@ -196,7 +195,7 @@ function updateMap() {//add here everything that could potentially change
   shared.svg_circle_EV.style("display","none")
 }
 
-function switchEVPreview(){
+function updateCirclePreviewPath(){
   if (!shared.showFutureInsteadOfEV){ //if show EV
     shared.currentCircleLayerPath = Config.EV_path
     shared.svg_circle_EV.style("border-color",Config.layers[Config.EV_path].colors[0])
@@ -216,4 +215,13 @@ function switchEVPreview(){
   }
 }
 
-export default{update_clip,update_EV_preview,update_chart,update_text_school,updateMarker,updateMap,switchEVPreview}
+function updateCirclePreviewLayer(){
+  updateCirclePreviewPath()
+  var layer_path = shared.currentCircleLayerPath
+  if (!shared.cachedLayers[layer_path] || !shared.showCirclePreview){
+    return
+  }
+  shared.imgs_EV.attr("xlink:href", shared.cachedLayers[layer_path].url)
+}
+
+export default{update_clip,update_EV_preview,update_chart,update_text_school,updateMarker,updateMap,updateCirclePreviewPath,updateCirclePreviewLayer}

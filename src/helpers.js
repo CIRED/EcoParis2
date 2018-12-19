@@ -189,6 +189,7 @@ function handleKeyEvent(e){
   if (e && (e.charCode || e.keyCode) == 32){ // space bar
     shared.showFutureInsteadOfEV = ! shared.showFutureInsteadOfEV
   }
+  update_f.updateCirclePreviewLayer()
   update_f.update_EV_preview(shared.lastMousePosition.x,shared.lastMousePosition.y)
 }
 

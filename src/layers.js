@@ -148,8 +148,7 @@ function loadLayer(path, isFuture, callback) {
 
           var value = canvas.toDataURL("png");
 
-          update_f.switchEVPreview()//refresh the EV overlay, the layer we want might be ready now
-          //imgs.attr("xlink:href", value)
+          update_f.updateCirclePreviewLayer()//refresh the EV overlay, the layer we want might be ready now
 
           var colorScale = null
           if (Config.layers[path] && Config.layers[path].useColorScheme){
@@ -339,6 +338,9 @@ function setLayer(layerPath, isFuture) {
   })
 
   shared.isFuture = isFuture
+
+  update_f.updateCirclePreviewLayer()
+
   update_f.update_EV_preview(shared.lastMousePosition.x,shared.lastMousePosition.y)
 }
 
