@@ -183,10 +183,11 @@ function range (length){
 }
 
 function handleKeyEvent(e){
-  if (e && e.keyCode == 120){ // 'x' key
+  console.log(e)
+  if (e && (e.charCode || e.keyCode) == 120){ // 'x' key
     shared.showCirclePreview = ! shared.showCirclePreview
   }
-  if (e && e.keyCode == 32){ // space bar
+  if (e && (e.charCode || e.keyCode) == 32){ // space bar
     shared.showFutureInsteadOfEV = ! shared.showFutureInsteadOfEV
   }
   update_f.update_EV_preview(shared.lastMousePosition.x,shared.lastMousePosition.y)
