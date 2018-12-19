@@ -9,7 +9,7 @@ function update_clip() {
   var defs_path = shared.defs_path
   function clip_projectPoint(x, y) {
 
-    if (cachedLayers[currentLayerPath]){
+    if (!cachedLayers[currentLayerPath]){
       return
     }
     var default_tl_point = map.latLngToLayerPoint([cachedLayers[currentLayerPath].tl_lat, cachedLayers[currentLayerPath].tl_lng])
