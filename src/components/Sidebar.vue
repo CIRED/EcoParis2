@@ -3,6 +3,18 @@
     <div v-if="currentLayerPath && layers[currentLayerPath].loaded && !isEspacesVerts">
       <h2>{{ layers[currentLayerPath].title }}</h2>
       <div v-html="layers[currentLayerPath].content"></div>
+
+
+      <p v-if="isCorrelation">
+      Formule: (P<sub>n</sub> + Nu<sub>n</sub> + Na<sub>n</sub> + T<sub>n</sub>) &frasl; 4</sub>
+        <ul>
+          <li> Pollinisation: P<sub>n</sub> = P &frasl; max(P) </li>
+          <li> Rét. nutriment: Nu<sub>n</sub> = Nu &frasl; max(Nu) </li>
+          <li> Recharge des nappes: Na<sub>n</sub> = Na &frasl; max(Na) </li>
+          <li> Rafraîchissement: T<sub>n</sub> = T &frasl; max(T) </li>
+        </ul>
+      </p>
+
       <Histogram
         v-if="!isEspacesVerts"
         :x="currentHistogramX"
@@ -13,6 +25,7 @@
 
     <div v-else class="split">
       <article>
+        $$x^2 = \frac{n^2+n}{2}$$
         <h2>Bienvenue sur EcoParis.</h2>
 
         <p>EcoParis est une visualisation interactive des données cartographiques des services écosystémiques en territoires urbains et péri-urbains en région Ile-de-France issues du projet <a href="https://idefese.wordpress.com/">IDEFESE</a>.</p>
@@ -48,6 +61,9 @@ export default {
   computed: {
     isEspacesVerts() {
       return this.currentLayerPath == Config.EV_path;
+    },
+    isCorrelation(){
+      return this.currentLayerPath == Config.Correlation;
     }
   }
 }
@@ -116,4 +132,6 @@ export default {
   font-size: 0.8em;
   display: inline-block;
 }
+
+
 </style>

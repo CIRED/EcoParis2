@@ -5,7 +5,7 @@
 			"icon": "E",
 			"colorScheme":0,
 			"useColorScheme":false,
-			"colors":["#966F33","#356FD7","#228B22"],
+			"colors":["#006400","#356FD7","#90EE90"],
 			"min_value":0,
 			"max_value":0,
 
@@ -104,6 +104,7 @@
 	"EV_path": "data/rasters/espaces_verts.json",
     "Ecole_path": "data/rasters/ecoles_elementaires.json",
     "Urban_cooling": "data/rasters/T_reduction.json",
+		"Correlation" : "data/rasters/correlation_ref.json",
 
     "":" ====== reminder =======",
     "":"here are the options for the 'colorScheme' parameter:",
@@ -111,5 +112,5 @@
     "":"1 - red-blue",
     "":"2 - blue",
     "":"3 - green-blue",
-    "":"4 - red"    
+    "":"4 - red"
 }
