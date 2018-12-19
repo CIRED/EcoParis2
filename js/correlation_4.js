@@ -2,8 +2,9 @@ var change_referential = function(px,py,output_p,input_p){
     var current_tx = px / (output_p.width - 1) //between 0 and 1 included
     var current_ty = py / (output_p.height - 1)
 
-    var current_lng = (1-current_tx) * input_p.tl_lng + current_tx * input_p.br_lng
-    var current_lat = (1-current_ty) * input_p.tl_lat + current_ty * input_p.br_lat
+    var current_lng = ((1-current_tx) * input_p.tl_lng + current_tx * input_p.br_lng) * 100000
+    var current_lat = ((1-current_ty) * input_p.tl_lat + current_ty * input_p.br_lat) * 100000
+
 
     var input_tl_lng = input_p.tl_lng * 100000 //to correct floating point imprecisions later
     var input_tl_lat = input_p.tl_lat * 100000 //anyway, we apply the same factor to every coordinates,
