@@ -2,6 +2,9 @@
   <section class="sidebar">
     <div v-if="currentLayerPath && layers[currentLayerPath].loaded && !isEspacesVerts">
       <h2>{{ layers[currentLayerPath].title }}</h2>
+      <h4 v-if="interCommName">
+        {{interCommName}}
+      </h4>
       <div v-html="layers[currentLayerPath].content"></div>
 
 
@@ -55,7 +58,7 @@ import Config from '../config.json'
 import Histogram from './Histogram.vue'
 
 export default {
-  props: ['layers', 'currentLayerPath', 'currentHistogramX', 'currentHistogramY', 'schoolCount'],
+  props: ['layers', 'currentLayerPath', 'currentHistogramX', 'currentHistogramY', 'schoolCount', 'interCommName'],
   components: { Histogram },
   computed: {
     isEspacesVerts() {

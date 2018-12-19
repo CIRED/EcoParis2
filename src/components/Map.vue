@@ -118,7 +118,8 @@ export default {
                 this.$refs.legend,
                 e, d, v, interCommContainment, voronoiContainment,
                 (x, y) => this.$emit('newHistogram', x, y),
-                n => this.$emit('newSchools', n)
+                n => this.$emit('newSchools', n),
+                n => this.$emit('newName',n)
               )
 
             Object.keys(Config.layers).forEach(layerPath => {

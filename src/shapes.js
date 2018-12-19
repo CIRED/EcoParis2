@@ -40,6 +40,10 @@ function defineVoronoi(svg,emptyOpacity,fullOpacity){
       //additionally, update the right elements according to current voronoi
       update_f.update_chart(i, shared.currentLayerPath, true)
       update_f.update_text_school(i, shared.currentLayerPath, true)
+
+      if (shared.highlightedInterComm != -1){
+        shared.onNewName(shared.interComm_shape.features[shared.highlightedInterComm].properties.nomgroup)
+      }
     })
     .on("mouseout", function(d, i) {
       //when the mouse goes out of this area, we should revert changes
@@ -128,6 +132,9 @@ function defineInterComms(svg,emptyOpacity,fadedOpacity,fullOpacity){
       }
       update_f.update_chart(i, shared.currentLayerPath, false)
       update_f.update_text_school(i, shared.currentLayerPath, false)
+
+      //console.log(shared.interComm_shape.features[i].properties.nomgroup)
+      shared.onNewName(shared.interComm_shape.features[i].properties.nomgroup)
     })
     .on("mouseout", function(d, i) {
       if (shared.highlightedInterComm != -1) { // i.e. we are not zoomed in
@@ -144,6 +151,7 @@ function defineInterComms(svg,emptyOpacity,fadedOpacity,fullOpacity){
       shared.svg_circle_EV.attr("style","display:none;")
       
       shared.lastMousePosition={x:-300,y:-300} //be sure not to display the preview circle!
+      shared.onNewName('')
     })
     .on("click", function(d, i) {
       if (!d3.event || !d3.event.clientX || !d3.event.clientY ||

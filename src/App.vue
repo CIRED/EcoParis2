@@ -31,13 +31,15 @@
         :isFuture="isFuture"
         @toggleFuture="() => isFuture ^= true"
         @newHistogram="(x, y) => {this.currentHistogramX = x; this.currentHistogramY = y;}" 
-        @newSchools="n => this.schoolCount = n" />
+        @newSchools="n => this.schoolCount = n" 
+        @newName="n => this.interCommName = n" />
       <Sidebar
         :layers="layers"
         :currentLayerPath="currentLayerPath"
         :currentHistogramX="currentHistogramX"
         :currentHistogramY="currentHistogramY"
-        :schoolCount="schoolCount" />
+        :schoolCount="schoolCount"
+        :interCommName="interCommName" />
     </section>
   </div>
 </template>
@@ -78,6 +80,7 @@ export default {
     sidebarVisible: false,
     aboutVisible: false,
 
+    interCommName: "",
     schoolCount: null,
   }),
 
@@ -113,6 +116,13 @@ h2 {
 h3 {
   color: #666;
   font-size: 11pt;
+  font-weight: normal;
+  text-align: center;
+}
+
+h4 {
+  color: #666;
+  font-size: 16pt;
   font-weight: normal;
   text-align: center;
 }
