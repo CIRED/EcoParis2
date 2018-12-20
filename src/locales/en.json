@@ -1,3 +1,85 @@
 {
+    "intro": {
+        "title": "Welcome on EcoParis.",
+        "about": "EcoParis is an interactive visualization of map data of ecosystem services in urban and peri-urban areas in the Ile-de-France region from the <a href=\"https://idefese.wordpress.com/\">IDEFESE</a>project.",
+        "start": "For starters, you can select a layer to display among nutrient retention, temperature reduction, pollination or groundwater recharge measurements.",
+        "future": "You can also choose to display the estimated evolution of these measures by 2030 in a climate change scenario.",
+        "credits": "EcoParis has been designed by students of the <a href=\"https://edu.epfl.ch/coursebook/en/data-visualization-COM-480\">Data Visualization</a> course at EPFL, with the help of Perrine Hamel of the Stanford <a href=\"https://naturalcapitalproject.stanford.edu/\">Natural Capital Project</a>."
+    },
     
+    "sidebar": {
+        "whole-region": "All of the Île-de-France region",
+        "child-count": "As children are one of the most vulnerable population groups, it is important to note that there are {count} schools in the selected area."
+    },
+    
+    "titles": {
+        "layers": "Layers",
+        "credits": "About"
+    },
+    
+    "credits": {
+        "title": "Realization and Acknowledgement.",
+        "what": "EcoParis has been designed by students of the <a href=\"https://edu.epfl.ch/coursebook/en/data-visualization-COM-480\">Data Visualization</a> course at EPFL.",
+        "alex": "Alex Ferragni, Master in Computer Science",
+        "karthi": "Karthigan Sinnathamby, Master in Data Science",
+        "romain": "Romain Liautaud, Master in Communication Systems",
+        "collaborators": "This project has been realized in colloboration with the Stanford <a href=\"https://naturalcapitalproject.stanford.edu/\">Natural Capital Project</a> which objective is to develop scientific based approaches to put forward the natural benefits in the eyes of the society, in order to take the natural heritage in the decision-making process.",
+        "credits-1": "The dataset on the nutrient retention, pollination and groundwater recharge measurements have been computed by Emmanuel Faure for his <a href=\"https://www.dropbox.com/s/s4ccqoz7yg38sgw/Faure_memoire.pdf?dl=0\">Master thesis</a> and remain preliminary. The data computation and its limits are described in the thesis.",
+        "credits-2": "The data on the cooling service are only illustrative, waiting for the results on the <a href=\"https://idefese.wordpress.com/\">IDEFESE</a> project. The data on the <a href=\"http://data.iau-idf.fr/datasets?q=espaces+verts&sort_by=relevance\">green spaces</a> and on the <a href=\"http://data.iau-idf.fr/datasets?q=r%C3%A9seau+hydrographique+principal+simplifi%C3%A9+d%27%C3%8Ele-de-france&sort_by=relevance\">water network</a> comes from the Ile-de-France IAU.",
+        "thanks": "Our deepest thanks to Perrine Hamel, senior scientist at Natural Capital Project,and to Emmanuel Faure for the description in French of the natural services.",
+        "logo": "The logo of the parrot was made by <a href=\"https://www.flaticon.com/authors/freepik\">Freepik</a> for <a href=\"http://www.flaticon.com/\">Flaticon</a>."
+    },
+    
+    "layers": {
+    
+        "data/rasters/espaces_verts.json": {
+            "name": "Green Sp.",
+            "icon": "G",
+            "title": "",
+            "content": "",
+            "unit": ""
+        },
+        "data/rasters/pollination_ref.json": {
+            "name": "Polli.",
+            "icon": "P",
+            "title": "Pollination measurement",
+            "content": "<p>For many flowering plants, the realization of the sexual cycle involves the intervention of pollinating animals, which allows the encounter of gametes by their behavior of food intake. The abundance of pollinators is therefore a determining factor of agricultural yield accounting for 75% of human cultures.</p><p style='text-align: center;'><a class='button' href='http://data.naturalcapitalproject.org/nightly-build/invest-users-guide/html/croppollination.html' target='_blank'>More details</a></p>",
+            "unit": "Abundance index"
+        },
+        "data/rasters/T_reduction.json": {
+            "name": "Temp.",
+            "icon": "T",
+            "title": "Cooling Service",
+            "content": "<p>The cooling service can reach several degrees. It reduces health risks (cardiovascular diseases and deaths directly related to heatwaves) and potentially the energy consumption associated with air conditioning. </p><p style='text-align: center;'><a class='button' href='https://www.iucn.org/content/nature-cools-when-things-heat' target='_blank'>More details</a></p>",
+            "unit": "in °C"
+        },
+        "data/rasters/L_ref.json": {
+            "name": "Nappe",
+            "icon": "Na",
+            "title": "Groundwater recharge measurement",
+            "content": "<p>This measure quantifies the retention of rainwater by ecosystems upstream of waterways. It establishes, for each pixel, a monthly water assesment to compute the amount of rainwater infiltrating the groundwater, net of water flow and evapotranspiration. The majority of exploitation for the production of water intended for human consumption exploit groundwater. With the effects of climate change, more pronounced and more frequent weather events, droughts or intense rain events, will impact water resources. </p><p style='text-align: center;'><a class='button' href='http://data.naturalcapitalproject.org/nightly-build/invest-users-guide/html/seasonal_water_yield.html' target='_blank'>More details</a></p>",
+            "unit": "in mm/year"
+        },
+        "data/rasters/n_ret_ref.json": {
+            "name": "Nutri.",
+            "icon": "Nu",
+            "title": "Nutrient retention measurement",
+            "content": "<p>The measure aims at estimating the quantities of nitrogen and phosphorus retained annually upstream of the hydrographic network after a diffuse deposit. The retention service makes it possible to improve the quality of the water (superficial and underground). It is directly useful to water management organizations (unions and sanitation department), and therefore to residents whose taxes finance the maintenance of sanitation services.</p><p style='text-align: center;'p><a class='button' href='http://data.naturalcapitalproject.org/nightly-build/invest-users-guide/html/ndr.html' target='_blank'>Know more</a></p>",
+            "unit": "in % of absorption"
+        },
+        "data/rasters/correlation_ref.json": {
+            "name": "Hotspots",
+            "icon": "H",
+            "title": "Natural hotspots",
+            "content": "<p>A multi-criteria indicator has been calculated to identify service hotspots. The measurement consists of the average of the four service values ​​(nutrient retention, groundwater recharge, cooling and pollination), previously standardized (linear transformation to values ​​between 0 and 1). The more natural spaces there are, the more the quantity of service increases while depending on the biophysical processes specific to each service. </p><p style='margin-bottom:0'>Formule : (P<sub>n</sub> + Nu<sub>n</sub> + Na<sub>n</sub> + T<sub>n</sub>) &frasl; 4</p><ul><li>Pollination: P<sub>n</sub> = P &frasl; max(P)</li><li>Nutrient Rét.: Nu<sub>n</sub> = Nu &frasl; max(Nu)</li><li>Groundwater recharge: Na<sub>n</sub> = Na &frasl; max(Na)</li><li>Cooling: T<sub>n</sub> = T &frasl; max(T)</li></ul>",
+            "unit": ""
+        },
+        "data/rasters/ecoles_elementaires.json": {
+            "name": "Elementary Schools",
+            "icon": "E",
+            "title": "Number of pre-schools and elementary schools",
+            "content": "<p>Should not appear anyway, find something to fill here.</p>",
+            "unit": ""
+        }
+    }
 }

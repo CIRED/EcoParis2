@@ -2,7 +2,7 @@
     "intro": {
         "title": "Bienvenue sur EcoParis.",
         "about": "EcoParis est une visualisation interactive des données cartographiques des services écosystémiques en territoires urbains et péri-urbains en région Ile-de-France issues du projet <a href=\"https://idefese.wordpress.com/\">IDEFESE</a>.",
-        "start": "Pour commencer, vous pouvez sélectionner une couche à afficher parmi des mesures de rétention d'azote, des mesures de réduction de la température due à la végétation ou encore d'indice écologique des régions.",
+        "start": "Pour commencer, vous pouvez sélectionner une couche à afficher parmi des mesures de rétention de nutriment, réduction de la température, pollinisation ou encore de rechargement des nappes phréatiques.",
         "future": "Vous pouvez aussi choisir d'afficher l'évolution estimée de ces mesures à l'horizon 2030 dans un scénario de changement climatique.",
         "credits": "EcoParis a été conçu par des élèves du cours de <a href=\"https://edu.epfl.ch/coursebook/en/data-visualization-COM-480\">Data Visualization</a> de l'EPFL, avec l'aide de Perrine Hamel du projet <a href=\"https://naturalcapitalproject.stanford.edu/\">Natural Capital Project</a> de Stanford."
     },
@@ -28,5 +28,58 @@
         "credits-2": "Les données sur le service de rafraîchissement ne sont fournies qu'à titre illustratif, en attendant les résultat des travaux du projet <a href=\"https://idefese.wordpress.com/\">IDEFESE</a>. Les données sur les <a href=\"http://data.iau-idf.fr/datasets?q=espaces+verts&sort_by=relevance\">espaces verts</a> et sur le <a href=\"http://data.iau-idf.fr/datasets?q=r%C3%A9seau+hydrographique+principal+simplifi%C3%A9+d%27%C3%8Ele-de-france&sort_by=relevance\">réseau hydrographique</a> proviennent de l'IAU Ile-de-France.",
         "thanks": "Nos remerciements à Perrine Hamel, chargée de recherche au Natural Capital Project, et à Emmanuel Faure pour les descriptions en français des services.",
         "logo": "Le logo du perroquet a été réalisé par <a href=\"https://www.flaticon.com/authors/freepik\">Freepik</a> pour <a href=\"http://www.flaticon.com/\">Flaticon</a>."
+    },
+    
+    "layers": {
+    
+        "data/rasters/espaces_verts.json": {
+            "name": "Esp. nat.",
+            "icon": "E",
+            "title": "",
+            "content": "",
+            "unit": ""
+        },
+        "data/rasters/pollination_ref.json": {
+            "name": "Polli.",
+            "icon": "P",
+            "title": "Mesure de la pollinisation",
+            "content": "<p>Pour de nombreuses plantes à fleurs, la réalisation du cycle sexuel implique l’intervention d’animaux pollinisateurs, qui permettent la rencontre des gamètes par leur comportement de prise alimentaire. L’abondance de pollinisateurs est donc un facteur déterminant du rendement agricole et ce pour 75% des cultures humaines.</p><p style='text-align: center;'><a class='button' href='http://data.naturalcapitalproject.org/nightly-build/invest-users-guide/html/croppollination.html' target='_blank'>En savoir plus</a></p>",
+            "unit": "indice d'abondance"
+        },
+        "data/rasters/T_reduction.json": {
+            "name": "Temp.",
+            "icon": "T",
+            "title": "Mesure du service de rafraîchissement",
+            "content": "<p>Le service de rafraichissement peut atteindre plusieurs degrés. Il réduit les risques sanitaires (maladies cardio-vasculaires et décès directement liés aux canicules) et potentiellement la consommation énergétique associée à la climatisation.</p><p style='text-align: center;'><a class='button' href='https://www.iucn.org/content/nature-cools-when-things-heat' target='_blank'>En savoir plus</a></p>",
+            "unit": "en °C"
+        },
+        "data/rasters/L_ref.json": {
+            "name": "Nappe",
+            "icon": "Na",
+            "title": "Mesure du rechargement des nappes",
+            "content": "<p>Cette mesure permet de quantifier la rétention des eaux de pluie par les écosystèmes en amont des cours d’eau. Elle établit, pour chaque pixel, un bilan hydrique mensuel permettant de calculer la quantité d’eau pluviale s’infiltrant vers les nappes phréatiques, nette du ruissellement et de l’évapotranspiration. La majorité des captages pour la production d’eaux destinées à la consommation humaine exploitent des eaux souterraines. Avec les effets du changement climatique, des aléas météorologiques plus marqués et plus fréquents, sécheresses ou épisodes pluvieux intenses, vont impacter les ressources en eau.</p><p style='text-align: center;'><a class='button' href='http://data.naturalcapitalproject.org/nightly-build/invest-users-guide/html/seasonal_water_yield.html' target='_blank'>En savoir plus</a></p>",
+            "unit": "en mm/an"
+        },
+        "data/rasters/n_ret_ref.json": {
+            "name": "Nutri.",
+            "icon": "Nu",
+            "title": "Mesure de la rétention des nutriments",
+            "content": "<p>La mesure vise à estimer les quantités d’azote et de phosphore retenues annuellement en amont du réseau hydrographique après un dépôt diffus. Le service de rétention permet d'améliorer la qualité de l'eau (superficielle et souterraine). Il est directement utile aux organismes de gestion de l'eau (syndicats et département d'assainissement), et donc aux habitants dont les impôts financent la maintenance des services d'assainissement.</p><p style='text-align: center;'p><a class='button' href='http://data.naturalcapitalproject.org/nightly-build/invest-users-guide/html/ndr.html' target='_blank'>En savoir plus</a></p>",
+            "unit": "en % d'absorption"
+        },
+        "data/rasters/correlation_ref.json": {
+            "name": "Hotspots",
+            "icon": "H",
+            "title": "Hotspots des services",
+            "content": "<p>Un indicateur multi-critère a été calculé pour identifier les hotspots de services. La mesure consiste en la moyenne des quatre valeurs de service (rétention des nutriments, rechargement des nappes, rafraîchissement et pollinisation), préalablement normalisées (transformation linéaire vers des valeurs entre 0 et 1). Plus il y a d'espaces naturels, plus la quantité de service augmente tout en dépendant des procédés biophysiques propres à chaque service.</p><p style='margin-bottom:0'>Formule : (P<sub>n</sub> + Nu<sub>n</sub> + Na<sub>n</sub> + T<sub>n</sub>) &frasl; 4</p><ul><li>Pollinisation : P<sub>n</sub> = P &frasl; max(P)</li><li>Rét. nutriment : Nu<sub>n</sub> = Nu &frasl; max(Nu)</li><li>Recharge des nappes : Na<sub>n</sub> = Na &frasl; max(Na)</li><li>Rafraîchissement : T<sub>n</sub> = T &frasl; max(T)</li></ul>",
+            "unit": ""
+        },
+        "data/rasters/ecoles_elementaires.json": {
+            "name": "Ecoles elementaires",
+            "icon": "E",
+            "title": "Nombre d'écoles élémentaires et maternelles.",
+            "content": "<p>Should not appear anyway, find something to fill here.</p>",
+            "unit": ""
+        }
     }
 }
