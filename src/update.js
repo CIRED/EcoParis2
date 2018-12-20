@@ -102,7 +102,10 @@ function update_chart(layerURL) {
     return;
   }
   var data=[]
-  if (voro == true) {
+  if (i < 0){ //none selected, show data about entire Paris region
+    data = info.entire_hist
+  }
+  else if (voro == true) {
     data = info.voronoi_hist[i]
   } else {
     data = info.interComm_hist[i]
@@ -117,13 +120,16 @@ function update_text_school(layerURL){
   var i = shared.currentChartIndex
   var voro = shared.currentChartIndexIsVoronoi
   var cachedLayers = shared.cachedLayers
-  if(layerURL==Config.Urban_cooling){
+  if(layerURL == Config.Urban_cooling){
     var info = cachedLayers[Config.Ecole_path]
     if (!info) {
         return;
     }
     var data=[]
-    if (voro == true) {
+    if (i < 0){
+      data = info.entire_hist.slice(-1).pop()
+    }
+    else if (voro == true) {
       data = info.voronoi_hist[i].slice(-1).pop()
     } else {
       data = info.interComm_hist[i].slice(-1).pop()

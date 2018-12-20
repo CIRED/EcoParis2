@@ -61,6 +61,10 @@ function defineVoronoi(svg,emptyOpacity,fullOpacity){
       shared.svg_EV.style("display","none")
       shared.svg_circle_EV.style("display","none")
 
+      shared.currentChartIndex = -1 // none selected, display data about entire Paris
+      update_f.update_chart(shared.currentLayerPath)
+      update_f.update_text_school(shared.currentLayerPath)
+
       shared.lastMousePosition={x:-300,y:-300}
     })
     .on("dblclick", function(d, i) {
@@ -153,6 +157,10 @@ function defineInterComms(svg,emptyOpacity,fadedOpacity,fullOpacity){
       }
       shared.svg_EV.style("display","none")
       shared.svg_circle_EV.style("display","none")
+
+      shared.currentChartIndex = -1 // none selected, display data about entire Paris
+      update_f.update_chart(shared.currentLayerPath)
+      update_f.update_text_school(shared.currentLayerPath)
       
       shared.lastMousePosition={x:-300,y:-300} //be sure not to display the preview circle!
       shared.onNewName('')

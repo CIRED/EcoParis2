@@ -52,6 +52,12 @@ function loadLayer(path, isFuture, callback) {
       var voronoi_means = []
       var voronoi_counts = []
       var voronoi_hist = {}
+      var entire_hist = []
+
+
+      for (var i=0; i<256; ++i){
+        entire_hist[i] = 0
+      }
 
       for (var i = 0; i < voronoi_shape.features.length; ++i) {
         voronoi_counts[i] = 0
@@ -110,6 +116,7 @@ function loadLayer(path, isFuture, callback) {
 
           for (var j=0; j<256; ++j){
             interComm_hist[i][j] += interComm_hist_portion[i][j]
+            entire_hist[j] += interComm_hist_portion[i][j]
           }
           
 
@@ -174,6 +181,7 @@ function loadLayer(path, isFuture, callback) {
             "voronoi_means": voronoi_means,
             "interComm_means": interComm_means,
             "voronoi_hist": voronoi_hist,
+            "entire_hist":entire_hist,
             "interComm_hist": interComm_hist,
             "hist_buckets": hist_buckets,
             "percentiles" : json.percentiles,
@@ -340,7 +348,7 @@ function setLayer(layerPath, isFuture) {
   shared.isFuture = isFuture
 
   update_f.updateCirclePreviewLayer()
-  
+
   update_f.update_chart(shared.currentLayerPath)
   update_f.update_text_school(shared.currentLayerPath)
 

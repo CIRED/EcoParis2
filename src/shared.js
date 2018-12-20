@@ -75,7 +75,7 @@ var isFuture = false
 
 var currentCircleLayerPath = ""
 
-var currentChartIndex = 0
+var currentChartIndex = -1
 
 var currentChartIndexIsVoronoi = false
 
