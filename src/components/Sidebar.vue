@@ -1,6 +1,6 @@
 <template>
   <section class="sidebar">
-    <template v-if="currentLayerPath && layers[currentLayerPath].loaded && !isEspacesVerts">
+    <template v-if="!isEspacesVerts && currentLayerPath && layers[currentLayerPath].loaded">
       <article>
         <h2>{{ layers[currentLayerPath].title }}</h2>
         <div v-html="layers[currentLayerPath].content"></div>
@@ -20,9 +20,9 @@
         </p>
 
         <Histogram
-          v-if="!isEspacesVerts"
           :x="currentHistogramX"
-          :y="currentHistogramY"/>
+          :y="currentHistogramY"
+          :currentLayerPath="currentLayerPath" />
       </article>
     </template>
 
@@ -85,7 +85,7 @@ export default {
 
 .sidebar .contextual-info {
   position: relative;
-  padding: 10px 0;
+  padding: 10px 0 0;
 
   &::before {
     content: '';
