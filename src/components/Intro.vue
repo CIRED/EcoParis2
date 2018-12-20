@@ -9,14 +9,27 @@
 
     <section class="buttons">
       <a v-if="isLoading" class="button loading">Chargement</a>
-      <a v-else @click.prevent="$emit('dismiss')" href="#" class="button">Commencer la visite</a>
+      <template v-else>
+        <a @click.prevent="startFrench" href="#" class="button">Commencer la visite</a>
+        <a @click.prevent="startEnglish" href="#" class="button">Get started</a>
+      </template>
     </section>
   </section>
 </template>
 
 <script>
 export default {
-  props: ['isLoading']
+  props: ['isLoading'],
+  methods: {
+    startFrench() {
+      this.$i18n.locale = 'fr'
+      this.$emit('dismiss')
+    },
+    startEnglish() {
+      this.$i18n.locale = 'en'
+      this.$emit('dismiss')
+    }
+  }
 }
 </script>
 

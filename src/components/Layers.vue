@@ -1,6 +1,6 @@
 <template>
   <section class="layers">
-    <h3>Couches</h3>
+    <h3>{{ $t('titles.layers') }}</h3>
 
     <div class="buttons">
       <a v-for="layer in layers"

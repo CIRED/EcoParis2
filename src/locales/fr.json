@@ -1,0 +1,32 @@
+{
+    "intro": {
+        "title": "Bienvenue sur EcoParis.",
+        "about": "EcoParis est une visualisation interactive des données cartographiques des services écosystémiques en territoires urbains et péri-urbains en région Ile-de-France issues du projet <a href=\"https://idefese.wordpress.com/\">IDEFESE</a>.",
+        "start": "Pour commencer, vous pouvez sélectionner une couche à afficher parmi des mesures de rétention d'azote, des mesures de réduction de la température due à la végétation ou encore d'indice écologique des régions.",
+        "future": "Vous pouvez aussi choisir d'afficher l'évolution estimée de ces mesures à l'horizon 2030 dans un scénario de changement climatique.",
+        "credits": "EcoParis a été conçu par des élèves du cours de <a href=\"https://edu.epfl.ch/coursebook/en/data-visualization-COM-480\">Data Visualization</a> de l'EPFL, avec l'aide de Perrine Hamel du projet <a href=\"https://naturalcapitalproject.stanford.edu/\">Natural Capital Project</a> de Stanford."
+    },
+
+    "sidebar": {
+        "whole-region": "Toute la région Île-de-France",
+        "child-count": "Les enfants étant l'une des catégories de population vulnérables aux canicules, il est important de noter qu'il y a {count} établissements scolaires dans la zone sélectionnée."
+    },
+
+    "titles": {
+        "layers": "Couches",
+        "credits": "À propos"
+    },
+
+    "credits": {
+        "title": "Réalisation et remerciements.",
+        "what": "EcoParis a été conçu par trois étudiants de l'EPFL pendant le semestre d'automne 2018 dans le cadre du cours de <a href=\"https://edu.epfl.ch/coursebook/en/data-visualization-COM-480\">Data Visualization</a>.",
+        "alex": "Alex Ferragni, Master d'Informatique",
+        "karthi": "Karthigan Sinnathamby, Master en Data Science",
+        "romain": "Romain Liautaud, Master en Systèmes de Communication",
+        "collaborators": "Ce projet a été réalisé en colloboration avec <a href=\"https://naturalcapitalproject.stanford.edu/\">Natural Capital Project</a> de Stanford dont la mission consiste à développer des approches scientifiques pour mettre en avant les bénéfices de la nature aux yeux de la société dans le but d'incorporer le patrimoine naturel dans la prise de décision.",
+        "credits-1": "Les données sur les services de rétention des nutriments, recharge des nappes, et pollinisation ont été créées par Emmanuel Faure pour son <a href=\"https://www.dropbox.com/s/s4ccqoz7yg38sgw/Faure_memoire.pdf?dl=0\">mémoire de thèse de Master</a> et restent préliminaires. Le calcul des données ainsi que les limitations sont décrites dans le mémoire.",
+        "credits-2": "Les données sur le service de rafraîchissement ne sont fournies qu'à titre illustratif, en attendant les résultat des travaux du projet <a href=\"https://idefese.wordpress.com/\">IDEFESE</a>. Les données sur les <a href=\"http://data.iau-idf.fr/datasets?q=espaces+verts&sort_by=relevance\">espaces verts</a> et sur le <a href=\"http://data.iau-idf.fr/datasets?q=r%C3%A9seau+hydrographique+principal+simplifi%C3%A9+d%27%C3%8Ele-de-france&sort_by=relevance\">réseau hydrographique</a> proviennent de l'IAU Ile-de-France.",
+        "thanks": "Nos remerciements à Perrine Hamel, chargée de recherche au Natural Capital Project, et à Emmanuel Faure pour les descriptions en français des services.",
+        "logo": "Le logo du perroquet a été réalisé par <a href=\"https://www.flaticon.com/authors/freepik\">Freepik</a> pour <a href=\"http://www.flaticon.com/\">Flaticon</a>."
+    }
+}

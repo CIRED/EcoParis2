@@ -20,7 +20,7 @@
         @zoomIn="() => currentZoom += 1" />
 
       <a href="#" class="about-button"
-        @click.prevent="() => aboutVisible = true">À propos</a>
+        @click.prevent="() => aboutVisible = true">{{ $t('titles.credits') }}</a>
     </section>
     <section class="container">
       <Map
@@ -127,7 +127,7 @@ h4 {
   text-align: center;
 }
 
-p {
+p, ul {
   font-family: 'Crimson Text', serif;
 }
 
@@ -207,6 +207,7 @@ p {
   display: block;
   text-align: center;
   height: 40px;
+  width: 80px;
   line-height: 40px;
   border: 1px solid #bbb;
   border-top: 0;
@@ -216,5 +217,12 @@ p {
   color: #666;
   font-size: 10pt;
   text-decoration: none;
+}
+
+#espacesVerts {
+  height: 300px;
+  width: 100%;
+  margin-top: 25px;
+  margin-bottom: 5px;
 }
 </style>
