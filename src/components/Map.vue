@@ -222,7 +222,7 @@ export default {
   border-radius: 50%;
   width: 120px;
   height: 120px;
-  border: 1px solid;
+  border: 3px solid;
   border-color:#000;
   box-shadow: 0 0 3px rgba(#000, .3);
   position: absolute;
@@ -230,6 +230,8 @@ export default {
   display: flex;
   pointer-events: none;
   top: -120px;
+  margin-left: -20px;
+  margin-bottom: -20px;
 
   image {
     image-rendering: optimizespeed;
@@ -238,9 +240,9 @@ export default {
 
 .EV-circle-svg {
   border-radius: 50%;
-  width: 90px;
-  height: 90px;
-  border: 1px solid;
+  width: 80px;
+  height: 80px;
+  border: 1px dashed;
   border-color:rgba(#000,0.7);
   position: absolute;
   background: #fff0;
@@ -280,22 +282,23 @@ export default {
 
 .legend {
   position: absolute;
-  bottom: 35px;
-  right: 25px;
+  bottom: 40px;
+  right: 30px;
   text-align: center;
+  padding: 5px 10px;
 
   box-shadow: 0 0 2px rgba(0, 0, 0, .3);
   background: #fff;
 
   h3 {
     text-transform: uppercase;
-    margin: 10px;
+    margin: 5px;
   }
 
   p, figcaption {
     font-size: .6em;
     font-style: italic;
-    margin-top: 0;
+    margin: 0 auto;
   }
 
   figure {
@@ -306,14 +309,14 @@ export default {
     width: 70px;
     height: 28px;
     border: 1px solid #000;
-    margin: 10px auto;
+    margin: 5px auto;
   }
 }
 
 .legend-inner {
   height: 200px;
   width: 70px;
-  margin: 8px 10px;
+  margin: 0 auto 10px;
   position: relative;
 }
 

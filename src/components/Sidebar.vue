@@ -1,32 +1,42 @@
 <template>
   <section class="sidebar">
-    <div v-if="currentLayerPath && layers[currentLayerPath].loaded && !isEspacesVerts">
-      <h2>{{ layers[currentLayerPath].title }}</h2>
-      <h4 v-if="interCommName">
-        {{interCommName}}
-      </h4>
-      <div v-html="layers[currentLayerPath].content"></div>
+    <template v-if="currentLayerPath && layers[currentLayerPath].loaded && !isEspacesVerts">
+      <article>
+        <h2>{{ layers[currentLayerPath].title }}</h2>
+        <div v-html="layers[currentLayerPath].content"></div>
 
+        <p v-if="isCorrelation">
+        Formule: (P<sub>n</sub> + Nu<sub>n</sub> + Na<sub>n</sub> + T<sub>n</sub>) &frasl; 4</sub>
+          <ul>
+            <li> Pollinisation: P<sub>n</sub> = P &frasl; max(P) </li>
+            <li> Rét. nutriment: Nu<sub>n</sub> = Nu &frasl; max(Nu) </li>
+            <li> Recharge des nappes: Na<sub>n</sub> = Na &frasl; max(Na) </li>
+            <li> Rafraîchissement: T<sub>n</sub> = T &frasl; max(T) </li>
+          </ul>
+        </p>
+      </article>
 
-      <p v-if="isCorrelation">
-      Formule: (P<sub>n</sub> + Nu<sub>n</sub> + Na<sub>n</sub> + T<sub>n</sub>) &frasl; 4</sub>
-        <ul>
-          <li> Pollinisation: P<sub>n</sub> = P &frasl; max(P) </li>
-          <li> Rét. nutriment: Nu<sub>n</sub> = Nu &frasl; max(Nu) </li>
-          <li> Recharge des nappes: Na<sub>n</sub> = Na &frasl; max(Na) </li>
-          <li> Rafraîchissement: T<sub>n</sub> = T &frasl; max(T) </li>
-        </ul>
-      </p>
+      <article class="contextual-info">
+        <h4 v-if="interCommName">
+          {{interCommName}}
+        </h4>
 
-      <Histogram
-        v-if="!isEspacesVerts"
-        :x="currentHistogramX"
-        :y="currentHistogramY"/>
+        <h4 v-else>
+          Toute la région Île-de-France
+        </h4>
 
-        <p v-if="schoolCount">Il y a {{ schoolCount }} établissements scolaires dans la région sélectionnée.</p>
-    </div>
+        <p v-if="interCommName && schoolCount" style="font-style: italic;">
+          Les enfants étant l'une des catégories de population vulnérables aux canicules, il est important de noter qu'il y a {{ schoolCount }} établissements scolaires dans la zone sélectionnée.
+        </p>
 
-    <div v-else class="split">
+        <Histogram
+          v-if="!isEspacesVerts"
+          :x="currentHistogramX"
+          :y="currentHistogramY"/>
+      </article>
+    </template>
+
+    <template v-else>
       <article>
         <h2>Bienvenue sur EcoParis.</h2>
 
@@ -49,7 +59,7 @@
           </a>
         </section>
       </article>
-    </div>
+    </template>
   </section>
 </template>
 
@@ -81,21 +91,39 @@ export default {
 
 .sidebar {
   z-index: 500;
-  width: 450px;
+  width: 460px;
   max-width: 30%;
   box-sizing: border-box;
-  padding: 40px;
+  padding: 35px;
+  font-size: 0.94em;
 
   background: #fff;
   box-shadow: 0 0 2px rgba(0, 0, 0, .3);
   overflow: auto;
-}
 
-.sidebar .split {
-  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+
+.sidebar .contextual-info {
+  position: relative;
+  padding: 10px 0;
+
+  &::before {
+    content: '';
+    position: absolute;
+    display: block;
+    border-top: 1px solid #e9e9e9;
+    left: -35px;
+    right: -35px;
+    top: 0;
+  }
+
+  h4 {
+    font-size: .9em;
+    font-variant-caps: small-caps;
+  }
 }
 
 .sidebar p {
@@ -104,6 +132,8 @@ export default {
 
 .sidebar h2 {
   margin-top: 0;
+  letter-spacing: -1px;
+  font-size: 1.25em;
 }
 
 .sidebar .about {
@@ -130,10 +160,8 @@ export default {
   border-color: #000;
   box-shadow: none;
   text-shadow: none;
-  margin: 5px 0 20px;
-  font-size: 0.8em;
+  margin: 5px 0 10px;
+  font-size: 0.85em;
   display: inline-block;
 }
-
-
 </style>

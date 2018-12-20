@@ -38,7 +38,7 @@
 			"max_value":-2.45584,
 
 			"title": "Mesure du service de rafraîchissement.",
-			"content": "<p>Le service de rafraichissement peut atteindre plusieurs degrés. Il réduit les risques sanitaires (maladies cardio-vasculaires et décès directement liés aux canicules) et potentiellement la consommation énergétique associée à la climatisation.</p><p style='text-align: center;'><a class='button' href='https://www.iucn.org/content/nature-cools-when-things-heat' target='_blank'>En savoir plus</a></p><p>Les enfants étant l'une des catégories de population vulnérables aux canicules, nous représentons le nombre d'établissements scolaires dans chaque intercommunalité.</p>",
+			"content": "<p>Le service de rafraichissement peut atteindre plusieurs degrés. Il réduit les risques sanitaires (maladies cardio-vasculaires et décès directement liés aux canicules) et potentiellement la consommation énergétique associée à la climatisation.</p><p style='text-align: center;'><a class='button' href='https://www.iucn.org/content/nature-cools-when-things-heat' target='_blank'>En savoir plus</a></p>",
             "unit":"en °C",
             "future":"data/rasters/T_reduction.json"
 		},
@@ -65,7 +65,7 @@
 
 			"title": "Mesure de la rétention des nutriments.",
 			"content": "<p>La mesure vise à estimer les quantités d’azote et de phosphore retenues annuellement en amont du réseau hydrographique après un dépôt diffus. Le service de rétention permet d'améliorer la qualité de l'eau (superficielle et souterraine). Il est directement utile aux organismes de gestion de l'eau (syndicats et département d'assainissement), et donc aux habitants dont les impôts financent la maintenance des services d'assainissement.</p><p style='text-align: center;'p><a class='button' href='http://data.naturalcapitalproject.org/nightly-build/invest-users-guide/html/ndr.html' target='_blank'>En savoir plus</a></p>",
-            "unit":"en pourcent d'absorbtion",
+            "unit":"en % d'absorption",
             "future":"data/rasters/n_ret_cc.json"
         },
 		"data/rasters/correlation_ref.json":{
