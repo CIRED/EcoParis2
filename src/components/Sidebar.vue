@@ -15,8 +15,9 @@
           {{ $t('sidebar.whole-region') }}
         </h4>
 
-        <p v-if="interCommName && schoolCount" style="font-style: italic;">
-          {{ $t('sidebar.child-count', {count: schoolCount}) }}
+        <p
+          v-if="interCommName && schoolCount" 
+          v-html="$t('sidebar.child-count', {count: schoolCount})">
         </p>
 
         <Histogram

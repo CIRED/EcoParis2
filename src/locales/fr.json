@@ -9,7 +9,7 @@
 
     "sidebar": {
         "whole-region": "Toute la région Île-de-France",
-        "child-count": "Les enfants étant l'une des catégories de population vulnérables aux canicules, il est important de noter qu'il y a {count} établissements scolaires dans la zone sélectionnée."
+        "child-count": "Les enfants étant l'une des catégories de population vulnérables aux canicules, il est important de noter qu'il y a <b>{count}</b> établissements scolaires dans la zone sélectionnée."
     },
 
     "titles": {
