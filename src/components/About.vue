@@ -5,13 +5,11 @@
         <section class="about-box">
             <h2>{{ $t('credits.title') }}</h2>
             <p v-html="$t('credits.what')"></p>
-
             <ul>
                 <li>{{ $t('credits.alex') }}</li>
                 <li>{{ $t('credits.karthi') }}</li>
                 <li>{{ $t('credits.romain') }}</li>
             </ul>
-
             <p v-html="$t('credits.collaborators')"></p>
             <p v-html="$t('credits.credits-1')"></p>
             <p v-html="$t('credits.credits-2')"></p>
