@@ -89,9 +89,15 @@ function update_EV_preview(mouseX,mouseY){
   )
 }
 
-function update_chart(i,layerURL,voro) {
+function update_chart(layerURL) {
+  var i = shared.currentChartIndex
+  var voro = shared.currentChartIndexIsVoronoi
   var cachedLayers = shared.cachedLayers
   var info = cachedLayers[layerURL]
+
+  if (shared.isFuture && Config.layers[layerURL].future){
+    info = cachedLayers[Config.layers[layerURL].future]
+  }
   if (!info) {
     return;
   }
@@ -107,7 +113,9 @@ function update_chart(i,layerURL,voro) {
 
 }
 
-function update_text_school(i,layerURL,voro){
+function update_text_school(layerURL){
+  var i = shared.currentChartIndex
+  var voro = shared.currentChartIndexIsVoronoi
   var cachedLayers = shared.cachedLayers
   if(layerURL==Config.Urban_cooling){
     var info = cachedLayers[Config.Ecole_path]
@@ -196,12 +204,7 @@ function updateMap() {//add here everything that could potentially change
 }
 
 function updateCirclePreviewPath(){
-  if (!shared.showFutureInsteadOfEV){ //if show EV
-    shared.currentCircleLayerPath = Config.EV_path
-    shared.svg_circle_EV.style("border-color",Config.layers[Config.EV_path].colors[0])
-    shared.svg_EV.style("border-color",Config.layers[Config.EV_path].colors[0])
-  }
-  else{
+  if (shared.showFutureInsteadOfEV && Config.layers[shared.currentLayerPath].future){ //if show future/present
     if (shared.isFuture){ //if show present
       shared.currentCircleLayerPath = shared.currentLayerPath
       shared.svg_circle_EV.style("border-color",Config.color_present)
@@ -212,6 +215,11 @@ function updateCirclePreviewPath(){
       shared.svg_circle_EV.style("border-color",Config.color_future)
       shared.svg_EV.style("border-color",Config.color_future)
     }
+  }
+  else{ //if show EV
+    shared.currentCircleLayerPath = Config.EV_path
+    shared.svg_circle_EV.style("border-color",Config.layers[Config.EV_path].colors[0])
+    shared.svg_EV.style("border-color",Config.layers[Config.EV_path].colors[0])
   }
 }
 

@@ -75,6 +75,10 @@ var isFuture = false
 
 var currentCircleLayerPath = ""
 
+var currentChartIndex = 0
+
+var currentChartIndexIsVoronoi = false
+
 export default {cachedLayers,
 				currentLayerPath,
 				map,
@@ -111,4 +115,6 @@ export default {cachedLayers,
 				showFutureInsteadOfEV,
 				lastMousePosition,
 				isFuture,
-				currentLayerPath}
+				currentLayerPath,
+				currentChartIndex,
+				currentChartIndexIsVoronoi}

@@ -340,6 +340,9 @@ function setLayer(layerPath, isFuture) {
   shared.isFuture = isFuture
 
   update_f.updateCirclePreviewLayer()
+  
+  update_f.update_chart(shared.currentLayerPath)
+  update_f.update_text_school(shared.currentLayerPath)
 
   update_f.update_EV_preview(shared.lastMousePosition.x,shared.lastMousePosition.y)
 }

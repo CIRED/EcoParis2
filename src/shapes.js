@@ -38,8 +38,10 @@ function defineVoronoi(svg,emptyOpacity,fullOpacity){
       update_f.update_clip()
 
       //additionally, update the right elements according to current voronoi
-      update_f.update_chart(i, shared.currentLayerPath, true)
-      update_f.update_text_school(i, shared.currentLayerPath, true)
+      shared.currentChartIndex = i
+      shared.currentChartIndexIsVoronoi = true
+      update_f.update_chart(shared.currentLayerPath)
+      update_f.update_text_school(shared.currentLayerPath)
 
       if (shared.highlightedInterComm != -1){
         shared.onNewName(shared.interComm_shape.features[shared.highlightedInterComm].properties.nomgroup)
@@ -130,8 +132,10 @@ function defineInterComms(svg,emptyOpacity,fadedOpacity,fullOpacity){
       } else { // we are zoomed in a particular interComm
         d3.select(this).style('fill-opacity', fadedOpacity);
       }
-      update_f.update_chart(i, shared.currentLayerPath, false)
-      update_f.update_text_school(i, shared.currentLayerPath, false)
+      shared.currentChartIndex = i
+      shared.currentChartIndexIsVoronoi = false
+      update_f.update_chart(shared.currentLayerPath)
+      update_f.update_text_school(shared.currentLayerPath)
 
       //console.log(shared.interComm_shape.features[i].properties.nomgroup)
       shared.onNewName(shared.interComm_shape.features[i].properties.nomgroup)
