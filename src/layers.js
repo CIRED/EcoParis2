@@ -203,7 +203,7 @@ function setLayer(layerPath, isFuture) {
 
   this.loadLayer(layerPath, isFuture, () => {
 
-  if (layerPath == Config.EV_path){ //TODO: add parameter "AlwaysShowLayer" in config?
+  if (layerPath == Config.EV_path){
       imgs.attr("clip-path", "")
     }
     else{
@@ -245,9 +245,19 @@ function setLayer(layerPath, isFuture) {
 
     min = 0//Math.min(...layer.interComm_means)
     max = 255//Math.max(...layer.interComm_means)
+      
+
+
+    // Reset the width and height of the canvas.
+    shared.canvas.width = layer.width
+    shared.canvas.height = layer.height
+
+    // Update the bounding box and current coordinates.
+    update_parameters.hide = false
+
+    update_f.updateMap()
 
     shared.interComms.style('fill', function(_, i){
-      //console.log(layer.interComm_means[i],colorScale(layer.interComm_means[i]))
       if (shared.highlightedInterComm != -1) { // i.e. we are zoomed in
         if (i != shared.highlightedInterComm) {
             return "#000"
@@ -260,18 +270,9 @@ function setLayer(layerPath, isFuture) {
           return "#00000011"
         }
         return colorScale(layer.interComm_means[i])
-      }})
-      
+      }
+    })
 
-
-    // Reset the width and height of the canvas.
-    shared.canvas.width = layer.width
-    shared.canvas.height = layer.height
-
-    // Update the bounding box and current coordinates.
-    update_parameters.hide = false
-
-    update_f.updateMap()
     shared.currentLayerPath = layerPath
     imgs.attr('xlink:href', layer.url)
 
