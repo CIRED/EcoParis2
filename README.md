@@ -17,7 +17,7 @@ This project uses:
 
 First, you need to install NodeJS using your favorite package manager. For example, with Homebrew:
 
-    `$ brew install node`
+`$ brew install node`
 
 Then, to install the project, use `npm install`.
 
