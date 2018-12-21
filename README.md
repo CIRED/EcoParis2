@@ -56,7 +56,7 @@ There are several parsing scripts required to add new data on other branches:
 
 1) `generate_image_json`: Contains the script used to parse a new raster file. Instructions are detailed in the file `js/parseImage.js`.
 2) `generate_correlation`: Contains the script used to generate the hotspots layers. Instructions are detailed in the file `js/correlation_4.js`.
-3) `generate_voronois`: Contains the script used to compute the voronoi GeoJson. Instructions are detailed in the file `js/parseImage.js`.
+3) `generate_voronois`: Contains the script used to compute the voronoi GeoJson. Instructions are detailed in the file `src/map_generate_voronoi.js`.
 4) `generate_containment_json`: Contians the script used to generate the pre-computed containment files. Instructions are detailed in the file `js/parseImage.js`.
 
 If you want to:
