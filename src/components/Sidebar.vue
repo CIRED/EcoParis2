@@ -138,10 +138,6 @@ export default {
 }
 
 .sidebar .button {
-  color: #000;
-  border-color: #000;
-  box-shadow: none;
-  text-shadow: none;
   margin: 5px 0 10px;
   font-size: 0.85em;
   display: inline-block;

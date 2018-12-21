@@ -67,7 +67,7 @@ $flag-path: '../../public/assets';
 
 /** Introduction page. **/
 .intro {
-  z-index: 1001;
+  z-index: 2000;
   position: fixed;
   display: flex;
   left: 0;

@@ -24,7 +24,7 @@
 			"max_value":0.123434,
 
 			"title": "Mesure de la pollinisation.",
-			"content": "<p>Pour de nombreuses plantes à fleurs, la réalisation du cycle sexuel implique l’intervention d’animaux pollinisateurs, qui permettent la rencontre des gamètes par leur comportement de prise alimentaire. L’abondance de pollinisateurs est donc un facteur déterminant du rendement agricole et ce pour 75% des cultures humaines.</p><p style='text-align: center;'><a class='button' href='http://data.naturalcapitalproject.org/nightly-build/invest-users-guide/html/croppollination.html' target='_blank'>En savoir plus</a></p>",
+			"content": "<p>Pour de nombreuses plantes à fleurs, la réalisation du cycle sexuel implique l’intervention d’animaux pollinisateurs, qui permettent la rencontre des gamètes par leur comportement de prise alimentaire. L’abondance de pollinisateurs est donc un facteur déterminant du rendement agricole et ce pour 75% des cultures humaines.</p><p style='text-align: center;'><a class='button dark' href='http://data.naturalcapitalproject.org/nightly-build/invest-users-guide/html/croppollination.html' target='_blank'>En savoir plus</a></p>",
             "unit":"indice d'abondance",
 			"hist_legend": "Indice d'abondance de pollinisation",
             "future":"data/rasters/pollination_cc.json"
@@ -39,7 +39,7 @@
 			"max_value":-2.45584,
 
 			"title": "Mesure du service de rafraîchissement.",
-			"content": "<p>Le service de rafraichissement peut atteindre plusieurs degrés. Il réduit les risques sanitaires (maladies cardio-vasculaires et décès directement liés aux canicules) et potentiellement la consommation énergétique associée à la climatisation.</p><p style='text-align: center;'><a class='button' href='https://www.iucn.org/content/nature-cools-when-things-heat' target='_blank'>En savoir plus</a></p>",
+			"content": "<p>Le service de rafraichissement peut atteindre plusieurs degrés. Il réduit les risques sanitaires (maladies cardio-vasculaires et décès directement liés aux canicules) et potentiellement la consommation énergétique associée à la climatisation.</p><p style='text-align: center;'><a class='button dark' href='https://www.iucn.org/content/nature-cools-when-things-heat' target='_blank'>En savoir plus</a></p>",
             "unit":"en °C",
 			"hist_legend": "Raffraichissement (en °C)",
             "future":"data/rasters/T_reduction.json"
@@ -53,7 +53,7 @@
 			"max_value":771.576,
 
 			"title": "Mesure du rechargement des nappes.",
-			"content": "<p>Cette mesure permet de quantifier la rétention des eaux de pluie par les écosystèmes en amont des cours d’eau. Elle établit, pour chaque pixel, un bilan hydrique mensuel permettant de calculer la quantité d’eau pluviale s’infiltrant vers les nappes phréatiques, nette du ruissellement et de l’évapotranspiration. La majorité des captages pour la production d’eaux destinées à la consommation humaine exploitent des eaux souterraines. Avec les effets du changement climatique, des aléas météorologiques plus marqués et plus fréquents, sécheresses ou épisodes pluvieux intenses, vont impacter les ressources en eau.</p><p style='text-align: center;'><a class='button' href='http://data.naturalcapitalproject.org/nightly-build/invest-users-guide/html/seasonal_water_yield.html' target='_blank'>En savoir plus</a></p>",
+			"content": "<p>Cette mesure permet de quantifier la rétention des eaux de pluie par les écosystèmes en amont des cours d’eau. Elle établit, pour chaque pixel, un bilan hydrique mensuel permettant de calculer la quantité d’eau pluviale s’infiltrant vers les nappes phréatiques, nette du ruissellement et de l’évapotranspiration. La majorité des captages pour la production d’eaux destinées à la consommation humaine exploitent des eaux souterraines. Avec les effets du changement climatique, des aléas météorologiques plus marqués et plus fréquents, sécheresses ou épisodes pluvieux intenses, vont impacter les ressources en eau.</p><p style='text-align: center;'><a class='button dark' href='http://data.naturalcapitalproject.org/nightly-build/invest-users-guide/html/seasonal_water_yield.html' target='_blank'>En savoir plus</a></p>",
             "unit":"en mm/an",
 			"hist_legend": "Rechargement des nappes (en mm/an)",
             "future":"data/rasters/L_cc.json"
@@ -67,7 +67,7 @@
 			"max_value":100,
 
 			"title": "Mesure de la rétention des nutriments.",
-			"content": "<p>La mesure vise à estimer les quantités d’azote et de phosphore retenues annuellement en amont du réseau hydrographique après un dépôt diffus. Le service de rétention permet d'améliorer la qualité de l'eau (superficielle et souterraine). Il est directement utile aux organismes de gestion de l'eau (syndicats et département d'assainissement), et donc aux habitants dont les impôts financent la maintenance des services d'assainissement.</p><p style='text-align: center;'p><a class='button' href='http://data.naturalcapitalproject.org/nightly-build/invest-users-guide/html/ndr.html' target='_blank'>En savoir plus</a></p>",
+			"content": "<p>La mesure vise à estimer les quantités d’azote et de phosphore retenues annuellement en amont du réseau hydrographique après un dépôt diffus. Le service de rétention permet d'améliorer la qualité de l'eau (superficielle et souterraine). Il est directement utile aux organismes de gestion de l'eau (syndicats et département d'assainissement), et donc aux habitants dont les impôts financent la maintenance des services d'assainissement.</p><p style='text-align: center;'p><a class='button dark' href='http://data.naturalcapitalproject.org/nightly-build/invest-users-guide/html/ndr.html' target='_blank'>En savoir plus</a></p>",
             "unit":"en % d'absorption",
 			"hist_legend": "Rétention des nutriments (en % d'absorption)",
             "future":"data/rasters/n_ret_cc.json"

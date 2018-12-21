@@ -201,7 +201,7 @@ export default {
 
 <style lang="scss" type="text/scss">
 .map-container {
-  flex: 1;
+  flex-grow: 1;
   position: relative;
 }
 
@@ -216,6 +216,10 @@ export default {
   image {
     image-rendering: optimizespeed;
   }
+}
+
+.leaflet-top, .leaflet-bottom {
+  z-index: 300 !important;
 }
 
 .EV-svg {

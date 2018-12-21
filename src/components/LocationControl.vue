@@ -67,10 +67,6 @@ export default {
       this.searchExpanded ^= true
       this.$refs.searchInput.focus()
     },
-
-    keypressSearch(e) {
-      alert(JSON.stringify(e))
-    }
   }
 }
 </script>

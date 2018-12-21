@@ -1,5 +1,6 @@
 <template>
-  <div id="app">
+  <div id="app" :class="[`tutorial-${currentTutorialStep}`]">
+    
     <transition name="fade">
       <Intro
         v-if="introVisible"
@@ -9,37 +10,45 @@
 
     <About v-if="aboutVisible" @dismiss="() => aboutVisible = false" />
 
-    <section class="menu">
-      <LocationControl
-        :onLocation="loc => this.currentLocation = loc" />
-      <Layers
-        :layers="layers"
-        v-model="currentLayerPath" />
-      <ZoomControl
-        @zoomOut="() => currentZoom -= 1"
-        @zoomIn="() => currentZoom += 1" />
+    <section class="horizontal-split">
+      <Tutorial
+        v-model="currentTutorialStep"
+        :currentLayerPath="currentLayerPath"
+        @layerChange="path => this.currentLayerPath = path" />
 
-      <a href="#" class="about-button"
-        @click.prevent="() => aboutVisible = true">{{ $t('titles.credits') }}</a>
-    </section>
-    <section class="container">
-      <Map
-        :layers="layers"
-        :currentLayerPath="currentLayerPath"
-        :currentLocation="currentLocation"
-        :currentZoom="currentZoom"
-        :isFuture="isFuture"
-        @toggleFuture="() => isFuture ^= true"
-        @newHistogram="(x, y) => {this.currentHistogramX = x; this.currentHistogramY = y;}" 
-        @newSchools="n => this.schoolCount = n" 
-        @newName="n => this.interCommName = n" />
-      <Sidebar
-        :layers="layers"
-        :currentLayerPath="currentLayerPath"
-        :currentHistogramX="currentHistogramX"
-        :currentHistogramY="currentHistogramY"
-        :schoolCount="schoolCount"
-        :interCommName="interCommName" />
+      <section class="vertical-split">
+        <section class="menu">
+          <LocationControl
+            :onLocation="loc => this.currentLocation = loc" />
+          <Layers
+            :layers="layers"
+            v-model="currentLayerPath" />
+          <ZoomControl
+            @zoomOut="() => currentZoom -= 1"
+            @zoomIn="() => currentZoom += 1" />
+
+          <a href="#" class="about-button"
+            @click.prevent="() => aboutVisible = true">{{ $t('titles.credits') }}</a>
+        </section>
+
+        <Map
+          :layers="layers"
+          :currentLayerPath="currentLayerPath"
+          :currentLocation="currentLocation"
+          :currentZoom="currentZoom"
+          :isFuture="isFuture"
+          @toggleFuture="() => isFuture ^= true"
+          @newHistogram="(x, y) => {this.currentHistogramX = x; this.currentHistogramY = y;}" 
+          @newSchools="n => this.schoolCount = n" 
+          @newName="n => this.interCommName = n" />
+        <Sidebar
+          :layers="layers"
+          :currentLayerPath="currentLayerPath"
+          :currentHistogramX="currentHistogramX"
+          :currentHistogramY="currentHistogramY"
+          :schoolCount="schoolCount"
+          :interCommName="interCommName" />
+      </section>
     </section>
   </div>
 </template>
@@ -48,6 +57,7 @@
 import Config from './config.json'
 
 import Intro from './components/Intro.vue'
+import Tutorial from './components/Tutorial.vue'
 import About from './components/About.vue'
 import ZoomControl from './components/ZoomControl.vue'
 import LocationControl from './components/LocationControl.vue'
@@ -59,7 +69,7 @@ import Sidebar from './components/Sidebar.vue'
 const defaultLayerPath = Config.EV_path
 
 export default {
-  components: { Intro, About, ZoomControl, LocationControl, Layers, Map, Sidebar },
+  components: { Intro, Tutorial, About, ZoomControl, LocationControl, Layers, Map, Sidebar },
 
   data: () => ({
     layers: Object.keys(Config.layers).reduce((m, layerPath) => {
@@ -76,9 +86,12 @@ export default {
     currentLocation: null,
     currentHistogramX: null,
     currentHistogramY: null,
+
     introVisible: true,
     sidebarVisible: false,
     aboutVisible: false,
+
+    currentTutorialStep: 1,
 
     interCommName: "",
     schoolCount: null,
@@ -89,6 +102,12 @@ export default {
       return this.layers[this.currentLayerPath].loaded
     }
   },
+
+  methods: {
+    logKey(e) {
+      console.log(e)
+    }
+  }
 }
 </script>
 
@@ -150,25 +169,41 @@ p, ul {
   &:hover {
     padding: 9px 16px;
   }
+
+  &.dark {
+    color: #000;
+    border-color: #000;
+  }
+
+  &.dark.full {
+    background: #000;
+    color: #fff;
+  }
 }
 
 .menu {
   z-index: 500;
-  position: fixed;
+  position: absolute;
   top: 0;
   bottom: 0;
   left: 50px;
   display: flex;
   flex-direction: column;
-
   justify-content: center;
 }
 
-.container {
+.horizontal-split {
   display: flex;
-  background: #000;
+  flex-direction: column;
   width: 100%;
   height: 100%;
+}
+
+.vertical-split {
+  display: flex;
+  flex-grow: 1;
+  background: #000;
+  position: relative;
 }
 
 // TODO(liautaud): Create mixins and move everything

@@ -5,8 +5,10 @@
     <div class="buttons">
       <a v-for="layer in layers"
         v-if="!layer.hidden"
-        v-bind:style="[value == layer.path ? {'background': layer.active_color} : {'background-color':layer.color}]"
-        :class="{ active: value == layer.path}"
+        :style="{'background': value == layer.path ? layer.active_color : layer.color}"
+        :key="layer.name"
+        :title="layer.name"
+        :class="{ active: value == layer.path }"
 
         @click.prevent="select(layer)">
         <span class="icon" v-html="layer.icon"></span>
@@ -23,14 +25,12 @@
           <div class="loader-tile loader-tile8"></div>
           <div class="loader-tile loader-tile9"></div>
         </div>
-
       </a>
     </div>
   </section>
 </template>
 
 <script>
-
 export default {
   props: ['layers', 'value'],
 
