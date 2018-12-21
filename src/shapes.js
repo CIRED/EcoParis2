@@ -166,7 +166,7 @@ function defineInterComms(svg,emptyOpacity,fadedOpacity,fullOpacity){
     })
     .on("click", function(d, i) {
       if (!d3.event || !d3.event.clientX || !d3.event.clientY ||
-          Math.abs(d3.event.clientX - shared.lastMouseDownX) >= 5 || Math.abs(d3.event.clientY - shared.lastMouseDownY) >= 5){
+          Math.abs(d3.event.clientX - shared.lastMouseDownX) >= 5 || Math.abs(d3.event.clientY  - shared.mapElement.getBoundingClientRect().top - shared.lastMouseDownY) >= 5){
         return
       }
       shared.interComms.style("pointer-events", "all") // now we can click/hover on every department
