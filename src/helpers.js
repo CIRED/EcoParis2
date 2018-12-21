@@ -216,7 +216,7 @@ function handleKeyEvent(e){
   }
   //then redraw circles
   update_f.updateCirclePreviewLayer()
-  update_f.update_EV_preview(shared.lastMousePosition.x,shared.lastMousePosition.y)
+  update_f.updateCirclePreview(shared.lastMousePosition.x,shared.lastMousePosition.y)
 }
 
 export default {loadContainmentFile,createMap,setLocation,getColorsFromScheme,fillScale,computeColorRange,blankStyle,range,handleKeyEvent}

@@ -89,7 +89,7 @@ function defineVoronoi(svg){
 
         //update last mouse position, and recompute circle overlay position and content
         shared.lastMousePosition={x:d3.event.clientX,y:d3.event.clientY - shared.mapElement.getBoundingClientRect().top}
-        update_f.update_EV_preview(shared.lastMousePosition.x,shared.lastMousePosition.y)
+        update_f.updateCirclePreview(shared.lastMousePosition.x,shared.lastMousePosition.y)
       }
       else{
         //no defined event, simply don't display circles
@@ -208,7 +208,7 @@ function defineInterComms(svg,fadedOpacity){
 
         //update last mouse position, and recompute circle overlay position and content
         shared.lastMousePosition={x:d3.event.clientX,y:d3.event.clientY - shared.mapElement.getBoundingClientRect().top}
-        update_f.update_EV_preview(shared.lastMousePosition.x,shared.lastMousePosition.y)
+        update_f.updateCirclePreview(shared.lastMousePosition.x,shared.lastMousePosition.y)
       }
       else{
         //no defined event, simply don't display circles

@@ -45,7 +45,7 @@ function update_clip() {
 /**
  * Update the preview of the circle overlay, given mouse position
  */
-function update_EV_preview(mouseX,mouseY){
+function updateCirclePreview(mouseX,mouseY){
   updateCirclePreviewPath()
   var svg_EV = shared.svg_EV
   var svg_circle_EV = shared.svg_circle_EV
@@ -319,4 +319,4 @@ function updateCirclePreviewLayer(){
   shared.imgs_EV.attr("xlink:href", shared.cachedLayers[layer_path].url)
 }
 
-export default{update_clip,update_EV_preview,update_chart,update_text_school,updateMarker,updateMap,updateCirclePreviewPath,updateCirclePreviewLayer,deselectInterComm}
+export default{update_clip,updateCirclePreview,update_chart,update_text_school,updateMarker,updateMap,updateCirclePreviewPath,updateCirclePreviewLayer,deselectInterComm}
