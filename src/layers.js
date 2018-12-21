@@ -42,16 +42,7 @@ function loadLayer(path, isFuture, callback) {
       var tempContext = canvas.getContext("2d");
       tempContext.createImageData(canvas.width, canvas.height);
 
-      var len = canvas.height * canvas.width;
-      var workersCount = 1;
-      var finished = 0;
-      var segmentLength = len / workersCount;
-      var blockSize = canvas.height / workersCount;
-
       //initalize means and counts arrays
-      var voronoi_means = []
-      var voronoi_counts = []
-      var voronoi_hist = {}
       var entire_hist = []
 
 
@@ -59,140 +50,92 @@ function loadLayer(path, isFuture, callback) {
         entire_hist[i] = 0
       }
 
-      for (var i = 0; i < voronoi_shape.features.length; ++i) {
-        voronoi_counts[i] = 0
-        voronoi_means[i] = 0
-        voronoi_hist[i] = []
-        for (var j=0; j<256; ++j){
-          voronoi_hist[i][j]=0
-        }
-      }
-
-      var interComm_means = []
-      var interComm_counts = []
-      var interComm_hist = {}
-
-      for (var i = 0; i < interComm_shape.features.length; ++i) {
-        interComm_counts[i] = 0
-        interComm_means[i] = 0
-        interComm_hist[i] = []
-        for (var j=0; j<256; ++j){
-          interComm_hist[i][j]=0
-        }
-      }
-
       shared.firstVoronoiByInterComm = []
-      var firstVoronoiByInterComm = shared.firstVoronoiByInterComm
-
-      for (var i = 0; i < interComm_shape.features.length; ++i) {
-        firstVoronoiByInterComm[i] = 10000 //bigger than the max, ~670
-      }
-
       // Return a promise.
       var onWorkEnded = function(e) {
         var canvasData = e.data.result;
-        var index = e.data.index;
 
-        var interComm_counts_portion = e.data.interComm_counts
-        var interComm_means_portion = e.data.interComm_means
-        var voronoi_counts_portion = e.data.voronoi_counts
-        var voronoi_means_portion = e.data.voronoi_means
-        var firstVoronoiByInterCommPortion = e.data.firstVoronoiByInterComm
-        var voronoi_hist_portion = e.data.voronoi_hist
-        var interComm_hist_portion = e.data.interComm_hist
-
-        for (var i = 0; i < voronoi_shape.features.length; ++i) {
-          voronoi_counts[i] += voronoi_counts_portion[i]
-          voronoi_means[i] += voronoi_means_portion[i]
-
-          for (var j=0; j<256; ++j){
-            voronoi_hist[i][j] += voronoi_hist_portion[i][j]
-          }
-        }
+        var interComm_counts = e.data.interComm_counts
+        var interComm_means = e.data.interComm_means
+        var voronoi_counts = e.data.voronoi_counts
+        var voronoi_means = e.data.voronoi_means
+        shared.firstVoronoiByInterComm = e.data.firstVoronoiByInterComm
+        var voronoi_hist = e.data.voronoi_hist
+        var interComm_hist = e.data.interComm_hist
 
         for (var i = 0; i < interComm_shape.features.length; ++i) {
-          interComm_counts[i] += interComm_counts_portion[i]
-          interComm_means[i] += interComm_means_portion[i]
-
           for (var j=0; j<256; ++j){
-            interComm_hist[i][j] += interComm_hist_portion[i][j]
-            entire_hist[j] += interComm_hist_portion[i][j]
-          }
-          
-
-          if (firstVoronoiByInterComm[i] > firstVoronoiByInterCommPortion[i]) {
-            firstVoronoiByInterComm[i] = firstVoronoiByInterCommPortion[i]
+            entire_hist[j] += interComm_hist[i][j]
           }
         }
 
-        tempContext.putImageData(canvasData, 0, blockSize * index);
-        finished++;
+        tempContext.putImageData(canvasData, 0, 0);
+        console.log(voronoi_counts,interComm_counts)
 
-        if (finished == workersCount) {
-          if(path == Config.Ecole_path){
-            // Here we count the number of schools
-              for (var i = 0; i < voronoi_shape.features.length; ++i) {
-                  voronoi_means[i] /= 255
-              }
-              for (var i = 0; i < interComm_shape.features.length; ++i) {
-                  interComm_means[i] /= 255
-              }
-          }
-          else{
+        if(path == Config.Ecole_path){
+          // Here we count the number of schools
             for (var i = 0; i < voronoi_shape.features.length; ++i) {
-              if (voronoi_counts[i] != 0) {
-                voronoi_means[i] /= voronoi_counts[i]
-              }
+                voronoi_means[i] /= 255
             }
             for (var i = 0; i < interComm_shape.features.length; ++i) {
-              if (interComm_counts[i] != 0) {
-                interComm_means[i] /= interComm_counts[i]
-              }
+                interComm_means[i] /= 255
+            }
+        }
+        else{
+          for (var i = 0; i < voronoi_shape.features.length; ++i) {
+            if (voronoi_counts[i] != 0) {
+              voronoi_means[i] /= voronoi_counts[i]
             }
           }
-              
-          var hist_buckets = [70, 140]; //TODO: change acodring to layer (hard-coded...)
-
-          var value = canvas.toDataURL("png");
-
-          update_f.updateCirclePreviewLayer()//refresh the EV overlay, the layer we want might be ready now
-
-          var colorScale = null
-          if (Config.layers[path] && Config.layers[path].useColorScheme){
-            var domain = helpers_f.range(256)
-            var range = helpers_f.getColorsFromScheme(Config.layers[path].colorScheme)
-          
-            colorScale = d3.scale.linear()
-              .range(range).domain(domain)
+          for (var i = 0; i < interComm_shape.features.length; ++i) {
+            if (interComm_counts[i] != 0) {
+              interComm_means[i] /= interComm_counts[i]
+            }
           }
-          
-          if (Config.layers[path] && Config.layers[path].useColorScheme){
-            range = helpers_f.getColorsFromScheme(Config.layers[path].colorScheme)
-          }
-          
-          shared.cachedLayers[truePath] = {
-            "url": value,
-            "tl_lat": json.tl_lat,
-            "tl_lng": json.tl_lng,
-            "br_lat": json.br_lat,
-            "br_lng": json.br_lng,
-            "width": canvas.width,
-            "height": canvas.height,
-            "voronoi_means": voronoi_means,
-            "interComm_means": interComm_means,
-            "voronoi_hist": voronoi_hist,
-            "entire_hist":entire_hist,
-            "interComm_hist": interComm_hist,
-            "hist_buckets": hist_buckets,
-            "percentiles" : json.percentiles,
-            "layerUrl": truePath,
-            "colorScale": colorScale
-          }
-
-          console.log('Processed layer:', truePath)
-
-          callback();
         }
+            
+        var hist_buckets = [70, 140];
+
+        var value = canvas.toDataURL("png");
+
+        update_f.updateCirclePreviewLayer()//refresh the EV overlay, the layer we want might be ready now
+
+        var colorScale = null
+        if (Config.layers[path] && Config.layers[path].useColorScheme){
+          var domain = helpers_f.range(256)
+          var range = helpers_f.getColorsFromScheme(Config.layers[path].colorScheme)
+        
+          colorScale = d3.scale.linear()
+            .range(range).domain(domain)
+        }
+        
+        if (Config.layers[path] && Config.layers[path].useColorScheme){
+          range = helpers_f.getColorsFromScheme(Config.layers[path].colorScheme)
+        }
+        
+        shared.cachedLayers[truePath] = {
+          "url": value,
+          "tl_lat": json.tl_lat,
+          "tl_lng": json.tl_lng,
+          "br_lat": json.br_lat,
+          "br_lng": json.br_lng,
+          "width": canvas.width,
+          "height": canvas.height,
+          "voronoi_means": voronoi_means,
+          "interComm_means": interComm_means,
+          "voronoi_hist": voronoi_hist,
+          "entire_hist":entire_hist,
+          "interComm_hist": interComm_hist,
+          "hist_buckets": hist_buckets,
+          "percentiles" : json.percentiles,
+          "layerUrl": truePath,
+          "colorScale": colorScale
+        }
+
+        console.log('Processed layer:', truePath)
+
+        callback();
+        
       };
 
       // FIXME(liautaud): Nested callbacks is a code smell.
@@ -215,29 +158,26 @@ function loadLayer(path, isFuture, callback) {
         }
       }
 
-      for (var index = 0; index < workersCount; index++) {
-        var worker = new Worker("assets/pictureProcessor.js");
-        worker.onmessage = onWorkEnded;
-        var canvasData = tempContext.getImageData(0, blockSize * index, canvas.width, blockSize);
-        worker.postMessage({
-          canvasData: canvasData,
-          pixels: pixels,
-          index: index,
-          length: segmentLength,
-          width: canvas.width,
-          height: canvas.height,
-          voronoiContainmentData: shared.voronoiContainment.data,
-          interCommContainmentData: shared.interCommContainment.data,
-          numVoronois: voronoi_shape.features.length,
-          numInterComms: interComm_shape.features.length,
-          tl_lat: json.tl_lat,
-          tl_lng: json.tl_lng,
-          br_lat: json.br_lat,
-          br_lng: json.br_lng,
-          colorDomain: domain,
-          colorRange: range
-        });
-      }
+      var worker = new Worker("assets/pictureProcessor.js");
+      worker.onmessage = onWorkEnded;
+      var canvasData = tempContext.getImageData(0, 0, canvas.width, canvas.height);
+      worker.postMessage({
+        canvasData: canvasData,
+        pixels: pixels,
+        length: canvas.height * canvas.width,
+        width: canvas.width,
+        height: canvas.height,
+        voronoiContainmentData: shared.voronoiContainment.data,
+        interCommContainmentData: shared.interCommContainment.data,
+        numVoronois: voronoi_shape.features.length,
+        numInterComms: interComm_shape.features.length,
+        tl_lat: json.tl_lat,
+        tl_lng: json.tl_lng,
+        br_lat: json.br_lat,
+        br_lng: json.br_lng,
+        colorDomain: domain,
+        colorRange: range
+      });
     })
 
   // TODO(liautaud): Return a Promise.
@@ -299,7 +239,6 @@ function setLayer(layerPath, isFuture) {
 
     const colorScale = layer.colorScale
     shared.voronoi.style('fill', function(_, i){
-      //console.log(layer.voronoi_means[i],colorScale(layer.voronoi_means[i]))
       if (layerPath == Config.EV_path){
         return "#00000011" //transparent
       }
