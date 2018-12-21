@@ -59,12 +59,9 @@ function isWithinParis(point) {
 function setLocation (lat, lng) {
   if (!lat || !lng || !isWithinParis([lng, lat])) {
     lat = null
-    lng = null
-    shared.map.fitBounds(shared.initialBounds)
+    lng = null 
   } else {
-    //console.log(lat,lng)
     shared.map.setView(new L.LatLng(lat, lng),11)
-    //shared.map.setZoom(11)
   }
 
   shared.currentGeoLat = lat
