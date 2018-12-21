@@ -34,6 +34,16 @@ The project hierarchy is as follows:
     - `assets`: external scripts and images
     - `data`: pre-computed jsons necessary for the visualization
         - `rasters`: preprocessed raster files
-- `src`: source code, main App component and settings file
+- `src`: main App component and settings file
     - `components`: web page dynamic components
     - `locales`: frensh-english translations
+    
+    as well as source code:
+    - `main.js`: main function, mounts the app
+    - `map.js`: functions used to create the map and initialize the components
+    - `shapes.js`: functions used to generate the intercommunalities and voronois shapes and behaviour
+    - `layers.js`: functions used to load, preprocess and switch layers
+    - `update.js`: functions used to update elements (map, sidebar, scale,...)
+    - `helpers.js`: contains various helper functions
+    - `shared.js`: contains shared variables needed by multiple files 
+    - `config.json`: contains informations about the layers to display
