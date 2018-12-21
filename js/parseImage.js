@@ -12,10 +12,9 @@
  *		- (Choose file location/name, and write its name down there)
  *		- SCR: choose default (EPSG:4326 - WGS 84)
  *		- Write down the North/East/West/South values down there
- *		- Go back to SCR = EPSG-102110-RGF_1993_Lambert_93 (or whatever it was, actually)
+ *		- Change to SCR = EPSG:3857 - WGS 84 / Pseudo-Mercator
  *		- Save
- *		- Choose bin thresholds for the categories of the histograms on the right (values go from 0 to 255, choose an array of separators)
- *		- Write down there whether the values are discrete or not (typically true for the "espaces_verts" raster file, only three categories there)
+ *		- Write down there whether the values are discrete or not (typically true for the "espaces_verts" raster file, only three categories there. False for "usual" rasters)
  *		- Run the server locally (npm won't work here, "python -m http.server" will do)
  *		- At the bottom of the page, download you file.
  */
@@ -30,9 +29,7 @@ var South = 48.111114327
 var West = 1.458223266
 var East = 3.565682555
 
-var HistogramBins = [80,160] //3 categories: 0-80, 81-160, 161-255
-
-var AreValuesDiscrete = true //typically true when a pixel color is a category
+var AreValuesDiscrete = true //typically true when a pixel color is a category. False for "usual" rasters.
 
 
 function whenDocumentLoaded(action) {
@@ -46,6 +43,8 @@ function whenDocumentLoaded(action) {
 
 
 whenDocumentLoaded(() => {
+
+	var HistogramBins = [80,160]
 
 	document.getElementById("my-image").src=FileName
 
