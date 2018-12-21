@@ -1,5 +1,5 @@
 //this file contains a set of variables. Those variables should be treated as global variables, and can be used anywhere
-//used because otherwise, we would have either a 800 lines file, or 15 parameters functions...
+//used because otherwise, we would have either 800-lines files, or 15 parameters functions...
 
 var cachedLayers = {} //placehoder for the layers, to compute them only once
 
@@ -7,7 +7,7 @@ var currentLayerPath = "" //path of the currently selected layer
 
 var map = null //reference to the leaflet map
 
-var mapElement = null
+var mapElement = null //reference to the map container
 
 var currentGeoLat = null //current latitude of the cursor
 
@@ -73,13 +73,13 @@ var showFutureInsteadOfEV = false //do we show the future preview in the circle 
 
 var lastMousePosition = {x:0,y:0} //last known position of the mouse
 
-var isFuture = false
+var isFuture = false //are we in the future? (state of the 2012-2030 button)
 
-var currentCircleLayerPath = ""
+var currentCircleLayerPath = "" //name of the current layer that need to be drawn inside the circle preview
 
-var currentChartIndex = -1
+var currentChartIndex = -1 //index of the current voronoi/intercomm that has its data displayed in the sidebar, -1 if none
 
-var currentChartIndexIsVoronoi = false
+var currentChartIndexIsVoronoi = false //is the current element that has its data displayed in the sidebar a voronoi or an intercomm?
 
 export default {cachedLayers,
 				currentLayerPath,
