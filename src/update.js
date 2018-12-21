@@ -111,7 +111,11 @@ function update_chart(layerURL) {
     data = info.interComm_hist[i]
   }
 
-  data[0]=0 // ignore 0 values
+  //TODO: don't exclude Urban cooling, but right now the layer has only three different values so it looks way better with 0 values
+  if (layerURL != Config.Urban_cooling){
+    data[0]=0 // ignore 0 values
+  }
+  
   shared.onHistChange(helpers_f.range(256),data)
 
 }
