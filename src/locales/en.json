@@ -40,7 +40,7 @@
         "3": "The legend is visible at the bottom right, and indicates that you are currently viewing a map of the natural areas of the region.",
         "4": "You can use the menu on the left to choose a measure to display, or to place your current position on the map.",
         "5": "For example, select the measurement of groundwater recharge.",
-        "6": "The right part of the screen gives you more information about the selected measurement, as well as its distribution as a histogram.",
+        "6": "The right part of the screen gives you more information about the selected measurement, as well as its distribution as a histogram. Press <span class=\"keycap\">&rarr;</span> when you are done.",
         "7": "For some measurements, you can also choose between current data and a prediction by 2030 under a climate change scenario.",
         "8": "Move your mouse over the map. The histogram changes according to the inter-municipality overflown, and the green spaces under your cursor are displayed in a bubble.",
         "9": "You can disable the bubble by pressing <span class=\"keycap\">X</span>. You can use the bubble to see future predictions by pressing <span class=\"keycap\">SPACE</span>.",

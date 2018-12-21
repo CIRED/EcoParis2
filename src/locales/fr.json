@@ -40,7 +40,7 @@
         "3": "La légende est visible en bas à droite, et vous indique que vous visualisez actuellement une carte des espaces naturels de la région.",
         "4": "Vous pouvez utiliser le menu à gauche pour choisir une mesure à afficher, ou encore pour placer votre position actuelle sur la carte.",
         "5": "Sélectionnez par exemple la mesure du rechargement des nappes phréatiques.",
-        "6": "La partie droite de l'écran vous donne plus d'informations sur la mesure sélectionnée, ainsi que sa distribution sous forme d'histogramme.",
+        "6": "La partie droite de l'écran vous donne plus d'informations sur la mesure sélectionnée, ainsi que sa distribution sous forme d'histogramme. Appuyez sur <span class=\"keycap\">&rarr;</span> pour passer à la suite.",
         "7": "Pour certaines mesures, vous pouvez aussi choisir entre les données actuelles et une prédicition à l'horizon 2030 sous un scénario de changement climatique.",
         "8": "Déplacez votre souris sur la carte. L'histogramme change selon l'intercommunalité survolée, et les espaces verts sous votre curseur sont affichés dans une bulle.",
         "9": "Vous pouvez désactiver la bulle en pressant <span class=\"keycap\">X</span>. Vous pouvez utiliser la bulle pour voir les prédictions futures en pressant <span class=\"keycap\">ESPACE</span>.",
