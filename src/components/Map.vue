@@ -24,19 +24,19 @@
       <div ref="legend" class="legend-inner"></div>
 
       <section v-if="isEspacesVerts">
-        <h3>Espace naturels</h3>
+        <h3>{{ $t('legend.natural-spaces') }}</h3>
 
         <figure>
           <div class="item" :style="{backgroundColor: forestColor}"></div>
-          <figcaption>Espaces boisés</figcaption>
+          <figcaption v-html="$t('legend.wood')"></figcaption>
         </figure>
         <figure>
           <div class="item" :style="{backgroundColor: waterColor}"></div>
-          <figcaption>Fleuves et <br />espaces en eau</figcaption>
+          <figcaption v-html="$t('legend.water')"></figcaption>
         </figure>
         <figure>
           <div class="item" :style="{backgroundColor: greenColor}"></div>
-          <figcaption>Espaces verts et <br />espaces de loisirs</figcaption>
+          <figcaption v-html="$t('legend.leisure')"></figcaption>
         </figure>
       </section>
 
@@ -67,10 +67,14 @@ export default {
     isEspacesVerts() {
       return this.currentLayerPath == Config.EV_path
     },
+    
+    currentLayerId() {
+      return Config.layers[this.currentLayerPath].id
+    },
 
     currentUnit() {
       if (this.currentLayerPath) {
-        return Config.layers[this.currentLayerPath].unit
+        return this.$t(`layers.${this.currentLayerId}.unit`)
       }
     },
 

@@ -3,16 +3,16 @@
     <h3>{{ $t('titles.layers') }}</h3>
 
     <div class="buttons">
-      <a v-for="layer in layers"
+      <a v-for="(layer, path) in layers"
         v-if="!layer.hidden"
         :style="{'background': value == layer.path ? layer.active_color : layer.color}"
-        :key="layer.name"
-        :title="layer.name"
+        :key="path"
+        :title="path"
         :class="{ active: value == layer.path }"
 
         @click.prevent="select(layer)">
-        <span class="icon" v-html="layer.icon"></span>
-        <span>{{ layer.name }}</span>
+        <span class="icon" v-html="$t(`layers.${layer.id}.icon`)"></span>
+        <span>{{ $t(`layers.${layer.id}.name`) }}</span>
 
         <div v-if="!layer.loaded" class="loader-tile-grid">
           <div class="loader-tile loader-tile1"></div>

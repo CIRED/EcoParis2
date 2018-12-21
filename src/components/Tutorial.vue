@@ -2,27 +2,15 @@
   <section class="tutorial">
     <p v-html="currentStepHtml"></p>
 
-    <a href="#" @click.prevent="close" class="button dark"><span class="keycap">ESC</span> Quitter</a>
-    <a v-if="value < 12" href="#" @click.prevent="next" class="button dark full"><span class="keycap">&rarr;</span> Suivant</a>
+    <a href="#" @click.prevent="close" class="button dark"><span class="keycap">ESC</span> {{ $t('skip') }}</a>
+    <a v-if="value < 12" href="#" @click.prevent="next" class="button dark full"><span class="keycap">&rarr;</span> {{ $t('next') }}</a>
   </section>
 </template>
 
 <script>
-const steps = [
-  "Bienvenue sur <i>EcoParis</i>. Pour accéder directement à la visualisation, appuyez sur Echap. Pour continuer le tutoriel, appuyez sur la flèche droite.",
-  "Cette visualisation est articulée autour d'une carte de la région Île-de-France, sur laquelle vous pouvez superposer plusieurs mesures écosystémiques.",
-  "La légende est visible en bas à droite, et vous indique que vous visualisez actuellement une carte des espaces naturels de la région.",
-  "Vous pouvez utiliser le menu à gauche pour choisir une mesure à afficher, ou encore pour placer votre position actuelle sur la carte.",
-  "Sélectionnez par exemple la mesure du rechargement des nappes phréatiques.",
-  "La partie droite de l'écran vous donne plus d'informations sur la mesure sélectionnée, ainsi que sa distribution sous forme d'histogramme.",
-  "Pour certaines mesures, vous pouvez aussi choisir entre les données actuelles et une prédicition à l'horizon 2030 sous un scénario de changement climatique.",
-  "Déplacez votre souris sur la carte. L'histogramme change selon l'intercommunalité survolée, et les espaces verts sous votre curseur sont affichés dans une bulle.",
-  "Vous pouvez désactiver la bulle en pressant <span class=\"keycap\">X</span>. Vous pouvez utiliser la bulle pour voir les prédictions futures en pressant <span class=\"keycap\">ESPACE</span>.",
-  "Vous pouvez cliquer sur une intercommunalité pour l'observer en détails, et double-cliquer pour revenir à la vue générale.",
-  "Pour finir, sélectionnez la mesure de Hotspots. Elle correspond à un aggrégat des autres mesures, et quantifie les bénéfices naturels dans une zone.",
-  "À l'aide de la bulle, vous pouvez constater le lien entre les espaces naturels et les hotspots. À vous maintenant de chercher d'autres liens !"
-]
-
+/**
+ * Handles key presses to ESC, ← and →.
+ */
 function onKeyUp(e) {
   if (e && (e.which || e.keyCode) == 37) {
     this.prev()
@@ -75,7 +63,7 @@ export default {
 
   computed: {
     currentStepHtml() {
-      return steps[this.value ? this.value - 1 : 0]
+      return this.$t(`tutorial.${this.value || 12}`)
     }
   },
 
@@ -214,7 +202,7 @@ export default {
     }
   }
 
-  .layers [title=Nappe] {
+  .layers [title="data/rasters/L_ref.json"] {
     z-index: 1500;
     background: #fff;
   }
@@ -254,7 +242,7 @@ export default {
     }
   }
 
-  .layers [title=Hotspots] {
+  .layers [title="data/rasters/correlation_ref.json"] {
     z-index: 1500;
     background: #fff;
   }

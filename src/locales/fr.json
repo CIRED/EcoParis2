@@ -9,7 +9,8 @@
 
     "sidebar": {
         "whole-region": "Toute la région Île-de-France",
-        "child-count": "Les enfants étant l'une des catégories de population vulnérables aux canicules, il est important de noter qu'il y a <b>{count}</b> établissements scolaires dans la zone sélectionnée."
+        "child-count": "Les enfants étant l'une des catégories de population vulnérables aux canicules, il est important de noter qu'il y a <b>{count}</b> établissements scolaires dans la zone sélectionnée.",
+        "number-points": "Nombre de points"
     },
 
     "titles": {
@@ -30,55 +31,73 @@
         "logo": "Le logo du perroquet a été réalisé par <a href=\"https://www.flaticon.com/authors/freepik\">Freepik</a> pour <a href=\"http://www.flaticon.com/\">Flaticon</a>."
     },
     
-    "layers": {
+    "tutorial": {
+        "skip": "Quitter",
+        "next": "Suivant",
+        "1": "Bienvenue sur <i>EcoParis</i>. Pour accéder directement à la visualisation, appuyez sur Echap. Pour continuer le tutoriel, appuyez sur la flèche droite.",
+        "2": "Cette visualisation est articulée autour d'une carte de la région Île-de-France, sur laquelle vous pouvez superposer plusieurs mesures écosystémiques.",
+        "3": "La légende est visible en bas à droite, et vous indique que vous visualisez actuellement une carte des espaces naturels de la région.",
+        "4": "Vous pouvez utiliser le menu à gauche pour choisir une mesure à afficher, ou encore pour placer votre position actuelle sur la carte.",
+        "5": "Sélectionnez par exemple la mesure du rechargement des nappes phréatiques.",
+        "6": "La partie droite de l'écran vous donne plus d'informations sur la mesure sélectionnée, ainsi que sa distribution sous forme d'histogramme.",
+        "7": "Pour certaines mesures, vous pouvez aussi choisir entre les données actuelles et une prédicition à l'horizon 2030 sous un scénario de changement climatique.",
+        "8": "Déplacez votre souris sur la carte. L'histogramme change selon l'intercommunalité survolée, et les espaces verts sous votre curseur sont affichés dans une bulle.",
+        "9": "Vous pouvez désactiver la bulle en pressant <span class=\"keycap\">X</span>. Vous pouvez utiliser la bulle pour voir les prédictions futures en pressant <span class=\"keycap\">ESPACE</span>.",
+        "10": "Vous pouvez cliquer sur une intercommunalité pour l'observer en détails, et double-cliquer pour revenir à la vue générale.",
+        "11": "Pour finir, sélectionnez la mesure de Hotspots. Elle correspond à un aggrégat des autres mesures, et quantifie les bénéfices naturels dans une zone.",
+        "12": "À l'aide de la bulle, vous pouvez constater le lien entre les espaces naturels et les hotspots. À vous maintenant de chercher d'autres liens !"      
+    },
+
+    "legend": {
+        "natural-spaces": "Espace naturels",
+        "wood": "Espaces boisés",
+        "water": "Fleuves et <br />espaces en eau",
+        "leisure": "Espaces verts et <br />espaces de loisirs"
+    },
     
-        "data/rasters/espaces_verts.json": {
+    "layers": {
+        "espaces-verts": {
             "name": "Esp. nat.",
-            "icon": "E",
-            "title": "",
-            "content": "",
-            "unit": ""
+            "icon": "E"
         },
-        "data/rasters/pollination_ref.json": {
+        "pollination": {
             "name": "Polli.",
             "icon": "P",
             "title": "Mesure de la pollinisation",
             "content": "<p>Pour de nombreuses plantes à fleurs, la réalisation du cycle sexuel implique l’intervention d’animaux pollinisateurs, qui permettent la rencontre des gamètes par leur comportement de prise alimentaire. L’abondance de pollinisateurs est donc un facteur déterminant du rendement agricole et ce pour 75% des cultures humaines.</p><p style='text-align: center;'><a class='button' href='http://data.naturalcapitalproject.org/nightly-build/invest-users-guide/html/croppollination.html' target='_blank'>En savoir plus</a></p>",
+			"hist_legend": "Indice d'abondance de pollinisation",
             "unit": "indice d'abondance"
         },
-        "data/rasters/T_reduction.json": {
+        "reduction": {
             "name": "Temp.",
             "icon": "T",
             "title": "Mesure du service de rafraîchissement",
             "content": "<p>Le service de rafraichissement peut atteindre plusieurs degrés. Il réduit les risques sanitaires (maladies cardio-vasculaires et décès directement liés aux canicules) et potentiellement la consommation énergétique associée à la climatisation.</p><p style='text-align: center;'><a class='button' href='https://www.iucn.org/content/nature-cools-when-things-heat' target='_blank'>En savoir plus</a></p>",
+			"hist_legend": "Raffraichissement (en °C)",
             "unit": "en °C"
         },
-        "data/rasters/L_ref.json": {
+        "nappes": {
             "name": "Nappe",
             "icon": "Na",
             "title": "Mesure du rechargement des nappes",
             "content": "<p>Cette mesure permet de quantifier la rétention des eaux de pluie par les écosystèmes en amont des cours d’eau. Elle établit, pour chaque pixel, un bilan hydrique mensuel permettant de calculer la quantité d’eau pluviale s’infiltrant vers les nappes phréatiques, nette du ruissellement et de l’évapotranspiration. La majorité des captages pour la production d’eaux destinées à la consommation humaine exploitent des eaux souterraines. Avec les effets du changement climatique, des aléas météorologiques plus marqués et plus fréquents, sécheresses ou épisodes pluvieux intenses, vont impacter les ressources en eau.</p><p style='text-align: center;'><a class='button' href='http://data.naturalcapitalproject.org/nightly-build/invest-users-guide/html/seasonal_water_yield.html' target='_blank'>En savoir plus</a></p>",
+			"hist_legend": "Rechargement des nappes (en mm/an)",
             "unit": "en mm/an"
         },
-        "data/rasters/n_ret_ref.json": {
+        "nutriments": {
             "name": "Nutri.",
             "icon": "Nu",
             "title": "Mesure de la rétention des nutriments",
             "content": "<p>La mesure vise à estimer les quantités d’azote et de phosphore retenues annuellement en amont du réseau hydrographique après un dépôt diffus. Le service de rétention permet d'améliorer la qualité de l'eau (superficielle et souterraine). Il est directement utile aux organismes de gestion de l'eau (syndicats et département d'assainissement), et donc aux habitants dont les impôts financent la maintenance des services d'assainissement.</p><p style='text-align: center;'p><a class='button' href='http://data.naturalcapitalproject.org/nightly-build/invest-users-guide/html/ndr.html' target='_blank'>En savoir plus</a></p>",
+			"hist_legend": "Rétention des nutriments (en % d'absorption)",
             "unit": "en % d'absorption"
         },
-        "data/rasters/correlation_ref.json": {
+        "hotspots": {
             "name": "Hotspots",
             "icon": "H",
             "title": "Hotspots des services",
             "content": "<p>Un indicateur multi-critère a été calculé pour identifier les hotspots de services. La mesure consiste en la moyenne des quatre valeurs de service (rétention des nutriments, rechargement des nappes, rafraîchissement et pollinisation), préalablement normalisées (transformation linéaire vers des valeurs entre 0 et 1). Plus il y a d'espaces naturels, plus la quantité de service augmente tout en dépendant des procédés biophysiques propres à chaque service.</p><p style='margin-bottom:0'>Formule : (P<sub>n</sub> + Nu<sub>n</sub> + Na<sub>n</sub> + T<sub>n</sub>) &frasl; 4</p><ul><li>Pollinisation : P<sub>n</sub> = P &frasl; max(P)</li><li>Rét. nutriment : Nu<sub>n</sub> = Nu &frasl; max(Nu)</li><li>Recharge des nappes : Na<sub>n</sub> = Na &frasl; max(Na)</li><li>Rafraîchissement : T<sub>n</sub> = T &frasl; max(T)</li></ul>",
-            "unit": ""
-        },
-        "data/rasters/ecoles_elementaires.json": {
-            "name": "Ecoles elementaires",
-            "icon": "E",
-            "title": "Nombre d'écoles élémentaires et maternelles.",
-            "content": "<p>Should not appear anyway, find something to fill here.</p>",
+			"hist_legend": "",
             "unit": ""
         }
     }

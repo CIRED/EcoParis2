@@ -2,8 +2,8 @@
   <section class="sidebar">
     <template v-if="!isEspacesVerts && currentLayerPath && layers[currentLayerPath].loaded">
       <article>
-        <h2>{{ layers[currentLayerPath].title }}</h2>
-        <div v-html="layers[currentLayerPath].content"></div>
+        <h2>{{ $t(`layers.${currentLayerId}.title`) }}</h2>
+        <div v-html="$t(`layers.${currentLayerId}.content`)"></div>
       </article>
 
       <article class="contextual-info">
@@ -61,6 +61,10 @@ export default {
   computed: {
     isEspacesVerts() {
       return this.currentLayerPath == Config.EV_path;
+    },
+
+    currentLayerId() {
+      return Config.layers[this.currentLayerPath].id
     }
   }
 }

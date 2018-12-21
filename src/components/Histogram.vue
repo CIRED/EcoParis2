@@ -47,14 +47,14 @@ export default {
       .style("text-anchor", "middle")
       .style("font-size", "9pt")
       .style("font-style", "italic")
-      .text("Nombre de points")
+      .text(this.$t('sidebar.number-points'))
 
     const xLegend = svg.append("text")             
         .attr("transform", `translate(${innerWidth / 2} , ${height - 10})`)
         .style("text-anchor", "middle")
         .style("font-size", "9pt")
         .style("font-style", "italic")
-        .text("Rechargement des nappes (en mm/an)")
+        .text(this.$t(`layers.${this.currentLayerId}.hist_legend`))
 
     /**
      * Updates the histogram using new data for the bars.
@@ -123,6 +123,12 @@ export default {
      */
     x() {
       this.updateChart(this.x, this.y)
+    }
+  },
+
+  computed: {
+    currentLayerId() {
+      return Config.layers[this.currentLayerPath].id
     }
   }
 }
