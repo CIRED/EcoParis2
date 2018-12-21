@@ -70,7 +70,6 @@ function loadLayer(path, isFuture, callback) {
         }
 
         tempContext.putImageData(canvasData, 0, 0);
-        console.log(voronoi_counts,interComm_counts)
 
         if(path == Config.Ecole_path){
           // Here we count the number of schools
