@@ -43,7 +43,7 @@ function createMap (element) {
 
   base.addTo(map)
 
-  map.setView(new L.LatLng(48.856614,2.3522219),map.getZoom()+2)
+  map.setView(new L.LatLng(48.856614,2.3522219),map.getZoom()+2) // zoom more on Paris, initially
 }
 
 /**
@@ -56,7 +56,7 @@ function isWithinParis(point) {
 /**
  * Sets the position of the geolocation marker.
  */
-function setLocation (lat, lng) {z
+function setLocation (lat, lng) {
   if (!lat || !lng || !isWithinParis([lng, lat])) {
     lat = null
     lng = null
