@@ -2,7 +2,7 @@
   <section class="tutorial">
     <p v-html="currentStepHtml"></p>
 
-    <a v-if="value > 1" href="#" @click.prevent="prev" class="button dark full"><span class="keycap">&rarr;</span> {{ $t('tutorial.previous') }}</a>
+    <a v-if="value > 1" href="#" @click.prevent="prev" class="button dark full"><span class="keycap">&larr;</span> {{ $t('tutorial.previous') }}</a>
     <a href="#" @click.prevent="close" class="button dark"><span class="keycap">ESC</span> {{ $t('tutorial.skip') }}</a>
     <a v-if="value < 12" href="#" @click.prevent="next" class="button dark full"><span class="keycap">&rarr;</span> {{ $t('tutorial.next') }}</a>
   </section>
@@ -157,14 +157,14 @@ export default {
   .keycap {
     margin: 0 10px 0 0;
   }
+}
 
-  &:last-child .keycap {
-    position: relative;
-    border-color: #fff;
-    padding-top: 1px;
-    padding-bottom: 3px;
-    top: -2px;
-  }
+.button.dark.full .keycap{
+  position: relative;
+  border-color: #fff;
+  padding-top: 1px;
+  padding-bottom: 3px;
+  top: -2px;
 }
 
 @mixin cover($rt: -1px, $rl: -1px, $rr: -1px, $rb: -1px) {
