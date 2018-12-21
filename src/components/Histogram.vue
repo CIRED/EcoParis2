@@ -54,7 +54,6 @@ export default {
         .style("text-anchor", "middle")
         .style("font-size", "9pt")
         .style("font-style", "italic")
-        .text(this.$t(`layers.${this.currentLayerId}.hist_legend`))
 
     /**
      * Updates the histogram using new data for the bars.
@@ -76,7 +75,7 @@ export default {
         .domain(xData)
 
       // Update the legend text.
-      xLegend.text(currentLayer.hist_legend)
+      xLegend.text(this.$t(`layers.${this.currentLayerId}.hist_legend`))
 
       // Find the x and y minimums and maximums.
       const nonZero = xData.filter(x => yData[x] > 0)
