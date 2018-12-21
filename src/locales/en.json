@@ -35,7 +35,7 @@
         "skip": "Skip",
         "next": "Next",
         "previous": "Previous",
-        "1": "Welcome to <i>EcoParis</i>. To skip to the visualization, press Escape. To continue the tutorial, press the right key.",
+        "1": "Welcome to <i>EcoParis</i>. To skip to the visualization, press Escape. To continue the tutorial, press the right key. After exiting it, you can restart the tutorial at any time by pressing the right arrow key.",
         "2": "This visualization revolves around the Île-de-France region, on which you can overlay several ecosystem measures.",
         "3": "The legend is visible at the bottom right, and indicates that you are currently viewing a map of the natural areas of the region.",
         "4": "You can use the menu on the left to choose a measure to display, or to place your current position on the map.",

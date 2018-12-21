@@ -35,7 +35,7 @@
         "skip": "Quitter",
         "next": "Suivant",
         "previous": "Précédent",
-        "1": "Bienvenue sur <i>EcoParis</i>. Pour accéder directement à la visualisation, appuyez sur Echap. Pour continuer le tutoriel, appuyez sur la flèche droite.",
+        "1": "Bienvenue sur <i>EcoParis</i>. Pour accéder directement à la visualisation, appuyez sur Echap. Pour continuer le tutoriel, appuyez sur la flèche droite. Après l'avoir quitté, vous pouvez à tout moment relancer le tutoriel en appuyant sur la touche directionnelle droite.",
         "2": "Cette visualisation est articulée autour d'une carte de la région Île-de-France, sur laquelle vous pouvez superposer plusieurs mesures écosystémiques.",
         "3": "La légende est visible en bas à droite, et vous indique que vous visualisez actuellement une carte des espaces naturels de la région.",
         "4": "Vous pouvez utiliser le menu à gauche pour choisir une mesure à afficher, ou encore pour placer votre position actuelle sur la carte.",
