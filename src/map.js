@@ -92,10 +92,8 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
   update_f.update_clip()
 
 
-  var emptyOpacity = 0
   var fadedOpacity = 0.4
   var semiFullOpacity = 0.7
-  var fullOpacity = 1
 
   shared.svg_EV = d3.select(EV_svg_element)
     .attr("style","display:none;")
@@ -123,9 +121,9 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
     .style("stroke-opacity", 1)
 
 
-  shared.voronoi = shapes_f.defineVoronoi(svg,emptyOpacity,fullOpacity)
+  shared.voronoi = shapes_f.defineVoronoi(svg)
 
-  shared.interComms = shapes_f.defineInterComms(svg,emptyOpacity,fadedOpacity,fullOpacity)
+  shared.interComms = shapes_f.defineInterComms(svg,fadedOpacity)
 
   shared.markerIcon = {
     iconUrl: 'assets/marker.png',

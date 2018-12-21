@@ -20,18 +20,18 @@ function oneIfInInterComm(interCommIndex) {
 /**
  * Defines the voronoi entity. Given an svg container (and some opacity parameters), will return a d3.selectAll("path") element defining the inner areas (i.e. voronois)
  */
-function defineVoronoi(svg,emptyOpacity,fullOpacity){
+function defineVoronoi(svg){
   return svg.append("g").selectAll("path")
     .data(shared.voronoi_shape.features)
     .enter().append('path')
     .attr('d', shared.pathGenerator)
     .attr('vector-effect', 'non-scaling-stroke')
     .style('stroke', "#666")
-    .style("fill-opacity", emptyOpacity)
-    .style("stroke-opacity", emptyOpacity)
+    .style("fill-opacity", 0)
+    .style("stroke-opacity", 0)
     .on("mouseover", function(d, i) { 
       // when the mouse hovers it, it should show the data behind, and become transparent
-      d3.select(this).style('fill-opacity', emptyOpacity);
+      d3.select(this).style('fill-opacity', 0);
 
       //update the data clip to show the layer inside this voronoi
       shared.defs_path.datum(d.geometry)
@@ -67,25 +67,13 @@ function defineVoronoi(svg,emptyOpacity,fullOpacity){
 
       shared.lastMousePosition={x:-300,y:-300}
     })
-    .on("dblclick", function(d, i) {
-      shared.interComms.style("pointer-events", "all")
-      shared.map.fitBounds(shared.initialBounds) // zoom back to paris
-      shared.highlightedInterComm = -1
+    .on("dblclick", function() {
+      update_f.deselectInterComm()
 
-      shared.interComms.style("fill", function(_,j){
-        if (!Config.layers[shared.currentLayerPath].useColorScheme){
-          return "#00000011"
-        }
-        return shared.cachedLayers[shared.currentLayerPath].colorScale(shared.cachedLayers[shared.currentLayerPath].interComm_means[j])
-      })
-      shared.interComms.style("fill-opacity", fullOpacity)
-      shared.voronoi.style("fill-opacity", emptyOpacity)
-      shared.voronoi.style("stroke-opacity", emptyOpacity)
+      shared.map.fitBounds(shared.initialBounds) // zoom back to paris
 
       shared.defs_path.datum([])
       update_f.update_clip()
-      shared.svg_EV.style("display","none")
-      shared.svg_circle_EV.style("display","none")
     })
     .on("mousemove",function(){
       if (d3.event && d3.event.clientX && d3.event.clientY && shared.currentLayerPath != Config.EV_path){
@@ -108,7 +96,7 @@ function defineVoronoi(svg,emptyOpacity,fullOpacity){
 /**
  * Defines the voronoi entity. Given an svg container (and some opacity parameters), will return a d3.selectAll("path") element defining the inner areas (i.e. voronois)
  */
-function defineInterComms(svg,emptyOpacity,fadedOpacity,fullOpacity){
+function defineInterComms(svg,fadedOpacity){
   return svg.append("g").selectAll("path")
     .data(shared.interComm_shape.features)
     .enter().append('path')
@@ -116,7 +104,7 @@ function defineInterComms(svg,emptyOpacity,fadedOpacity,fullOpacity){
     .attr('vector-effect', 'non-scaling-stroke')
     .style('stroke', "#333")
     .attr("fill", "#fff")
-    .attr("fill-opacity", fullOpacity)
+    .attr("fill-opacity", 1)
     .style("pointer-events", "all")
     .on("mouseover", function(d, i) {
       if (shared.highlightedInterComm != -1) { // i.e. we are zoomed in
@@ -128,7 +116,7 @@ function defineInterComms(svg,emptyOpacity,fadedOpacity,fullOpacity){
             d3.select(this).style("fill",shared.cachedLayers[shared.currentLayerPath].colorScale(shared.cachedLayers[shared.currentLayerPath].interComm_means[i]))
           }
           
-          d3.select(this).style('fill-opacity', fullOpacity);
+          d3.select(this).style('fill-opacity', 1);
         } else {
           //should never happen
         }
@@ -152,7 +140,7 @@ function defineInterComms(svg,emptyOpacity,fadedOpacity,fullOpacity){
           //should never happen
         }
       } else { // we are zoomed in a particular interComm
-        d3.select(this).style('fill-opacity', fullOpacity);
+        d3.select(this).style('fill-opacity', 1);
       }
       shared.svg_EV.style("display","none")
       shared.svg_circle_EV.style("display","none")
@@ -174,7 +162,7 @@ function defineInterComms(svg,emptyOpacity,fadedOpacity,fullOpacity){
 
       shared.interComms.style("fill","#000")
       shared.interComms.style('fill-opacity', fadedOpacity);
-      d3.select(this).style('fill-opacity', emptyOpacity);
+      d3.select(this).style('fill-opacity', 0);
       shared.highlightedInterComm = i
 
 

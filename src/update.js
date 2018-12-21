@@ -165,6 +165,7 @@ function updateMarker() {
 }
 
 function updateMap() {//add here everything that could potentially change
+
   var map = shared.map
   var cachedLayers = shared.cachedLayers
   var voronoi = shared.voronoi
@@ -173,6 +174,10 @@ function updateMap() {//add here everything that could potentially change
   var imgs_EV = shared.imgs_EV
   var update_parameters = shared.update_parameters
   var path = shared.pathGenerator
+
+  if (map.getZoom() == 9){
+    deselectInterComm()
+  }
 
   if (update_parameters.hide) {
     console.log('hidden!')
@@ -213,6 +218,24 @@ function updateMap() {//add here everything that could potentially change
   shared.svg_circle_EV.style("display","none")
 }
 
+function deselectInterComm(){
+  shared.interComms.style("pointer-events", "all")
+  shared.highlightedInterComm = -1
+
+  shared.interComms.style("fill", function(_,j){
+    if (!Config.layers[shared.currentLayerPath].useColorScheme){
+      return "#00000011"
+    }
+    return shared.cachedLayers[shared.currentLayerPath].colorScale(shared.cachedLayers[shared.currentLayerPath].interComm_means[j])
+  })
+  shared.interComms.style("fill-opacity", 1)
+  shared.voronoi.style("fill-opacity", 0)
+  shared.voronoi.style("stroke-opacity", 0)
+
+  shared.svg_EV.style("display","none")
+  shared.svg_circle_EV.style("display","none")
+}
+
 function updateCirclePreviewPath(){
   if (shared.showFutureInsteadOfEV && Config.layers[shared.currentLayerPath].future){ //if show future/present
     if (shared.isFuture){ //if show present
@@ -242,4 +265,4 @@ function updateCirclePreviewLayer(){
   shared.imgs_EV.attr("xlink:href", shared.cachedLayers[layer_path].url)
 }
 
-export default{update_clip,update_EV_preview,update_chart,update_text_school,updateMarker,updateMap,updateCirclePreviewPath,updateCirclePreviewLayer}
+export default{update_clip,update_EV_preview,update_chart,update_text_school,updateMarker,updateMap,updateCirclePreviewPath,updateCirclePreviewLayer,deselectInterComm}
