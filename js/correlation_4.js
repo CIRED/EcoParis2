@@ -1,3 +1,13 @@
+// ========== INSTRUCTIONS ==========
+/*
+ *  If you have changed a layer and you want it to be part of the hotspots layer, you should recompute it here.
+ *
+ *  STEPS:
+ *      - chose a set of layers you want to use
+ *      - update [1] [2] and [3] below (around lines 100) to contain the name of the rasters you will use, and their number.
+ *      - run the script ("python -m http.server") and download your file when it is done
+ */
+
 var change_referential = function(px,py,output_p,input_p){
     var current_tx = px / (output_p.width - 1) //between 0 and 1 included
     var current_ty = py / (output_p.height - 1)
@@ -97,23 +107,29 @@ function whenDocumentLoaded(action) {
 
 whenDocumentLoaded(() => {
     queue()
-        .defer(d3.json, "data/rasters/L_ref.json") // Load Watershed Shape
-        .defer(d3.json, "data/rasters/n_ret_ref.json") // Load Voronoi Shape
-        .defer(d3.json, "data/rasters/pollination_ref.json") // Load Voronoi Shape
-        .defer(d3.json, "data/rasters/T_reduction.json") // Load Voronoi Shape
+        //                                                                                                          ======== [1] BEGINS HERE =======
+        .defer(d3.json, "data/rasters/L_ref.json")
+        .defer(d3.json, "data/rasters/n_ret_ref.json")
+        .defer(d3.json, "data/rasters/pollination_ref.json")
+        .defer(d3.json, "data/rasters/T_reduction.json")
+        //                                                                                                          ======== [1] ENDS HERE =======
         .await(loadJSON); // When the GeoJsons are fully loaded, call the function loadGeom
 
+        //                                                                                                          ======== [2] BEGINS HERE =======
     function loadJSON(error, metric1, metric2, metric3, metric4){
+        //                                                                                                          ======== [2] ENDS HERE =======
         var output_width = 1943 //same as our reference image, so that the image is not too big (8000 x 6000...)
         var output_height = 1586
         var OutputFileName = "correlation_ref.json" //.json
         var HistogramBins = [80,160] //3 categories: 0-80, 81-160, 161-255
         
+        //                                                                                                          ======== [3] ENDS HERE =======
         var metric = []
         metric[0] = metric1
         metric[1] = metric2
         metric[2] = metric3
         metric[3] = metric4
+        //                                                                                                          ======== [3] ENDS HERE =======
         
         //var North = 49.215485585
         //var South = 48.127383524
@@ -125,10 +141,6 @@ whenDocumentLoaded(() => {
         var br_lats = []
         var br_lngs = []
 
-        console.log(metric[0])
-        console.log(metric[1])
-        console.log(metric[2])
-        console.log(metric[3])
         for (var i=0; i<metric.length; i++) {
             tl_lats[i] = metric[i].tl_lat
             tl_lngs[i] = metric[i].tl_lng
