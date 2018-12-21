@@ -89,11 +89,13 @@ export default {
       const ys = y.domain([0, yMax])
 
       // Update the axes.
+      yAxis.call(d3.axisLeft(ys))
       xAxis.call(
         d3.axisBottom(xs)
           .ticks(5)
-          .tickFormat(t => Math.round(layerScale(t) * 1000) / 1000))
-      yAxis.call(d3.axisLeft(ys))
+          .tickFormat(t => layerScale(t).toPrecision(3))
+          .tickPadding(6)
+      )
 
       // Update the bars.
       const bars = svg.selectAll("rect")
