@@ -89,8 +89,9 @@ function defineVoronoi(svg,emptyOpacity,fullOpacity){
     })
     .on("mousemove",function(){
       if (d3.event && d3.event.clientX && d3.event.clientY && shared.currentLayerPath != Config.EV_path){
-        shared.lastMousePosition={x:d3.event.clientX,y:d3.event.clientY}
-        update_f.update_EV_preview(d3.event.clientX,d3.event.clientY)
+        console.log(shared.mapElement.getBoundingClientRect().top)
+        shared.lastMousePosition={x:d3.event.clientX,y:d3.event.clientY - shared.mapElement.getBoundingClientRect().top}
+        update_f.update_EV_preview(shared.lastMousePosition.x,shared.lastMousePosition.y)
       }
       else{
         shared.svg_EV.style("display","none")
@@ -192,8 +193,8 @@ function defineInterComms(svg,emptyOpacity,fadedOpacity,fullOpacity){
     .on("mousemove",function(){
       if (d3.event && d3.event.clientX && d3.event.clientY && shared.currentLayerPath != Config.EV_path){
         //console.log(d3.event)
-        shared.lastMousePosition={x:d3.event.clientX,y:d3.event.clientY}
-        update_f.update_EV_preview(d3.event.clientX,d3.event.clientY)
+        shared.lastMousePosition={x:d3.event.clientX,y:d3.event.clientY - shared.mapElement.getBoundingClientRect().top}
+        update_f.update_EV_preview(shared.lastMousePosition.x,shared.lastMousePosition.y)
       }
       else{
         shared.svg_EV.style("display","none")

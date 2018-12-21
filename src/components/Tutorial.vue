@@ -109,15 +109,6 @@ export default {
   display: none;
 }
 
-// Fix weird glitch with the bubble when tutorial is on.
-.EV-svg, .EV-circle-svg {
-  margin-top: -68px;
-
-  .tutorial-null & {
-    margin-top: 0;
-  }
-}
-
 .keycap {
   display: inline-block;
   border: 1px solid #000;

@@ -15,6 +15,7 @@ export default function(element, EV_svg_element, EV_circle_svg_element, legend_e
   shared.legend_element = legend_element
   shared.interCommContainment = interCommContainment
   shared.voronoiContainment = voronoiContainment
+  shared.mapElement = element
 
   document.body.addEventListener("keypress",helpers_f.handleKeyEvent)
 

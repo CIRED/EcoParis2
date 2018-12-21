@@ -7,6 +7,8 @@ var currentLayerPath = "" //path of the currently selected layer
 
 var map = null //reference to the leaflet map
 
+var mapElement = null
+
 var currentGeoLat = null //current latitude of the cursor
 
 var currentGeoLng = null //current longitude of the cursos
@@ -82,6 +84,7 @@ var currentChartIndexIsVoronoi = false
 export default {cachedLayers,
 				currentLayerPath,
 				map,
+				mapElement,
 				currentGeoLat,
 				currentGeoLng,
 				svg_EV,
