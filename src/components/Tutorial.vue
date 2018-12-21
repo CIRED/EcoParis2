@@ -2,8 +2,8 @@
   <section class="tutorial">
     <p v-html="currentStepHtml"></p>
 
-    <a href="#" @click.prevent="close" class="button dark"><span class="keycap">ESC</span> {{ $t('skip') }}</a>
-    <a v-if="value < 12" href="#" @click.prevent="next" class="button dark full"><span class="keycap">&rarr;</span> {{ $t('next') }}</a>
+    <a href="#" @click.prevent="close" class="button dark"><span class="keycap">ESC</span> {{ $t('tutorial.skip') }}</a>
+    <a v-if="value < 12" href="#" @click.prevent="next" class="button dark full"><span class="keycap">&rarr;</span> {{ $t('tutorial.next') }}</a>
   </section>
 </template>
 
