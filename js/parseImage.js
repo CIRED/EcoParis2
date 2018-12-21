@@ -1,7 +1,7 @@
 /**
  *	Use this page to parse new geotiffs (or .tif[f]) and convert them to the json the website uses (but this part is easily done locally, no need for the actual server).
  *	(keep in mind that my program is in french, translations might not be exact)
- *  (Ok apparently htis can only run on Safari (I did not test them all though), Google Chrome cannot load tif images, sorry about that)
+ *  (Ok apparently this can only run on Safari (I did not test them all though), Google Chrome cannot load tif images, sorry about that)
  *
  *	STEPS:
  *
@@ -12,10 +12,10 @@
  *		- (Choose file location/name, and write its name down there)
  *		- SCR: choose default (EPSG:4326 - WGS 84)
  *		- Write down the North/East/West/South values down there
- *		- Go back to SCR = EPSG-102110-RGF_1993_Lambert_93 (or whatever it was, actually)
+ *		- Change to SCR = EPSG:3857 - WGS 84 / Pseudo-Mercator
  *		- Save
- *		- Choose bin thresholds for the categories of the histograms on the right (values go from 0 to 255, choose an array of separators)
- *		- Write down there whether the values are discrete or not (typically true for the "espaces_verts" raster file, only three categories there)
+ *		- Write down there whether the values are discrete or not (typically true for the "espaces_verts" raster file, only three categories there. False for "usual" rasters)
+ *		- Write down there if this is a present file, or a future projection in "isCC". If it is a future projection, update the min and max values accordingly, so that both files use the same scale.
  *		- Run the server locally (npm won't work here, "python -m http.server" will do)
  *		- At the bottom of the page, download you file.
  */
@@ -30,15 +30,13 @@ var South = 48.110677418
 var West = 1.440530148
 var East = 3.565831209
 
-var HistogramBins = [80,160] //3 categories: 0-80, 81-160, 161-255
-
 //according to QGis:
 var RefMinValue = 0 // pollination
 var RefMaxValue = 0.123434
 var CCMinValue = 0
 var CCMaxValue = 0.030854
 
-var isCC = true //false for ref, true for cc
+var isCC = true //false for ref, true for cc (cc == our future projection, ref == 2012 reference)
 var AreValuesDiscrete = false //typically true when a pixel color is a category
 
 
@@ -53,6 +51,8 @@ function whenDocumentLoaded(action) {
 
 
 whenDocumentLoaded(() => {
+
+	var HistogramBins = [80,160]
 
 	document.getElementById("my-image").src=FileName
 
