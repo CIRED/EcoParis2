@@ -89,7 +89,6 @@ function defineVoronoi(svg,emptyOpacity,fullOpacity){
     })
     .on("mousemove",function(){
       if (d3.event && d3.event.clientX && d3.event.clientY && shared.currentLayerPath != Config.EV_path){
-        console.log(shared.mapElement.getBoundingClientRect().top)
         shared.lastMousePosition={x:d3.event.clientX,y:d3.event.clientY - shared.mapElement.getBoundingClientRect().top}
         update_f.update_EV_preview(shared.lastMousePosition.x,shared.lastMousePosition.y)
       }
@@ -100,9 +99,8 @@ function defineVoronoi(svg,emptyOpacity,fullOpacity){
     })
     .on("mousedown",function(){
       if (d3.event && d3.event.clientX && d3.event.clientY && shared.currentLayerPath != Config.EV_path){
-        //console.log(d3.event)
         shared.lastMouseDownX = d3.event.clientX
-        shared.lastMouseDownY = d3.event.clientY
+        shared.lastMouseDownY = d3.event.clientY - shared.mapElement.getBoundingClientRect().top
       }
     });
 }
@@ -192,7 +190,6 @@ function defineInterComms(svg,emptyOpacity,fadedOpacity,fullOpacity){
     })
     .on("mousemove",function(){
       if (d3.event && d3.event.clientX && d3.event.clientY && shared.currentLayerPath != Config.EV_path){
-        //console.log(d3.event)
         shared.lastMousePosition={x:d3.event.clientX,y:d3.event.clientY - shared.mapElement.getBoundingClientRect().top}
         update_f.update_EV_preview(shared.lastMousePosition.x,shared.lastMousePosition.y)
       }
@@ -205,7 +202,7 @@ function defineInterComms(svg,emptyOpacity,fadedOpacity,fullOpacity){
       if (d3.event && d3.event.clientX && d3.event.clientY){
         //console.log(d3.event)
         shared.lastMouseDownX = d3.event.clientX
-        shared.lastMouseDownY = d3.event.clientY
+        shared.lastMouseDownY = d3.event.clientY - shared.mapElement.getBoundingClientRect().top
       }
     });
 }
