@@ -12,9 +12,17 @@ This project uses:
 - D3.js for the actual visualization, coupled with `d3-geo`, `d3-interpolate`, and `d3-color`.
 - The [Stamen tileserver](http://maps.stamen.com) for the Toner Lite tileset.
 
+
 ## Usage.
 
-- To install the project, use `npm install`.
+First, you need to install NodeJS using your favorite package manager. For example, with Homebrew:
+
+	```sh
+    $ brew install node
+    ```
+
+Then, to install the project, use `npm install`.
+
 - To start a development version with hot-reloading, use `npm run serve`.
 - To compile and minify the project for production, use `npm run build`.
 - To deploy the project to https://ecoparis.github.io, use `npm run release`.
