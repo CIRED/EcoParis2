@@ -25,3 +25,15 @@ Then, to install the project, use `npm install`.
 - To compile and minify the project for production, use `npm run build`.
 - To deploy the project to https://ecoparis.github.io, use `npm run release`.
 - To lint and fix files, use `npm run lint`.
+
+## Content.
+
+The project hierarchy is as follows:
+
+- `public`: static data to be downloaded by the browser
+    - `assets`: external scripts and images
+    - `data`: pre-computed jsons necessary for the visualization
+        - `rasters`: raster files
+- `src`: source code, main App component and settings file
+    - `components`: web page dynamic components
+    - `locales`: frensh-english translations
