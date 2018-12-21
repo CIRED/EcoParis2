@@ -10,8 +10,8 @@
     <section class="buttons">
       <a v-if="isLoading" class="button loading">Chargement</a>
       <template v-else>
-        <a @click.prevent="startFrench" href="#" class="button">Commencer la visite</a>
-        <a @click.prevent="startEnglish" href="#" class="button">Get started</a>
+        <a @click.prevent="startFrench" href="#" class="button"><i class="flag-icon flag-icon-fr"></i> Commencer la visite</a>
+        <a @click.prevent="startEnglish" href="#" class="button"><i class="flag-icon flag-icon-us"></i> Get started</a>
       </template>
     </section>
   </section>
@@ -33,7 +33,39 @@ export default {
 }
 </script>
 
-<style lang="scss" type="text/scss">
+<style lang="scss">
+/** Flags from https://github.com/lipis/flag-icon-css. **/
+$flag-path: '../../public/assets';
+
+.flag-icon-background {
+  background-size: contain;
+  background-position: 50%;
+  background-repeat: no-repeat;
+}
+
+.flag-icon {
+  @extend .flag-icon-background;
+  position: relative;
+  display: inline-block;
+  width: 1em;
+  margin-right: 0.4em;
+  line-height: 1em;
+  border-radius: 3px;
+  &:before {
+    content: '\00a0';
+  }
+}
+
+@mixin flag-icon($country) {
+  .flag-icon-#{$country} {
+    background-image: url(#{$flag-path}/flag-#{$country}.svg);
+  }
+}
+
+@include flag-icon('fr');
+@include flag-icon('us');
+
+/** Introduction page. **/
 .intro {
   z-index: 1001;
   position: fixed;

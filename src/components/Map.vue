@@ -242,7 +242,7 @@ export default {
   border-radius: 50%;
   width: 80px;
   height: 80px;
-  border: 1px dashed;
+  border: 2px dashed;
   border-color:rgba(#000,0.7);
   position: absolute;
   background: #fff0;
