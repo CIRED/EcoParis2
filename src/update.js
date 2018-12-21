@@ -224,8 +224,8 @@ function updateCirclePreviewPath(){
   }
   else{ //if show EV
     shared.currentCircleLayerPath = Config.EV_path
-    shared.svg_circle_EV.style("border-color",Config.layers[Config.EV_path].colors[0])
-    shared.svg_EV.style("border-color",Config.layers[Config.EV_path].colors[0])
+    shared.svg_circle_EV.style("border-color",Config.color_ev)
+    shared.svg_EV.style("border-color",Config.color_ev)
   }
 }
 

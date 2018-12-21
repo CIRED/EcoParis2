@@ -113,8 +113,9 @@
     "Urban_cooling": "data/rasters/T_reduction.json",
 	"Correlation" : "data/rasters/correlation_ref.json",
 
-	"color_present":"#00f",
-	"color_future":"#f00",
+	"color_ev": "#82d173",
+	"color_present":"#90c2e7",
+	"color_future":"#9f86c0",
 
     "":" ====== reminder =======",
     "":"here are the options for the 'colorScheme' parameter:",
