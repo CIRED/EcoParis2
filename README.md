@@ -33,7 +33,7 @@ The project hierarchy is as follows:
 - `public`: static data to be downloaded by the browser
     - `assets`: external scripts and images
     - `data`: pre-computed jsons necessary for the visualization
-        - `rasters`: raster files
+        - `rasters`: preprocessed raster files
 - `src`: source code, main App component and settings file
     - `components`: web page dynamic components
     - `locales`: frensh-english translations
