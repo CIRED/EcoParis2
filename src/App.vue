@@ -13,8 +13,9 @@
     <section class="horizontal-split">
       <Tutorial
         v-model="currentTutorialStep"
+        ref="tutorial"
         :currentLayerPath="currentLayerPath"
-        @layerChange="path => this.currentLayerPath = path" />
+        @layerChange="path => {this.currentLayerPath = '';this.currentLayerPath = path}" />
 
       <section class="vertical-split">
         <section class="menu">
@@ -22,7 +23,8 @@
             :onLocation="loc => this.currentLocation = loc" />
           <Layers
             :layers="layers"
-            v-model="currentLayerPath" />
+            v-model="currentLayerPath"
+            @checkTutorial="()=>{this.$refs.tutorial.checkIfNext()}" />
           <ZoomControl
             @zoomOut="() => currentZoom -= 1"
             @zoomIn="() => currentZoom += 1" />

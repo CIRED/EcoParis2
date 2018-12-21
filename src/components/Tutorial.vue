@@ -2,6 +2,7 @@
   <section class="tutorial">
     <p v-html="currentStepHtml"></p>
 
+    <a v-if="value > 1" href="#" @click.prevent="prev" class="button dark full"><span class="keycap">&rarr;</span> {{ $t('tutorial.previous') }}</a>
     <a href="#" @click.prevent="close" class="button dark"><span class="keycap">ESC</span> {{ $t('tutorial.skip') }}</a>
     <a v-if="value < 12" href="#" @click.prevent="next" class="button dark full"><span class="keycap">&rarr;</span> {{ $t('tutorial.next') }}</a>
   </section>
@@ -45,14 +46,26 @@ export default {
       if (this.value == 5) {
         // On step 5, going to the next step is equivalent to changing the layer to "Nappe".
         this.$emit('layerChange', 'data/rasters/L_ref.json')
+        this.$emit('input', 6)
       } else if (this.value == 11) {
         // On step 11, going to the next step is equivalent to changing the layer to "Hotspots".
         this.$emit('layerChange', 'data/rasters/correlation_ref.json')
+        this.$emit('input', 12)
       } else if (this.value == 12) {
         // Step 12 is the last step.
         this.close()
       } else {
         this.$emit('input', this.value + 1)
+      }
+    },
+
+    checkIfNext() {
+      if (this.value == 5 && this.currentLayerPath == 'data/rasters/L_ref.json') {
+        // On step 5, if the current layer is already "Nappe", go to next one.
+        this.$emit('input', 6)
+      } else if (this.value == 11 && this.currentLAyerPAth == 'data/rasters/L_ref.json') {
+        // On step 11, if the current layer is already "Hotspots", go to next one.
+        this.$emit('input', 12)
       }
     },
 

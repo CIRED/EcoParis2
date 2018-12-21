@@ -38,6 +38,7 @@ export default {
     select(layer) {
       if (!layer.loading) {
         this.$emit('input', layer.path)
+        this.$emit('checkTutorial', layer.path)
       }
     }
   },
