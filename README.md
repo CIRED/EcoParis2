@@ -38,7 +38,7 @@ The project hierarchy is as follows:
         - `rasters`: preprocessed raster files
 - `src`: main App component and settings file
     - `components`: web page dynamic components
-    - `locales`: frensh-english translations
+    - `locales`: Frensh and English translations
     
     as well as source code:
     - `main.js`: main function, mounts the app
