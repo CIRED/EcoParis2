@@ -1,7 +1,7 @@
 /**
  *	Use this page to parse new geotiffs (or .tif[f]) and convert them to the json the website uses (but this part is easily done locally, no need for the actual server).
  *	(keep in mind that my program is in french, translations might not be exact)
- *  (Ok apparently htis can only run on Safari (I did not test them all though), Google Chrome cannot load tif images, sorry about that)
+ *  (Ok apparently this can only run on Safari (I did not test them all though), Google Chrome cannot load tif images, sorry about that)
  *
  *	STEPS:
  *
